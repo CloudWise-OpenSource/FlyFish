@@ -1,0 +1,1 @@
+export function allowSetForegroundWindow(pid?: number): boolean;

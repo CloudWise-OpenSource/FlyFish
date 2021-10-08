@@ -1,0 +1,50 @@
+
+// hub列表首页样式
+.hubMonitorBox{
+	.searchHeader{
+		margin-bottom: 10px;
+	}
+	// 点击主机IP查看详情
+	.showHubDetails{
+		cursor: pointer;
+		&:hover{
+			color: orange;
+		}
+	}
+
+	// 表格css
+	.ant-table{
+		.ant-progress{
+			// 将标签定位到进度条内部
+			>div{
+				position: relative;
+				.ant-progress-text{
+					position: absolute;
+					left: 0;
+					padding: 4px;
+					width: 100%;
+				}
+			}
+		}
+	}
+	:global {
+		// 全局使用的警告值颜色-进度条专用
+		.ant-progress {
+			&.warnColor_green {
+				.ant-progress-bg {
+					background-color: green;
+				}
+			}
+			&.warnColor_red {
+				.ant-progress-bg {
+					background-color: red;
+				}
+			}
+			&.warnColor_orange {
+				.ant-progress-bg {
+					background-color: orange;
+				}
+			}
+		}
+	}
+}

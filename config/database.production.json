@@ -1,0 +1,9 @@
+{
+  "mysql": {
+    "driver": "mysql",
+    "host": "10.2.2.236",
+    "user": "root",
+    "password": "Root@123",
+    "database": "flyfish"
+  }
+}

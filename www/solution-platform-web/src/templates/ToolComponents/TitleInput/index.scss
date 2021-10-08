@@ -1,0 +1,19 @@
+.Tj_Input{
+  min-width: 200px;
+  display: flex;
+  .title{
+	color: #6B7799;
+	min-height: 30px;
+	white-space: nowrap;
+	padding-right: 10px;
+	line-height: 30px;
+  }
+  :global{
+	  .ant-input{
+		// background-color: #3F4D73;
+		// border: solid 1px #394973;
+		// outline: none;
+		color: #6B7799;
+	  }
+  }
+}

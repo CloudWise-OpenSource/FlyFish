@@ -1,0 +1,1 @@
+{"messages":["Debug URL","We can't launch a browser in debug mode from here. If you want to debug this webpage, open this workspace from VS Code on your desktop."],"keys":["terminalLinkHover.debug","cantOpenChromeOnWeb"],"filePath":"ui/terminalLinkHandler"}

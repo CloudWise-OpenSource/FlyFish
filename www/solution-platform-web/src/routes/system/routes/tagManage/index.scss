@@ -1,0 +1,22 @@
+.gap {
+	margin-bottom: 10px;
+}
+
+.wrapper {
+	height: calc(100vh - 105px);
+	:global {
+		.ant-pagination {
+			text-align: center;
+		}
+	}
+}
+
+.table,
+.empty {
+	height: 65vh;
+	:global {
+		.ant-table-placeholder, .ant-spin-container {
+			height: calc(65vh - 71px);
+		}
+	}
+}

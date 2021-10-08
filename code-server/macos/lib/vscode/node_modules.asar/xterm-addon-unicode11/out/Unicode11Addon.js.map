@@ -1,0 +1,1 @@
+{"version":3,"file":"Unicode11Addon.js","sourceRoot":"","sources":["../src/Unicode11Addon.ts"],"names":[],"mappings":";;;AAQA,6CAA0C;AAE1C,MAAa,cAAc;IAClB,QAAQ,CAAC,QAAkB;QAChC,QAAQ,CAAC,OAAO,CAAC,QAAQ,CAAC,IAAI,uBAAU,EAAE,CAAC,CAAC;IAC9C,CAAC;IACM,OAAO,KAAW,CAAC;CAC3B;AALD,wCAKC"}
