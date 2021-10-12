@@ -8,17 +8,15 @@
 
 ### 历史培训
 
- - [飞鱼平台讲解](https://yunzhihui.feishu.cn/minutes/obcn2ran211b55f3jlqt84mx)
- - [组件开发讲解](https://yunzhihui.feishu.cn/minutes/obcnwz1t6x94f59b1668ju4j)
+ - [飞鱼平台讲解](http://docs.aiops.cloudwise.com/zh/flyfish)
+ - [组件开发讲解](http://docs.aiops.cloudwise.com/zh/flyfish/component/develop.html)
 
 ### 相关培训
 
- - [官方文档](http://10.2.2.38/web/ff-doc/)
- - [用户快速上手](http://10.2.2.38/web/ff-doc/guide/quick-screen)
- - [开发快速上手](http://10.2.2.38/web/ff-doc/guide/quick-component)
- - [架构文档](https://team.cloudwise.com/pages/viewpage.action?pageId=33683298)
- - [表结构文档](https://team.cloudwise.com/pages/viewpage.action?pageId=33684035)
- - [组件开发文档](http://10.2.2.38/web/ff-doc/document)
+ - [官方文档](http://docs.aiops.cloudwise.com/zh/flyfish/getting-started/)
+ - [用户快速上手](http://docs.aiops.cloudwise.com/zh/flyfish/getting-started/)
+ - [开发快速上手](http://docs.aiops.cloudwise.com/zh/flyfish/component/basic.html)
+ - [内网部署文档](http://docs.aiops.cloudwise.com/zh/flyfish/deploy.html)
 
 ## 安装
 
@@ -32,9 +30,6 @@
 | ----------- | ----------- |
 | master      | 主分支      |
 | dev         | 测试分支    |
-| hotfix_xxx  | bugfix 分支 |
-| feature_xxx | 特性分支    |
-| release_xxx | 预发布分支  |
 
 ### 环境依赖
 
@@ -47,93 +42,53 @@
 | redis | >= 4.0.8  |
 | mysql | >= 5.6.38 |
 
-### 安装
+### 部署
+描述依赖项，及其安装/配置方式)
 
-- #### 手动安装
+| 环境  | 说明      |
+| ----- | --------- |
+| jdk   | >= v1.8   |
+| node  | >= 8.9.3  |
+| redis | >= 4.0.8  |
+| mysql | >= 5.6.38 |
 
-【注意: vim 部分需要自行填写相关配置信息】
-
-1.进入项目
-
+1、进入项目目录
 ```
-cd Solution-Platform-Server
-
-npm install
+cd flyfish
 ```
-
-2.配置 pm2.production.json
-
+2、修改mysql、redis配置文件
 ```
-cp pm2.json pm2.production.json
-
-vim pm2.production.json
-```
-
-3.初始化数据库配置
-
-```
-cp config/database.dev.json config/database.production.json
-
-vim config/database.production.json
-```
-
-4.编辑 src/common/config/config.production.js
-
-```
-cp src/common/config/config.js src/common/config/config.production.js
-
-vim src/common/config/config.production.js
-```
-
-5.编辑 src/common/config/adapter.production.js
-
-```
-cp src/common/config/adapter.js src/common/config/adapter.production.js
-
+vim src/common/config/adapter.js
 vim src/common/config/adapter.production.js
 ```
-
-6.编辑 src/web/config/config.production.js
-
+3、修改code-server配置文件
 ```
-cp src/web/config/config.js src/web/config/config.production.js
-
-vim src/web/config/config.production.js
+vim code-server/linux/out/browser/pages/vscode.browserified.js
 ```
 
-- #### jenkins pipeline 自动安装（待补充）
-
-### 启动/停止
-
+4、build dockerfile
 ```
-初始化数据库: pm2 run init_database_production
-启动: pm2 run pm2-start
-重启: pm2 run pm2-restart
-重新加载: npm run pm2-reload
-停止: pm2 run pm2-stop
+docker build -t flyfish .
 ```
 
-### 编译
-
+5、run docker
 ```
-# 编译 prod 命令
-npm run init_database_production
+docker run -itd --name flyfish -p 8364:8364 -p 3306:3306 -p 6379:6379 -p 8081:8081 flyfish
 ```
 
-## API 说明
+## 服务器管理
 
 ```
-两种方式
-# 自动生成
-  1、npm run createWebApiDoc
-  2、npm run openWebApiDoc
-
-# 直接查看
-  1、 http://10.2.3.56:8363/webApiDoc/index.html
+docker exec -it flyfish /bin/bash
 ```
 
-## 最新更新日志
-
-### Vx.x.x (xxxx.xx.xx)
-
-待补充 (Vx.x.x的主要更新内容)
+## 升级
+1、更新代码
+```
+git checkout master
+git pull
+```
+2、更新容器
+```
+重复【安装】步骤
+```
