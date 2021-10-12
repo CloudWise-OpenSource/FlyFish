@@ -13,7 +13,7 @@
 
 ### 相关培训
 
- - [官方文档](http://docs.aiops.cloudwise.com/zh/flyfish)
+ - [官方文档](http://docs.aiops.cloudwise.com/zh/)
  - [用户快速上手](http://docs.aiops.cloudwise.com/zh/flyfish/getting-started/)
  - [开发快速上手](http://docs.aiops.cloudwise.com/zh/flyfish/component/basic.html)
  - [内网部署文档](http://docs.aiops.cloudwise.com/zh/flyfish/deploy.html)
