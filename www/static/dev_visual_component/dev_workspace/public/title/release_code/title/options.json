@@ -1,0 +1,37 @@
+{
+    "options": {
+        "width": 1920,
+        "height": 1080,
+        "name": "本地测试大屏",
+        "scaleMode": "origin",
+        "backgroundColor": "#162C51",
+        "backgroundImage": "",
+        "css": ""
+    },
+    "events": [
+    ],
+    "functions": [
+    ],
+    "components": [
+        {
+            "type": "title",
+            "id": "UBKO-08U1-C9L4-6OJF-3OMB-3OFN",
+            "config": {
+                "left": 534,
+                "top": 242,
+                "width": 450,
+                "height": 280,
+                "index": 0,
+                "name": "title",
+                "visible": true,
+                "class": ""
+            },
+            "dataSource": {
+                "type": "json",
+                "options": {
+                "json": "{\"data\":{\"title\":\"标题\",\"text\":123}}"
+                }
+            }
+        }
+    ]
+}

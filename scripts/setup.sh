@@ -7,11 +7,7 @@
 /usr/local/mysql/support-files/mysql.server start
 
 #启动code-server
-
-#mac
-# cd code-server && macox/bin/code-server --config config.yaml && cd ../
-#linux
-cd code-server && linux/bin/code-server --config config.yaml && cd ../
+cd code-server && npm run linux-start && cd ../
 
 #初始化数据库
 HOSTNAME="127.0.0.1"  #数据库信息
@@ -27,4 +23,4 @@ mysql -u${USERNAME} -p${PASSWORD} -e "${create_db_sql}"
 npm run init_database_dev
 
 #启动服务
-node dev 
+npm run dev

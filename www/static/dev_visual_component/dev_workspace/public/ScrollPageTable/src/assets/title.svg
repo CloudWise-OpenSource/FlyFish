@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="468px" height="49px" viewBox="0 0 468 49" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Rectangle</title>
+    <defs>
+        <linearGradient x1="3.10693642%" y1="50%" x2="97.9675385%" y2="50%" id="linearGradient-1">
+            <stop stop-color="#22C6FF" offset="0%"></stop>
+            <stop stop-color="#6F9FD9" stop-opacity="0.238817063" offset="51.519599%"></stop>
+            <stop stop-color="#29639D" stop-opacity="0" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" fill-opacity="0.800000012" opacity="0.36">
+        <g id="通用组件1" transform="translate(-170.000000, -447.000000)" fill="url(#linearGradient-1)">
+            <g id="小标题" transform="translate(170.000000, 447.000000)">
+                <path d="M0,0 L478,0 L478,42.6957774 C401.923779,46.8738529 320.050849,48.9628906 232.381209,48.9628906 C144.71157,48.9628906 67.2511664,46.8738529 0,42.6957774 L0,0 Z" id="Rectangle"></path>
+            </g>
+        </g>
+    </g>
+</svg>

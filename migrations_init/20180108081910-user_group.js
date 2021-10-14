@@ -59,7 +59,7 @@ exports.up = function (db, callback) {
         // 2.初始化数据
         const fields = ['group_id', 'account_id', 'parent_group_id', 'group_name', 'description', 'lft', 'rgt', 'created_at', 'updated_at'];
         const values = [
-            [1, 1, 0, '根节点', 'test', 1, 2, '1515467647000', '1515467647000'],
+            [1, 1, 0, 'root point', 'test', 1, 2, '1515467647000', '1515467647000'],
         ];
 
         values.forEach(value => db.insert(tableName, fields, value, callback));

@@ -25,7 +25,7 @@ module.exports = [
         handle: 'cors',
         enable: true,       //是否开启该中间件
         options:{
-            origin:["http://localhost:8001", "http://localhost:9000"], //允许跨域的域名
+            origin: "*", //允许跨域的域名
             credentials:true,               //允许携带跨域的cookie
         },
     },

@@ -182,14 +182,14 @@ function main(_document, _window, _localStorage) {
     _document.onkeydown = function (event) {
         // Command + S
         if (event.keyCode == 83 && (event.metaKey || event.ctrlKey)) {
-            const host = 'http://10.2.3.247:8364';
+            const host = 'http://127.0.0.1:8364';
             const target = host + '/visual/component/create';
             const component_id = geturl('component_id');
             if (component_id >= 0) {
                 top.postMessage({ method: "codeCompile", action: "prepare" }, target);
                 const _top = top;
                 (async () => {
-                    const result = await fetch(host + '/web/visualComponents/devComponentIO/compileDevComponent', {
+                    const result = await fetch(host + '/web/components/devComponentIO/compileDevComponent', {
                         headers: {
                             'Content-Type': 'application/json'
                         },

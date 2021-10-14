@@ -301,7 +301,7 @@ export default class CodeEditor extends PureComponent {
 	render() {
 		const { component_id, component_mark, org_mark } = this.props;
 		const { npmInstalling } = this.state;   // 编辑器的高度
-		const codeServerUrl = window.ENV.coderDomain + '/?component_id=' + component_id + '&folder=/www/static/dev_visual_component/dev_workspace/' + org_mark + '/' + component_mark;
+		const codeServerUrl = window.ENV.coderDomain + '/?component_id=' + component_id + '&folder=/data/app/flyFish/flyfish/www/static/dev_visual_component/dev_workspace/' + org_mark + '/' + component_mark;
 		return (
     <div className={styles.code_editor}>
         <Card

@@ -42,6 +42,9 @@ exports.up = function (db, callback) {
     }, () => {
         // 1.创建表索引
         db.addIndex(tableName, 'account_id', ['account_id']);
+        
+        const initSql = "INSERT INTO `flyfish`.`components_categories` (`categories_id`, `account_id`, `type`, `name`, `deleted_at`, `created_at`, `updated_at`) VALUES (1, 1, 'basicComponent', 'basic component', 1, 1614563013869, 1614563013869);";
+        db.runSql(initSql);
     });
 
     return null;

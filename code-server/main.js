@@ -1,14 +1,13 @@
 var child_process = require('child_process');
 const platform = process.env.NODE_ENV || 'macos';
 
-console.log(platform, 11111)
 let command = '';
 switch (platform) {
 	case 'macos':
-		command = 'cd macos && ./bin/code-server'
+		command = 'macos/bin/code-server --config config.yaml'
 		break;
 	case 'linux':
-		command = 'cd linux && ./bin/code-server'
+		command = 'linux/bin/code-server --config config.yaml'
 		break;
 	default:
 		break;

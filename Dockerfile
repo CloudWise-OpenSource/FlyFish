@@ -14,8 +14,8 @@ ENV PATH=/root/.nvm/versions/node/v14.17.5/bin:/usr/local/sbin:/usr/local/bin:/u
 EXPOSE 8364
 
 #安装依赖
-RUN npm i
+RUN sh startup.sh
 
-#docker run
-# CMD ["node", "dev.js"]
+# #docker run
+# # CMD ["node", "dev.js"]
 CMD ["sh", "scripts/setup.sh"]

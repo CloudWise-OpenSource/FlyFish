@@ -1,0 +1,60 @@
+{
+	"options": {
+		"width": 1920,
+		"height": 1080,
+		"name": "趋势图",
+		"scaleMode": "origin",
+		"backgroundColor": "#0B1427",
+		"backgroundImage": "",
+		"css": ""
+	},
+	"dataSources": [
+		{
+			"name": "model-23",
+			"type": "http",
+			"options": {
+				"apiSuccessCode": 0,
+				"getDataField": "data",
+				"interval": 0,
+				"method": "GET",
+				"url": "http://10.2.3.56:8360/openAPI/model/getModelData",
+				"vars": "{\n  \"model_id\": 23\n}",
+				"headers": {
+					"Authorization": "f77ab8f512518ba7f98e5e45782227ab"
+				}
+			}
+		},
+		{
+			"name": "yapi-model-23",
+			"type": "http",
+			"options": {
+				"apiSuccessCode": 0,
+				"interval": 0,
+				"method": "GET",
+				"url": "http://10.2.2.49:3000/mock/358/data/23"
+			}
+		}
+	],
+	"events": [],
+	"functions": [],
+	"components": [
+		{
+			"type": "FoldLineChart",
+			"id": "UBKO-08U1-C9L4-6OJF-3OMB-3OFN",
+			"config": {
+				"left": 534,
+				"top": 200,
+				"width": 1000,
+				"height": 700,
+				"index": 0
+			},
+			"options": {},
+			"dataSource": {
+				"type": "json",
+				"options": {
+					"json": "{\"data\":{\"xAxis\":[\"1月\",\"2月\",\"3月\",\"4月\",\"5月\",\"6月\",\"7月\",\"8月\",\"9月\",\"10月\",\"11月\",\"12月\"],\"data\":[{\"name\":\"降水量\",\"data\":[150,230,224,218,135,147,260,320,230,120,240,280]},{\"name\":\"降雨量\",\"data\":[50,100,230,124,118,235,347,160,120,210,180,60]}]}}"
+				}
+			}
+		}
+	]
+}

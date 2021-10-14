@@ -1,0 +1,13 @@
+{
+  "name": "GaugeChart",
+  "version": "v1.0.0",
+  "description": "",
+  "dependencies": {
+    "@cloudwise-fe/chart-panel": "~1.0.0",
+    "echarts": "^5.1.2"
+  },
+  "scripts": {
+    "build-dev": "NODE_ENV=dev ../../node_modules/.bin/webpack --config ./build/webpack.config.dev.js",
+    "build-production": "NODE_ENV=production ../../node_modules/.bin/webpack --config ./build/webpack.config.production.js"
+  }
+}

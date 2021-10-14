@@ -1,0 +1,60 @@
+{
+  "options": {
+    "width": 1920,
+    "height": 1080,
+    "name": "饼图",
+    "scaleMode": "origin",
+    "backgroundColor": "#0B1427",
+    "backgroundImage": "",
+    "css": ""
+  },
+  "events": [],
+  "functions": [],
+  "dataSources": [
+    {
+      "name": "model-16",
+      "type": "http",
+      "options": {
+        "apiSuccessCode": "200",
+        "getDataField": "data",
+        "interval": 0,
+        "method": "GET",
+        "url": "http://10.2.3.56:8360/openAPI/model/getModelData",
+        "vars": "{\n  \"model_id\": 16\n}",
+        "headers": {
+          "Authorization": "f77ab8f512518ba7f98e5e45782227ab"
+        }
+      }
+    },
+    {
+      "name": "yapi-model-16",
+      "type": "http",
+      "options": {
+        "apiSuccessCode": 0,
+        "interval": 0,
+        "method": "GET",
+        "url": "http://10.2.2.49:3000/mock/358/data/16"
+      }
+    }
+  ],
+  "components": [
+    {
+      "type": "PieChart",
+      "id": "UBKO-08U1-C9L4-6OJF-3OMB-3OFN",
+      "config": {
+        "left": 534,
+        "top": 200,
+        "width": 800,
+        "height": 700,
+        "index": 0
+      },
+      "options": {},
+      "dataSource": {
+        "type": "json",
+        "options": {
+          "json": "{\"data\":{\"data\":[{\"value\":500,\"name\":\"搜索引擎\"},{\"value\":250,\"name\":\"直接访问\"},{\"value\":125,\"name\":\"邮件营销\"},{\"value\":125,\"name\":\"联盟广告\"}]}}"
+        }
+      }
+    }
+  ]
+}

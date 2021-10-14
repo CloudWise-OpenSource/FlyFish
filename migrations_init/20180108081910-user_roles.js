@@ -21,7 +21,7 @@ exports.up = function (db, callback) {
             type: "tinyint",
         },
         role_name: {
-            type:'string',
+            type:'varchar',
             notNull: true,
             length: 64,
         },
@@ -49,7 +49,7 @@ exports.up = function (db, callback) {
         // 2.初始化数据
         const fields = ['account_id', 'role_type', 'role_name', 'description', 'created_at', 'updated_at'];
         const values = [
-            [1, 1, '管理员', '系统内置角色', '1515467647000', '1515467647000'],
+            [1, 1, 'admin', 'neizhi', '1515467647000', '1515467647000'],
         ];
 
         values.forEach(value => db.insert(tableName, fields, value, callback));

@@ -99,7 +99,7 @@ module.exports = class extends think.Service{
      */
     async getComponentPageList(account_id, page, pageSize = 15, search = {}) {
         search = think.isEmpty(search) ? {} : JSON.parse(search);
-        let where = { account_id, ...search, shelf_status: "on" };
+        let where = { account_id, ...search };
         if (search.hasOwnProperty("name")) {
             delete where.name;
             where["name|component_mark"] = ["like", "%" + search.name + "%"];
@@ -156,7 +156,9 @@ module.exports = class extends think.Service{
     }
 
     async getComponentList() {
-        const result = await this.modelComponentIns.field('component_id,account_id,component_mark,org_id,created_at,deleted_at,name,updated_at').select();
+        const result = await this.modelComponentIns.field('component_id,account_id,component_mark,org_id,created_at,deleted_at,name,updated_at').where({shelf_status: 'on'}).select();
+        if (result.length === 0) return {component_list: []};
+        
         const orgIds = _.uniq(result.map(item => item.org_id));
         const orgList = await this.modelComponentsOrg.where({org_id: ['IN', orgIds]}).select();
         const orgMap = _.keyBy(orgList, 'org_id');

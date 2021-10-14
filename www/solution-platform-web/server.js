@@ -51,7 +51,7 @@ const server = new WebpackDevServer(webpack(config), {
     },
     proxy: {
         '/apexAPI': {
-            target: 'http://10.2.3.247:8364/',
+            target: 'http://127.0.0.1:8364/',
             pathRewrite: { '^/apexAPI': '' },
         },
     },

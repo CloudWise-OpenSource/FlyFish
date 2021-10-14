@@ -1,0 +1,60 @@
+{
+	"options": {
+		"width": 1920,
+		"height": 1080,
+		"name": "趋势图",
+		"scaleMode": "origin",
+		"backgroundColor": "#0B1427",
+		"backgroundImage": "",
+		"css": ""
+	},
+	"dataSources": [
+		{
+			"name": "model-23",
+			"type": "http",
+			"options": {
+				"apiSuccessCode": 0,
+				"getDataField": "data",
+				"interval": 0,
+				"method": "GET",
+				"url": "http://10.2.3.56:8360/openAPI/model/getModelData",
+				"vars": "{\n  \"model_id\": 23\n}",
+				"headers": {
+					"Authorization": "f77ab8f512518ba7f98e5e45782227ab"
+				}
+			}
+		},
+		{
+			"name": "yapi-model-23",
+			"type": "http",
+			"options": {
+				"apiSuccessCode": 0,
+				"interval": 0,
+				"method": "GET",
+				"url": "http://10.2.2.49:3000/mock/358/data/23"
+			}
+		}
+	],
+	"events": [],
+	"functions": [],
+	"components": [
+		{
+			"type": "ScatterChart",
+			"id": "UBKO-08U1-C9L4-6OJF-3OMB-3OFN",
+			"config": {
+				"left": 534,
+				"top": 200,
+				"width": 1000,
+				"height": 700,
+				"index": 0
+			},
+			"options": {},
+			"dataSource": {
+				"type": "json",
+				"options": {
+					"json": "{\"data\":{\"xAxis\":[\"10\",\"20\",\"30\",\"40\",\"50\",\"60\",\"70\",\"80\",\"90\",\"100\",\"110\"],\"data\":[{\"name\":\"降水量\",\"data\":[92,83,82,23,81,32,54,23,42,32,53]},{\"name\":\"降雨量\",\"data\":[12,43,81,43,51,22,64,53,22,12,33]}]}}"
+				}
+			}
+		}
+	]
+}

@@ -126,7 +126,7 @@ module.exports = class extends think.Service {
       }
 
       if (!(await fs.exists(target.gitignoreFile))) {
-        await fs.writeFile(target.gitignoreFile, "*");
+        await fs.writeFile(target.gitignoreFile, "package-lock.json\nnode_modules");
       }
 
       if (!(await fs.exists(target.envFile))) {

@@ -36,7 +36,7 @@ exports.up = function (db, callback) {
     ifNotExists: true
   }, () => {
     // 创建初始化数据
-    const initColumns = [1, '基础组件', '为大屏提供基础能力', 1];
+    const initColumns = [1, 'basic component', 'basic', 1];
     const insertColumns = Object.keys(columns);
     db.insert(tableName, insertColumns, initColumns, callback);
   })

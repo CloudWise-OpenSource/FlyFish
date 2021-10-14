@@ -13,8 +13,7 @@
     "release": "standard-version",
     "release:minor": "npm run release -- --release-as minor",
     "release:major": "npm run release -- --release-as major",
-    "replace": "replace '\\* #' '*' CHANGELOG.md",
-    "changelog": "conventional-changelog --config ./node_modules/@cloudwise-fe/web-changelog/lib/log -i CHANGELOG.md -s -r 0"
+    "replace": "replace '\\* #' '*' CHANGELOG.md"
   },
   "dependencies": {
     "antd": "^3.26.19",
@@ -43,7 +42,6 @@
     "url-search-params-polyfill": "^2.0.2"
   },
   "devDependencies": {
-    "@cloudwise-fe/web-changelog": "^1.0.0",
     "autoprefixer": "^7.2.5",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.0",

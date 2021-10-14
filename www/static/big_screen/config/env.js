@@ -17,7 +17,7 @@ window.DATAVI_ENV = (function() {
         // apiDomain: 'http://10.0.1.154:9090',
         apiDomain: apiDomain,
         getComponentCover,
-        componentsDir: 'http://127.0.0.1:8364/static/public_visual_component/1',
+        componentsDir: 'static/public_visual_component/1',
         apiSuccessCode: 200,     // API接口响应成功的code
 
         screenAPI: {    // 大屏展示和编辑用到的API

@@ -3,7 +3,7 @@
   "description": "application created by thinkjs",
   "version": "1.6.0",
   "scripts": {
-    "dev": "node dev.js",
+    "dev": "pm2-runtime start dev.js -n flyfish",
     "dev-debug": "DEBUG=think-router node development.js",
     "pm2-production-start": "pm2 start pm2.production.json",
     "pm2-production-reload": "pm2 sendSignal SIGUSR2 Solution-Platform-Server pm2.production.json",
@@ -28,8 +28,7 @@
     "release": "standard-version",
     "release:minor": "npm run release -- --release-as minor",
     "release:major": "npm run release -- --release-as major",
-    "replace": "replace '\\* #' '*' CHANGELOG.md",
-    "changelog": "conventional-changelog --config ./node_modules/@cloudwise-fe/web-changelog/lib/log -i CHANGELOG.md -s -r 0"
+    "replace": "replace '\\* #' '*' CHANGELOG.md"
   },
   "dependencies": {
     "archiver": "^2.1.1",
@@ -56,7 +55,6 @@
     "uuid": "^3.2.1"
   },
   "devDependencies": {
-    "@cloudwise-fe/web-changelog": "^1.0.0",
     "apidoc": "^0.17.6",
     "babel-cli": "^6.26.0",
     "babel-preset-think-node": "^1.0.3",
