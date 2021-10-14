@@ -61,7 +61,6 @@ cd flyfish
 2、修改mysql、redis配置文件ip【如本地部署无需修改】
 ```
 vim src/common/config/adapter.js
-vim src/common/config/adapter.production.js
 ```
 3、修改code-server配置文件ip【如本地部署无需修改】
 ```
