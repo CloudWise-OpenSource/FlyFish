@@ -3,6 +3,9 @@
  */
 
 const Base = require('../base');
+const svgCaptcha = require('svg-captcha');
+const { v4: uuidv4 } = require('uuid');
+
 const EnumUserStatus = require('../../../common/constants/app/rbac/user').EnumUserStatus;
 const EnumLoginUserInfo = require('../../../common/constants/EnumCookie').EnumLoginUserInfo;
 const mkLoginUserCacheKey = require('../../../common/constants/EnumCache').mkWebLoginUserCacheKey;
@@ -216,6 +219,41 @@ module.exports = class extends Base {
         if (think.isError(result)) return this.fail(result.message);
 
         this.success({}, "添加成功");
+    }
+
+
+
+
+    async registryAction() {
+        let { user_name, user_email, user_phone, user_password, key, captcha } = this.post();
+        if (await this.userService.isExist(1, {user_email})) return this.fail("邮箱已存在");
+        if (await this.userService.isExist(1, {user_phone})) return this.fail("手机号已存在");
+
+        const captchaCache = await this.cacheService.get(key);
+        if (captchaCache.toLowerCase() !== captcha.trim().toLowerCase()) return this.fail('验证码错误');
+
+        const result = await this.userService.addUser(1, {user_name, user_email, user_phone, user_password});
+        if (think.isError(result)) return this.fail(result.message);
+
+        this.success({}, "注册成功");
+    }
+
+    async captchaAction() {
+        const captcha = svgCaptcha.create({
+            size: 4, //验证码长度
+            fontSize: 45, //验证码字号
+            noise: 1, //干扰线条数目
+            width: 120, //宽度
+            height: 36, //高度
+            color: true, //验证码字符是否有颜色，默认是没有，但是如果设置了背景颜色，那么默认就是有字符颜色
+            background: '#ccc' //背景
+        })
+        const key = uuidv4();
+        await this.cacheService.set(key, captcha.text);
+        this.success({
+            key: key,
+            captcha: captcha.data,
+        }, '获取成功');
     }
 
     /**

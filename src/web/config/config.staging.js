@@ -17,6 +17,8 @@ module.exports = {
     "/web/visualScreen/screenEditor/getModelList", // 获取大屏模型列表
     "/web/visualScreen/screenEditor/getModelData", // 获取大屏模型数据
     "/web/visualScreen/screen/downloadScreenSource",
+    "/web/rbac/user/captcha",
+    "/web/rbac/user/registry",
   ],
 
   proxy: {

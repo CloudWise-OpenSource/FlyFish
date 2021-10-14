@@ -41,6 +41,7 @@
     "node-client-sdk": "^1.0.4",
     "pm2": "^2.10.1",
     "request": "^2.88.2",
+    "svg-captcha": "^1.4.0",
     "think-cache": "^1.1.0",
     "think-cache-file": "^1.1.0",
     "think-cache-redis": "^1.2.0",
