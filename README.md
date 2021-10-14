@@ -77,6 +77,10 @@ docker build -t flyfish .
 docker run -itd --name flyfish -p 8364:8364 -p 3306:3306 -p 6379:6379 -p 8081:8081 flyfish
 ```
 
+6、使用
+```
+浏览器访问: http://127.0.0.1:8364
+```
 ## 服务器管理
 
 ```
