@@ -13,13 +13,13 @@
   }
   .login_box {
 	width: 706px;
-	height: 320px;
+	height: 500px;
 	overflow: hidden;
 	position: fixed;
 	left: 50%;
 	top: 50%;
 
-	margin-top: -160px;
+	margin-top: -250px;
 	margin-left: -353px;
 	border-radius: 8px;
 	background-color: #fff;
@@ -38,7 +38,6 @@
 		line-height: 80px;
 		margin-left: 40px;
 		margin-bottom: 20px;
-
 	  }
 	  .login_email {
 		width: 320px;
@@ -51,6 +50,7 @@
 		margin-left: 40px;
 		font-size: 14px;
 		padding-left: 5px;
+		margin-top: 20px;
 
 		border-radius: 4px;
 		background-color: #fafafa;
@@ -73,6 +73,34 @@
 		background-color: #fafafa;
 		box-shadow: inset 1px 1px 2px 0 #e4e4e4;
 	  }
+		.captcha_box{
+			margin-top: 20px;
+			box-sizing: content-box;
+			line-height: 40px;
+			height: 40px;
+			display: flex;
+			.captcha {
+				width: 180px;
+				border-left: none;
+				border-right: none;
+				border-top: none;
+				border-bottom: solid 1px #dedede;
+				outline: none;
+				margin-left: 40px;
+				font-size: 14px;
+				padding-left: 5px;
+	
+				border-radius: 4px;
+				background-color: #fafafa;
+				box-shadow: inset 1px 1px 2px 0 #e4e4e4;
+				align-items: center;
+			}
+			.captcha_svg {
+				margin-left: 30px;
+				align-items: center;
+			}
+		}
+		
 	  .btn_login {
 		margin-left: 40px;
 		margin-top: 30px;
@@ -88,16 +116,11 @@
 		box-shadow: 0 5px 15px 0 #97dcff;
 	  }
 	}
-	.to_registry {
-		display: block;
-		margin-left: 40px;
-		margin-top: 10px;
-	}
 	.img_right {
 	  float: left;
 	  width: 169px;
 	  height: 245px;
-	  margin-top: 38px;
+	  margin-top: 130px;
 	  margin-left: 50px;
 	}
   }

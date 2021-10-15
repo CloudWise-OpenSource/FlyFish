@@ -10,6 +10,7 @@ const EnumRouter = {
     rootRoute: '', // 根路由
 
     login: 'login', // 登陆
+    registry: 'registry', // 注册
 
     /*
      |-----------------------------------------------

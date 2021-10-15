@@ -74,6 +74,7 @@ export default class Login extends PureComponent {
                     >
                         登&nbsp;&nbsp;录
                     </Button>
+                    <a href="/registry" className={styles.to_registry}>还没有账号？去注册</a>
                 </div>
                 <img src={rightLoginImg} className={styles.img_right} alt="login-right" />
             </div>

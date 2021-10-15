@@ -229,13 +229,19 @@ module.exports = class extends Base {
         if (await this.userService.isExist(1, {user_email})) return this.fail("邮箱已存在");
         if (await this.userService.isExist(1, {user_phone})) return this.fail("手机号已存在");
 
-        const captchaCache = await this.cacheService.get(key);
+        const captchaCache = await this.cacheService.get(key) || '';
         if (captchaCache.toLowerCase() !== captcha.trim().toLowerCase()) return this.fail('验证码错误');
 
-        const result = await this.userService.addUser(1, {user_name, user_email, user_phone, user_password});
-        if (think.isError(result)) return this.fail(result.message);
+        const addResult = await this.userService.addUser(1, {user_name, user_email, user_phone, user_password});
+        if (think.isError(addResult)) return this.fail(addResult.message);
 
-        this.success({}, "注册成功");
+        const userInfo = await this.userService.isAllowLogin(user_email, user_password);
+        const cacheKey = mkLoginUserCacheKey(1, addResult);
+        await this.setCacheUserInfo(cacheKey, userInfo);
+
+        const loginInfo = await this.authService.getUserLoginInfo(userInfo);
+
+        this.success(loginInfo, "注册成功");
     }
 
     async captchaAction() {

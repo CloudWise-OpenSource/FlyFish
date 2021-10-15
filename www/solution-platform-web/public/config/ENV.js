@@ -21,7 +21,10 @@ window.ENV = (function () {
             loginUrl: rootPath + 'login', // 登录页面url
 
             // 不需要验证是否登录的路由配置
-            noCheckIsLoginRoutes: [rootPath + 'login'],
+            noCheckIsLoginRoutes: [
+                rootPath + 'login',
+                rootPath + 'registry',
+            ],
         },
         visualComponent: {
             // 可视化组件配置

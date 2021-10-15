@@ -25,6 +25,8 @@ const proxyDataHubAPI = (api) => '/proxyDataHub' + api;
 const EnumAPI = {
     login: _processAPI('/web/rbac/user/login'), // 登录
     logout: _processAPI('/web/rbac/user/logout'), // 退出登录
+    registry: _processAPI('/web/rbac/user/registry'),
+    getCaptcha: _processAPI('/web/rbac/user/captcha'),
 
     /*
      |----------------------------------------------------------------
