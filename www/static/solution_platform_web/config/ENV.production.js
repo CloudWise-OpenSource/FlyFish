@@ -26,6 +26,7 @@ window.ENV = (function () {
                 rootPath + 'registry',
             ]
         },
+        registryUrl: rootPath + 'registry',             // 注册页面url
 
         visualScreen: { // 可视化大屏配置
             coverBasePath: apiDomain + '/upload/screen/cover',  // 大屏封面的webPath
