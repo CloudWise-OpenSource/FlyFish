@@ -22,6 +22,7 @@ export default class Registry extends PureComponent {
         this.state = {
             user_name: '',
             user_email: '',
+            user_phone: '',
             user_password: '',
             re_user_password: '',
             key: '',
@@ -38,11 +39,11 @@ export default class Registry extends PureComponent {
     onEnterDown = (e) => e.keyCode === 13 ? this.onSubmit() : null;
 
     onSubmit = () => {
-        const { user_name, user_email, user_password, re_user_password, key, captcha } = this.state;
+        const { user_name, user_email, user_phone, user_password, re_user_password, key, captcha } = this.state;
         if (user_password.trim() !== re_user_password.trim()) return T.prompt.error('两次密码输入不一致');
 
         this.setState({ loading: true }, () => {
-            doRegistryAction(user_name, user_email, user_password, key, captcha).then((resp) => {
+            doRegistryAction(user_name, user_email, user_phone, user_password, key, captcha).then((resp) => {
                 this.setState({ loading: false }, () => {
                     T.auth.setLoginInfo(resp.data);
                     window.location.href = EnumRouter.dVisual_bigScreen;
@@ -84,6 +85,14 @@ export default class Registry extends PureComponent {
                         className={styles.login_email}
                         onChange={(e) => this.setState({ user_email: e.target.value.trim() })}
                         placeholder="邮箱"
+                        onKeyDown={this.onEnterDown}
+                    />
+                    <input
+                        type="text"
+                        value={this.state.user_phone}
+                        className={styles.login_phone}
+                        onChange={(e) => this.setState({ user_phone: e.target.value.trim() })}
+                        placeholder="手机号"
                         onKeyDown={this.onEnterDown}
                     />
                     <input

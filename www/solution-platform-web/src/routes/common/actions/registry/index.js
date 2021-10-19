@@ -14,7 +14,7 @@ import {
  * @param user_password
  * @returns {Promise}
  */
-export const doRegistryAction = (user_name, user_email, user_password, key, captcha) => registry(user_name, user_email, user_password, key, captcha);
+export const doRegistryAction = (user_name, user_email, user_phone, user_password, key, captcha) => registry(user_name, user_email, user_phone, user_password, key, captcha);
 
 
 export const doGetCaptchaAction = () => getCaptcha();

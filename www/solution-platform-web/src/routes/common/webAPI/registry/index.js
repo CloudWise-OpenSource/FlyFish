@@ -13,6 +13,6 @@ const { postJSON, get } = T.request;
  * @param {String} user_password
  * @returns {Promise}
  */
-export const registry = (user_name, user_email, user_password, key, captcha) => postJSON(EnumAPI.registry, { user_name, user_email, user_password, key, captcha });
+export const registry = (user_name, user_email, user_phone, user_password, key, captcha) => postJSON(EnumAPI.registry, { user_name, user_email, user_phone, user_password, key, captcha });
 
 export const getCaptcha = () => get(EnumAPI.getCaptcha);
