@@ -100,4 +100,4 @@ git pull
 ```
 获取更多关于FlyFish的技术资料，或加入FlyFish开发者交流群，可扫描下方二维码咨询。
 ```
-<img src="./readme_pic/qr_code.png" width="200px"/>
+<img src="https://gitee.com/CloudWise/fly-fish/raw/main/readme_pic/qr_code.png" width="250px"/>
