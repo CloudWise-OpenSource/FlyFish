@@ -100,4 +100,4 @@ git pull
 ```
 获取更多关于FlyFish的技术资料，或加入FlyFish开发者交流群，可扫描下方二维码咨询。
 ```
-![qr_code](/readme_pic/qr_code.png)<br/>
+<img src="./readme_pic/qr_code.png" width="200px"/>
