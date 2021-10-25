@@ -95,3 +95,9 @@ git pull
 ```
 重复【安装】步骤
 ```
+
+## 更多
+```
+获取更多关于FlyFish的技术资料，或加入FlyFish开发者交流群，可扫描下方二维码咨询。
+```
+![qr_code](/readme_pic/qr_code.png)<br/>
