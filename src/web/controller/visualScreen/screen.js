@@ -17,7 +17,6 @@ module.exports = class extends Base {
      * @apiParam (入参) {String} name 大屏名称
      * @apiParam (入参) {File} cover 待上传的封面
      * @apiParam (入参) {String} tag_id 标签id列表
-     * @apiParam (入参) {File} logo 待上传logo
      * @apiParam (入参) {Number} status 大屏状态
      *
      * @apiSuccessExample Success-Response:
@@ -30,8 +29,6 @@ module.exports = class extends Base {
     async addAction() {
         const { account_id, user_id } = await this.getCacheUserInfo();
 
-        const { path: logoPath } = this.file('logo') || {};
-
         let { name, status, tag_id } = this.post();
         const file = this.file('cover');
 
@@ -42,7 +39,7 @@ module.exports = class extends Base {
 
         if (await this.screenService.isExistScreen(account_id, name)) return this.fail("大屏存在");
 
-        const result = await this.screenService.addScreen(account_id, user_id, tag_id, { name, coverPath: file ? file.path : null, status, logoPath });
+        const result = await this.screenService.addScreen(account_id, user_id, tag_id, { name, coverPath: file ? file.path : null, status });
 
         if (think.isError(result)) return this.fail(result.message);
 
@@ -88,7 +85,7 @@ module.exports = class extends Base {
     async getPageListAction() {
         const { account_id, user_id } = await this.getCacheUserInfo();
         const { page, search, order, condition } = this.get();
-        const result = await this.screenService.getScreenPageList(account_id, user_id, page, 15, "screen_id, name, cover, developing_user_id, status, logo, create_user_id", search, order, condition);
+        const result = await this.screenService.getScreenPageList(account_id, user_id, page, 15, "screen_id, name, cover, developing_user_id, status, create_user_id", search, order, condition);
 
         if (think.isError(result)) return this.fail(result.message);
 
@@ -142,7 +139,6 @@ module.exports = class extends Base {
      * @apiParam (入参) {Number} screen_id 大屏ID
      * @apiParam (入参) {String} name 大屏名称
      * @apiParam (入参) {File} cover 待上传的封面
-     * @apiParam (入参) {File} logo 待上传logo
      * @apiParam (入参) {Number} status 大屏状态
      *
      * @apiSuccessExample Success-Response:
@@ -156,7 +152,6 @@ module.exports = class extends Base {
         const { account_id } = await this.getCacheUserInfo();
 
         const { path: coverPath } = this.file('cover') || {};
-        const { path: logoPath } = this.file('logo') || {};
         const { screen_id, name, status, tag_id } = this.post();
 
         if (!tag_id) {
@@ -165,7 +160,7 @@ module.exports = class extends Base {
 
         if (await this.screenService.isExistScreen(account_id, name, screen_id)) return this.fail("大屏名称重复");
 
-        const result = await this.screenService.updateScreen(account_id, screen_id, tag_id, { name, coverPath, logoPath, status });
+        const result = await this.screenService.updateScreen(account_id, screen_id, tag_id, { name, coverPath, status });
         if (think.isError(result)) return this.fail(result.message);
 
         this.success({}, "更新成功");
@@ -234,7 +229,6 @@ module.exports = class extends Base {
      * @apiParam (入参) {String} name 大屏名称
      * @apiParam (入参) {String} tag_id 标签
      * @apiParam (入参) {File} cover 待上传的封面
-     * @apiParam (入参) {File} logo 待上传logo
      * @apiParam (入参) {Number} status 大屏状态
      *
      * @apiSuccessExample Success-Response:
@@ -248,14 +242,13 @@ module.exports = class extends Base {
         const { account_id, user_id } = await this.getCacheUserInfo();
 
         const { path: coverPath } = this.file('cover') || {};
-        const { path: logoPath } = this.file('logo') || {};
         const { screen_id, name, status, tag_id } = this.post();
 
         if (!tag_id) return this.fail('请选择标签');
 
         if (await this.screenService.isExistScreen(account_id, name)) return this.fail("大屏存在");
 
-        const result = await this.screenService.copyScreen(account_id, user_id, screen_id, tag_id, { name, coverPath, logoPath, status });
+        const result = await this.screenService.copyScreen(account_id, user_id, screen_id, tag_id, { name, coverPath, status });
         if (think.isError(result)) return this.fail(result.message);
 
         this.success({}, "复制成功");
@@ -366,7 +359,7 @@ module.exports = class extends Base {
 
         const result = await this.screenService.getScreenById(1, screen_id);
         if (think.isError(result)) return this.fail(result.message);
-        
+
         const screen_conf = JSON.parse(result.options_conf);
         const filepath = await this.screenService.downloadScreenSource(screen_id, screen_conf);
         if (think.isError(filepath)) return this.fail(filepath.message);

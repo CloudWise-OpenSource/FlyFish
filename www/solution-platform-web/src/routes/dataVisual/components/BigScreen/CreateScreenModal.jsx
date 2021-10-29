@@ -97,18 +97,6 @@ const CollectionCreateForm = Form.create()((props) => {
                             </Upload>
                         )}
                     </Form.Item>
-                    <Form.Item {...formItemLayout} label="大屏logo" extra="务必上传宽高比为1:1的logo">
-                        {getFieldDecorator('logo', {
-                            valuePropName: 'fileList',
-                            getValueFromEvent: normFile,
-                        })(
-                            <Upload beforeUpload={beforeUpload} accept=".jpg, .jpeg, .png">
-                                <Button>
-                                    <Icon type="upload" /> 上传大屏logo
-                                </Button>
-                            </Upload>
-                        )}
-                    </Form.Item>
                     <Form.Item {...formItemLayout} label="大屏状态" extra="请及时更新大屏状态">
                         {getFieldDecorator('status', {
                             initialValue: formData.status || EnumScreenStatus.developing.value
@@ -191,7 +179,7 @@ export default class CreateScreenModal extends PureComponent {
             if (err) return false;
 
             const { screen_id, getScreenList, screen_title } = this.props;
-            let { name, cover: [cover] = [], url, status, logo: [logo] = [] } = values;
+            let { name, cover: [cover] = [], url, status } = values;
 
             console.log(values);
 
@@ -213,15 +201,15 @@ export default class CreateScreenModal extends PureComponent {
 
                 switch (screen_title) {
                     case 'add':
-                        doAddScreen(name, cover, url, logo, status).then(...thenFn);
+                        doAddScreen(name, cover, url, status).then(...thenFn);
                         break;
                     case 'edit':
-                        doUpdateScreen(screen_id, name, cover, url, logo, status).then(
+                        doUpdateScreen(screen_id, name, cover, url, status).then(
                             ...thenFn
                         );
                         break;
                     case 'copy':
-                        doCopyScreen(screen_id, name, cover, url, logo, status).then(
+                        doCopyScreen(screen_id, name, cover, url, status).then(
                             ...thenFn
                         );
                         break;
