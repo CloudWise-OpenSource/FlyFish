@@ -23,12 +23,11 @@ export const getScreenDetail = (screen_id) => get(EnumAPI.dvScreen_getDetail, { 
  * @param {File} cover
  * @param {Object} url
  * @param {Array} tag_id
- * @param {File} logo
  * @param {Number} status
  * @returns {Promise}
  */
-export const addScreen = (name, cover, url, tag_id, logo, status) => {
-    return upload(EnumAPI.dvScreen_add, { name, cover, url, tag_id, logo, status });
+export const addScreen = (name, cover, url, tag_id, status) => {
+    return upload(EnumAPI.dvScreen_add, { name, cover, url, tag_id, status });
 };
 
 /**
@@ -36,12 +35,11 @@ export const addScreen = (name, cover, url, tag_id, logo, status) => {
  * @param {Number} screen_id
  * @param {String} name
  * @param {File} cover
- * @param {File} logo
  * @param {Array} tag_id
  * @param {Number} status
  * @returns {Promise}
  */
-export const updateScreen = (screen_id, name, cover, url, tag_id, logo, status) => upload(EnumAPI.dvScreen_update, { screen_id, name, cover, url, tag_id, logo, status });
+export const updateScreen = (screen_id, name, cover, url, tag_id, status) => upload(EnumAPI.dvScreen_update, { screen_id, name, cover, url, tag_id, status });
 
 /**
  * 删除大屏
@@ -63,11 +61,10 @@ export const unlockScreen = (screen_id) => put(EnumAPI.dvScreen_unlock, { screen
  * @param name
  * @param {File} cover
  * @param tag_id
- * @param {File} logo
  * @param {Number} status
  * @returns {*}
  */
-export const copyScreen = (screen_id, name, cover, url, tag_id, logo, status) => upload(EnumAPI.dvScreen_copy, { screen_id, name, cover, url, tag_id, logo, status });
+export const copyScreen = (screen_id, name, cover, url, tag_id, status) => upload(EnumAPI.dvScreen_copy, { screen_id, name, cover, url, tag_id, status });
 
 /**
  * 获取已删除大屏列表

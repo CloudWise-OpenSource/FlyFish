@@ -19,13 +19,6 @@ const formatSearchParams = (search) => {
 
 
 
-const checkLogoDirExist = async () => {
-    const logoDirExist = await fs.exists(EnumWebResourcePath.logo);
-    if (!logoDirExist) {
-        await fs.mkdir(EnumWebResourcePath.logo);
-    }
-}
-
 module.exports = class extends think.Service {
     constructor() {
         super();
@@ -53,22 +46,6 @@ module.exports = class extends think.Service {
         return targetName;
     };
 
-    /**
-     * 移动大屏logo
-     * @param srcPath
-     * @param screen_id
-     * @return {Promise<*>}
-     */
-    async moveScreenLogo(srcPath, screen_id) {
-        const targetName = screen_id + path.extname(srcPath);
-        const targetLogoPath = path.resolve(EnumWebResourcePath.logo, targetName);
-        await checkLogoDirExist();
-        const result = await this.helperService.move(srcPath, targetLogoPath).catch(e => think.isError(e) ? e : new Error(e));
-        if (think.isError(result)) return result;
-
-        return targetName;
-    };
-
 
     /**
      * 复制大屏封面图片
@@ -82,24 +59,6 @@ module.exports = class extends think.Service {
         const newCoverPath = path.resolve(EnumWebResourcePath.cover, targetName);
 
         const result = await this.helperService.copyFile(oldCoverPath, newCoverPath).catch(e => think.isError(e) ? e : new Error(e));
-        if (think.isError(result)) return result;
-
-        return targetName;
-    }
-
-
-    /**
-     * 复制大屏logo图片
-     * @param oldLogo
-     * @param screen_id
-     * @return {Promise<*>}
-     */
-    async copyScreenLogo(oldLogo, screen_id) {
-        const targetName = screen_id + path.extname(oldLogo);
-        const oldLogoPath = path.resolve(EnumWebResourcePath.logo, oldLogo);
-        const newLogoPath = path.resolve(EnumWebResourcePath.logo, targetName);
-        await checkLogoDirExist();
-        const result = await this.helperService.copyFile(oldLogoPath, newLogoPath).catch(e => think.isError(e) ? e : new Error(e));
         if (think.isError(result)) return result;
 
         return targetName;
@@ -131,13 +90,12 @@ module.exports = class extends think.Service {
      * @param {Object} params
      * @param {String} params.name 大屏名称
      * @param {String} params.coverPath 大屏封面临时上传 path
-     * @param {String} params.logoPath 大屏logo临时上传 path
      * @param {Number} params.status 大屏状态
      * @returns {Promise<*>}
      */
     async addScreen(account_id, user_id, tag_id, params) {
         const screen_id = mkScreenId();
-        let cover = null, logo = null;
+        let cover = null;
 
         console.log(params)
 
@@ -151,22 +109,13 @@ module.exports = class extends think.Service {
             await think.mkdir(path.resolve(EnumWebResourcePath.fragment, screen_id));
         }
 
-        if (params.logoPath) {
-            logo = await this.moveScreenLogo(params.logoPath, screen_id);
-            if (think.isError(logo)) {
-                return logo;
-            }
-        }
-
         delete params.coverPath;
-        delete params.logoPath;
 
         // 记录大屏信息
         Object.assign(params, {
             account_id,
             screen_id,
             cover: cover || '',
-            logo: logo || '',
             create_user_id: user_id,
             options_conf: JSON.stringify(getInitScreenOptionsConf(params.name))
         });
@@ -243,18 +192,18 @@ module.exports = class extends think.Service {
 
         let resultUserList = [];
         result.data.forEach((item) => {
-          if (
-            !think.isEmpty(item.create_user_id) &&
-            resultUserList.indexOf(item.create_user_id) === -1
-          ) {
-            resultUserList.push(item.create_user_id);
-          }
-          if (
-            !think.isEmpty(item.developing_user_id) &&
-            resultUserList.indexOf(item.developing_user_id) === -1
-          ) {
-            resultUserList.push(item.developing_user_id);
-          }
+            if (
+                !think.isEmpty(item.create_user_id) &&
+                resultUserList.indexOf(item.create_user_id) === -1
+            ) {
+                resultUserList.push(item.create_user_id);
+            }
+            if (
+                !think.isEmpty(item.developing_user_id) &&
+                resultUserList.indexOf(item.developing_user_id) === -1
+            ) {
+                resultUserList.push(item.developing_user_id);
+            }
         });
         const userService = think.service("rbac/user");
         let userInfoList = resultUserList.length > 0 ? await userService.getUserList(resultUserList) : [];
@@ -262,22 +211,22 @@ module.exports = class extends think.Service {
         result.data = result.data.map((item => {
             item.is_lock = !think.isEmpty(item.developing_user_id) ? item.developing_user_id != user_id : true;
             if (item.create_user_id) {
-              const createUserInfo = userInfoList.find(
-                (user) => user.user_id === item.create_user_id
-              );
-              if (
-                !think.isEmpty(createUserInfo)
-              ) {
-                item.create_user_name = createUserInfo.user_name;
-              }
+                const createUserInfo = userInfoList.find(
+                    (user) => user.user_id === item.create_user_id
+                );
+                if (
+                    !think.isEmpty(createUserInfo)
+                ) {
+                    item.create_user_name = createUserInfo.user_name;
+                }
             }
             if (item.developing_user_id) {
-              const updateUserInfo = userInfoList.find(
-                (user) => user.user_id === item.developing_user_id
-              );
-              if (!think.isEmpty(updateUserInfo)) {
-                item.developing_user_name = updateUserInfo.user_name;
-              }
+                const updateUserInfo = userInfoList.find(
+                    (user) => user.user_id === item.developing_user_id
+                );
+                if (!think.isEmpty(updateUserInfo)) {
+                    item.developing_user_name = updateUserInfo.user_name;
+                }
             }
             return item;
         }));
@@ -311,12 +260,11 @@ module.exports = class extends think.Service {
      * @param {Object} data
      * @param {String} [data.name]  大屏名称
      * @param {String} data.coverPath 大屏封面临时上传 path
-     * @param {String} data.logoPath 大屏logo临时上传 path
      * @param {Number} data.status 大屏状态
      * @returns {Promise<void>}
      */
     async updateScreen(account_id, screen_id, tag_id, data = {}) {
-        let cover = null, logo = null;
+        let cover = null;
         const screenInfo = await this.getScreenById(account_id, screen_id);
 
         if (data.coverPath) {
@@ -333,26 +281,9 @@ module.exports = class extends think.Service {
             }
         }
 
-        if (data.logoPath) {
-            const oldLogo = screenInfo.logo;
-
-            logo = await this.moveScreenLogo(data.logoPath, screen_id);
-            if (think.isError(logo)) return logo;
-
-            // 删除以前的logo
-            if (!this.helperService.lodash.isEmpty(oldLogo) && oldLogo !== logo) {
-                const oldLogoPath = path.resolve(EnumWebResourcePath.logo, oldLogo);
-                if (await fs.exists(oldLogoPath)) {
-                    await fs.delete(oldLogoPath);
-                }
-            }
-        }
-
         delete data.coverPath;
-        delete data.logoPath;
 
         if (cover) data.cover = cover;
-        if (logo) data.logo = logo;
         if (screenInfo.options_conf) {
             let options_conf = JSON.parse(screenInfo.options_conf);
             if (this.helperService.lodash.isPlainObject(options_conf.options) && options_conf.options.hasOwnProperty('name')) {
@@ -428,12 +359,12 @@ module.exports = class extends think.Service {
      */
     async saveScreenOptionsConf(account_id, developing_user_id, screen_id, options_conf) {
         let data = {
-          developing_user_id,
-          options_conf: JSON.stringify(options_conf),
+            developing_user_id,
+            options_conf: JSON.stringify(options_conf),
         };
         const { create_user_id } = await this.getScreenById(account_id, screen_id, "create_user_id");
         if (think.isEmpty(create_user_id)) {
-          data.create_user_id = developing_user_id;
+            data.create_user_id = developing_user_id;
         }
         return await this.modelScreenIns.where({ account_id, screen_id }).update(data).catch(err => {
             think.logger.error(err);
@@ -489,13 +420,12 @@ module.exports = class extends think.Service {
      * @param screen_old_id
      * @param {String} params.name  大屏名称
      * @param {String} params.coverPath 大屏封面临时上传 path
-     * @param {String} params.logoPath 大屏logo临时上传 path
      * @param {Number} params.status 大屏状态
      * @returns {Promise<*>}
      */
     async copyScreen(account_id, user_id, screen_old_id, tag_id, params) {
         const screen_id = mkScreenId();
-        let cover = null, logo = null;
+        let cover = null;
         const screenInfo = await this.getScreenById(account_id, screen_old_id);
         let config = JSON.parse(screenInfo.options_conf);
         // 将大屏封面转移到真实封面路径下
@@ -503,22 +433,12 @@ module.exports = class extends think.Service {
             cover = await this.moveScreenCover(params.coverPath, screen_id);
             if (think.isError(cover)) return cover;
 
-        } else if(screenInfo.cover) {
+        } else if (screenInfo.cover) {
             //复制旧的大屏封面图片重新命名
             cover = await this.copyScreenCover(screenInfo.cover, screen_id);
         }
 
-        if (params.logoPath) {
-            logo = await this.moveScreenLogo(params.logoPath, screen_id);
-            if (think.isError(logo)) return logo;
-
-        } else if(screenInfo.logo) {
-            //复制旧的大屏logo图片重新命名
-            logo = await this.copyScreenLogo(screenInfo.logo, screen_id);
-        }
-
         delete params.coverPath;
-        delete params.logoPath;
 
         const fragmentScreenIdOldDir = path.resolve(EnumWebResourcePath.fragment, screen_old_id);
         const fragmentScreenIdDir = path.resolve(EnumWebResourcePath.fragment, screen_id);
@@ -544,7 +464,6 @@ module.exports = class extends think.Service {
             account_id,
             screen_id,
             cover: cover || '',
-            logo: logo || '',
             create_user_id: user_id,
             options_conf: JSON.stringify(config)
         });
@@ -761,7 +680,7 @@ module.exports = class extends think.Service {
             path.resolve(think.config("custom.wwwDirPath"), 'static/big_screen/public/data-vi.js'),
             path.resolve(publicPath, "data-vi.js")
         );
-        
+
         const uploadImagePath = path.resolve(screenSourcePath, `public/upload/screen/fragment/${screen_id}`)
         if (!(await fs.exists(uploadImagePath))) {
             await fs.mkdir(uploadImagePath, { recursive: true });
@@ -779,7 +698,7 @@ module.exports = class extends think.Service {
                 conf.components.map((component) => component.type)
             );
             const componentsPath = path.resolve(screenSourcePath, "src/components");
-            const where = {component_mark: ['IN', componentNames]};
+            const where = { component_mark: ['IN', componentNames] };
             const fields = 'component_mark,org_mark';
             const orgInfos = await this.modelComponentIns.where(where).field(fields).softSelect().catch(err => {
                 think.logger.error(err);
@@ -788,7 +707,7 @@ module.exports = class extends think.Service {
 
             const compDependencies = {};
             for (let i = 0; i < componentNames.length; i++) {
-                const org = _.find(orgInfos, {component_mark: componentNames[i]});
+                const org = _.find(orgInfos, { component_mark: componentNames[i] });
                 if (!org) continue;
 
                 const componentFromSrc = path.resolve(
@@ -804,18 +723,18 @@ module.exports = class extends think.Service {
 
                 const packagePath = path.resolve(think.config("custom.vcWwwDirPath"), `static/dev_visual_component/dev_workspace/${org.org_mark}/${componentNames[i]}/package.json`);
 
-                const packageData = JSON.parse(await fs.readFile(packagePath, {encoding: 'utf8'}));
+                const packageData = JSON.parse(await fs.readFile(packagePath, { encoding: 'utf8' }));
                 Object.assign(compDependencies, packageData.dependencies);
             }
 
-            const templatePackage = JSON.parse(await fs.readFile(path.resolve(screenSourcePath, 'package.json'), {encoding: 'utf8'}));
+            const templatePackage = JSON.parse(await fs.readFile(path.resolve(screenSourcePath, 'package.json'), { encoding: 'utf8' }));
             Object.assign(templatePackage.dependencies, compDependencies);
             await fs.writeFile(path.resolve(screenSourcePath, 'package.json'), JSON.stringify(templatePackage));
 
             const webpackDevPath = path.resolve(screenSourcePath, 'webpack.config.dev.js');
             const webpackBuildPath = path.resolve(screenSourcePath, 'webpack.config.build.js');
-            const webpackDev = await fs.readFile(webpackDevPath, {encoding: 'utf8'});
-            const webpackBuild = await fs.readFile(webpackBuildPath, {encoding: 'utf8'});
+            const webpackDev = await fs.readFile(webpackDevPath, { encoding: 'utf8' });
+            const webpackBuild = await fs.readFile(webpackBuildPath, { encoding: 'utf8' });
 
             const componentConfig = {};
             componentNames.forEach(name => {

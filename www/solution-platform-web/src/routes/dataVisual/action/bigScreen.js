@@ -63,33 +63,30 @@ export const doGetScreenDetail = (screen_id) => getScreenDetail(screen_id);
  * 添加大屏
  * @param {String} name
  * @param {File} cover
- * @param {File} logo
  * @param {Number} status
  * @returns {Promise}
  */
-export const doAddScreen = (name, cover, url, tag_id, logo, status) => addScreen(name, cover, url, tag_id, logo, status);
+export const doAddScreen = (name, cover, url, tag_id, status) => addScreen(name, cover, url, tag_id, status);
 
 /**
  * 修改大屏
  * @param {Number} screen_id
  * @param {String} name
  * @param {File} cover
- * @param {File} logo
  * @param {Number} status
  * @returns {Promise}
  */
-export const doUpdateScreen = (screen_id, name, cover, url, tag_id, logo, status) => updateScreen(screen_id, name, cover, url, tag_id, logo, status);
+export const doUpdateScreen = (screen_id, name, cover, url, tag_id, status) => updateScreen(screen_id, name, cover, url, tag_id, status);
 
 /**
  * 复制大屏
  * @param screen_id
  * @param name
  * @param {File} cover
- * @param {File} logo
  * @param {Number} status
  * @returns {*}
  */
-export const doCopyScreen = (screen_id, name, cover, url, tag_id, logo, status) => copyScreen(screen_id, name, cover, url, tag_id, logo, status);
+export const doCopyScreen = (screen_id, name, cover, url, tag_id, status) => copyScreen(screen_id, name, cover, url, tag_id, status);
 
 /**
  * 获取已删除大屏列表
