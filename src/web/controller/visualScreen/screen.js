@@ -32,11 +32,6 @@ module.exports = class extends Base {
         let { name, status, tag_id } = this.post();
         const file = this.file('cover');
 
-        // 检查是否选择标签
-        if (!tag_id) {
-            return this.fail('请选择标签');
-        }
-
         if (await this.screenService.isExistScreen(account_id, name)) return this.fail("大屏存在");
 
         const result = await this.screenService.addScreen(account_id, user_id, tag_id, { name, coverPath: file ? file.path : null, status });
@@ -154,10 +149,6 @@ module.exports = class extends Base {
         const { path: coverPath } = this.file('cover') || {};
         const { screen_id, name, status, tag_id } = this.post();
 
-        if (!tag_id) {
-            return this.fail('请选择标签');
-        }
-
         if (await this.screenService.isExistScreen(account_id, name, screen_id)) return this.fail("大屏名称重复");
 
         const result = await this.screenService.updateScreen(account_id, screen_id, tag_id, { name, coverPath, status });
@@ -243,8 +234,6 @@ module.exports = class extends Base {
 
         const { path: coverPath } = this.file('cover') || {};
         const { screen_id, name, status, tag_id } = this.post();
-
-        if (!tag_id) return this.fail('请选择标签');
 
         if (await this.screenService.isExistScreen(account_id, name)) return this.fail("大屏存在");
 
