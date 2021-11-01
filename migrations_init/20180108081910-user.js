@@ -63,7 +63,7 @@ exports.up = function (db, callback) {
         const fields = ['account_id', 'user_name', 'user_email', 'user_phone', 'user_password', 'user_status', 'created_at', 'updated_at'];
         // user_password = "tianjishuju!@#$"
         const values = [
-            [1, 'demo', 'demo@tianjishuju.com', '15010003357', 'd7ebcd793a15d2862c908fe1234b4621', 1, '1515467647000', '1515467647000'],
+            [1, 'admin', 'admin@yunzhihui.com', '15010003357', 'cc856592f913fbbd54b8652a07f873df', 1, '1515467647000', '1515467647000'],
         ];
 
         values.forEach(value => db.insert(tableName, fields, value, callback));
