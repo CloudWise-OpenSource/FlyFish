@@ -15,4 +15,4 @@ const md5 = (data) => {
     return hash.digest('hex');
 }
 
-console.log(md5("tianjishuju!@#$"))
+console.log(md5("yunzhihui!@#$%"))
