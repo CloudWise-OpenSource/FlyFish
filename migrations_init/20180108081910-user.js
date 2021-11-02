@@ -61,7 +61,7 @@ exports.up = function (db, callback) {
 
         // 2.初始化数据
         const fields = ['account_id', 'user_name', 'user_email', 'user_phone', 'user_password', 'user_status', 'created_at', 'updated_at'];
-        // user_password = "tianjishuju!@#$"
+        // user_password = "yunzhihui!@#$%"
         const values = [
             [1, 'admin', 'admin@yunzhihui.com', '15010003357', '675e504e193017a308059226031a44ae', 1, '1515467647000', '1515467647000'],
         ];
