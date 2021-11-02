@@ -91,23 +91,23 @@ userRouters = isAdmin ? userRouters : T.lodash.filter(userRouters, (item) => { r
  */
 export const EnumDefaultMenus = [
     {
-        label: '解决方案平台',
-        value: 'dataPlatform',
+        label: "解决方案平台",
+        value: "dataPlatform",
         childrenMenu: [
             {
-                label: '数据可视化',
+                label: "数据可视化",
                 uniqueIdentity: EnumMenuPermission.dv,
                 icon: {
                     appType: EnumIconTypes.custom,
-                    iconType: 'caiji',
+                    iconType: "caiji",
                 },
                 children: [
                     {
-                        label: '作品集',
+                        label: "作品集",
                         uniqueIdentity: EnumMenuPermission.dv_bigScreen,
                         icon: {
                             appType: EnumIconTypes.antd,
-                            iconType: 'pie-chart',
+                            iconType: "pie-chart",
                         },
                         url: EnumRouter.dVisual_bigScreen,
                         children: [],
@@ -115,36 +115,37 @@ export const EnumDefaultMenus = [
                 ],
             },
             {
-                label: '可视化组件',
+                label: "可视化组件",
                 icon: {
                     appType: EnumIconTypes.custom,
-                    iconType: 'zujian1',
+                    uniqueIdentity: EnumMenuPermission.componentView,
+                    iconType: "zujian1",
                 },
                 children: [
                     {
-                        label: '组件列表',
+                        label: "组件列表",
+                        uniqueIdentity: EnumMenuPermission.componentView_list,
                         icon: {
                             appType: EnumIconTypes.antd,
-                            iconType: 'database',
+                            iconType: "database",
                         },
                         url: [
                             EnumRouter.v_component_list,
                             EnumRouter.v_component_create,
                         ],
                         children: [],
-                    }
+                    },
                 ],
             },
             {
-                label: '用户管理',
+                label: "用户管理",
                 uniqueIdentity: EnumMenuPermission.userM,
                 icon: {
                     appType: EnumIconTypes.custom,
-                    iconType: 'caiji',
+                    iconType: "caiji",
                 },
                 children: userRouters,
             },
-
         ],
     },
 ];
