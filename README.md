@@ -65,19 +65,19 @@ cd flyfish
 2、修改mysql、redis配置文件ip
 ```
 vim src/common/config/adapter.js
-修改 127.0.0.1 为服务器对应ip
+修改 127.0.0.1 为服务器对应ip【本地部署无需修改】
 
 ```
 3、修改code-server配置文件ip
 ```
 用于部署vscode编辑器开发组件
 vim code-server/linux/out/browser/pages/vscode.browserified.js
-查找127.0.0.1 替换127.0.0.1为服务器对应ip
+查找127.0.0.1 替换127.0.0.1为服务器对应ip【本地部署无需修改】
 ```
 4、修改后端服务接口ip
 ```
 vim www/static/solution_platform_web/config/ENV.production.js
-修改 apiDomain  与 coderDomain 为服务器对应ip
+修改 apiDomain  与 coderDomain 为服务器对应ip【本地部署无需修改】
 ```
 
 5、build dockerfile
