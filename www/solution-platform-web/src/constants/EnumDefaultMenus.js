@@ -115,7 +115,8 @@ export const EnumDefaultMenus = [
                 ],
             },
             {
-                label: "可视化组件",
+                label: '可视化组件',
+		uniqueIdentity: EnumMenuPermission.componentView,
                 icon: {
                     appType: EnumIconTypes.custom,
                     uniqueIdentity: EnumMenuPermission.componentView,
@@ -123,8 +124,8 @@ export const EnumDefaultMenus = [
                 },
                 children: [
                     {
-                        label: "组件列表",
-                        uniqueIdentity: EnumMenuPermission.componentView_list,
+                        label: '组件列表',
+			uniqueIdentity: EnumMenuPermission.componentView_list,
                         icon: {
                             appType: EnumIconTypes.antd,
                             iconType: "database",

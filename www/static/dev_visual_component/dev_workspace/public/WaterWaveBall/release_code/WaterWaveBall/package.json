@@ -3,7 +3,7 @@
   "version": "v1.0.0",
   "description": "",
   "dependencies": {
-    "@cloudwise-fe/chart-panel": "1.3.5",
+    "@cloudwise-fe/chart-panel": "~1.0.0",
     "echarts": "^4.9.0",
     "echarts-liquidfill": "^2.0.6"
   },

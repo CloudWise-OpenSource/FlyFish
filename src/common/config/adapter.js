@@ -20,7 +20,7 @@ exports.cache = {
     redis: {
         handle: redisCache,
         port: 6379,
-        host: '127.0.0.1',
+        host: '10.2.3.153',
         password: ''
     }
 };
@@ -68,7 +68,7 @@ exports.model = {
         database: 'flyfish',
         user: "Rootmaster",
         password: "Rootmaster@777",
-        host: '127.0.0.1',
+        host: '10.2.3.153',
         port: '3306',
         prefix: '',
         encoding: 'utf8',
