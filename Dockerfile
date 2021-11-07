@@ -14,8 +14,8 @@ ENV PATH=/root/.nvm/versions/node/v14.17.5/bin:/usr/local/sbin:/usr/local/bin:/u
 EXPOSE 8364
 
 #安装依赖
-RUN sh startup.sh
+RUN sh scripts/flyfish-startup.sh
 
 # #docker run
 # # CMD ["node", "dev.js"]
-CMD ["sh", "scripts/setup.sh"]
+CMD ["sh", "scripts/flyfish-docker-inner-startup.sh"]

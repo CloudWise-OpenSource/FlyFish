@@ -1,11 +1,12 @@
-# Created by .ignore support plugin (hsz.mobi)
+# Created by .ignore support plugin 
+.DS_Store
 .idea
 node_modules
 !code-server/**/node_modules
 www/webApiDoc
-/www/static/visual_component_platform/*
-/www/index.html
-webapp/
+www/static/visual_component_platform/*
+www/index.html
 www/static/solution_platform_web/platform/*
+webapp/
 .vscode
 package-lock.json
