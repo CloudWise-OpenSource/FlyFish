@@ -42,7 +42,7 @@ const server = new WebpackDevServer(webpack(config), {
 
     // 当请求不存在的路由时，直接返回首页
     historyApiFallback: {
-        index: '/public/',
+        index: "/public/",
         disableDotRule: true,
     },
 
@@ -50,9 +50,9 @@ const server = new WebpackDevServer(webpack(config), {
         colors: true,
     },
     proxy: {
-        '/apexAPI': {
-            target: 'http://127.0.0.1:8364/',
-            pathRewrite: { '^/apexAPI': '' },
+        "/apexAPI": {
+            target: "http://171.12.11.11:23368/",
+            pathRewrite: { "^/apexAPI": "" },
         },
     },
 });
