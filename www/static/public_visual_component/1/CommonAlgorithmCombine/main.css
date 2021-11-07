@@ -1,0 +1,22 @@
+.component-common-algorithm-combine-wrap {
+  height: 100%;
+  overflow-y: auto;
+}
+.component-common-algorithm-combine-wrap .component-common-algorithm-combine {
+  display: flex;
+  color: #FFF;
+  flex-wrap: wrap;
+}
+.component-common-algorithm-combine-wrap .component-common-algorithm-combine .component-algorithm-echart-box {
+  margin-right: 15px;
+  margin-bottom: 15px;
+}
+
+.component-algorithm-echart-box {
+  border: 1px solid #CCC;
+}
+.component-algorithm-echart-box .component-algorithm-echart-box-echart-wrap {
+  width: 100%;
+  height: 100%;
+}
+
