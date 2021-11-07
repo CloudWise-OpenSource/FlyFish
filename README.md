@@ -63,17 +63,37 @@ $ vim code-server/linux/out/browser/pages/vscode.browserified.js
 # 4、修改后端服务接口ip
 # #修改 apiDomain  与 coderDomain 为服务器对应ip【本地部署无需修改】
 $ vim www/static/solution_platform_web/config/ENV.production.js
+```
 
-# 5、build dockerfile
-$ docker build -t flyfish .
+模式一：仅数据库在 Docker 中运行模式:
 
-# 6、run docker
-$ docker run -itd --name flyfish -p 8364:8364 -p 3306:3306 -p 6379:6379 -p 8081:8081 flyfish
+```
+# 5、编译并启动 docker
+$ docker build --tag flyfish_database --file scripts/macos/Database-Dockerfile .
+$ docker run -itd --name flyfish_database -p 3306:3306 -p 6379:6379 flyfish_database
+
+# 6、编译代码
+$ bash scripts/flyfish-startup.sh
 
 # 7、浏览器访问
 # #http://127.0.0.1:8364
 
 # 8、进入docker操作
+# #根据开发需要【非必操作项】
+$ docker exec -it flyfish /bin/bash
+```
+
+模式二：所有服务在 Docker 中运行模式:
+
+```
+# 5、编译并启动 docker
+$ docker build --tag flyfish --file Dockerfile .
+$ docker run -itd --name flyfish -p 8364:8364 -p 3306:3306 -p 6379:6379 -p 8081:8081 flyfish
+
+# 6、浏览器访问
+# #http://127.0.0.1:8364
+
+# 7、进入docker操作
 # #根据开发需要【非必操作项】
 $ docker exec -it flyfish /bin/bash
 ```
