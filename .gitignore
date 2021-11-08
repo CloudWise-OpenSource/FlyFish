@@ -9,3 +9,5 @@ webapp/
 www/static/solution_platform_web/platform/*
 .vscode
 package-lock.json
+.DS_Store
+*/.DS_Store
