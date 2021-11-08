@@ -65,7 +65,26 @@ $ vim code-server/linux/out/browser/pages/vscode.browserified.js
 $ vim www/static/solution_platform_web/config/ENV.production.js
 ```
 
-模式一：仅数据库在 Docker 中运行模式:
+模式一：Docker 中运行所有服务
+- 优势：操作便捷，只依赖 Docker 服务
+- 缺点：运行速度慢（包含源码拷贝、软件包安装时间），不方便调试
+
+```
+# 5、编译并启动 docker
+$ docker build --tag flyfish --file Dockerfile .
+$ docker run -itd --name flyfish -p 8364:8364 -p 3306:3306 -p 6379:6379 -p 8081:8081 flyfish
+
+# 6、浏览器访问
+# #http://127.0.0.1:8364
+
+# 7、进入docker操作
+# #根据开发需要【非必操作项】
+$ docker exec -it flyfish /bin/bash
+```
+
+模式二：Docker 中运行仅数据库服务，代码在本机运行
+- 优势：运行速度较快（只有软件包安装时间），方便本地调试
+- 缺点：本地需要安装、配置 NodeJS 环境
 
 ```
 # 5、编译并启动 docker
@@ -83,20 +102,6 @@ $ bash scripts/flyfish-startup.sh
 $ docker exec -it flyfish /bin/bash
 ```
 
-模式二：所有服务在 Docker 中运行模式:
-
-```
-# 5、编译并启动 docker
-$ docker build --tag flyfish --file Dockerfile .
-$ docker run -itd --name flyfish -p 8364:8364 -p 3306:3306 -p 6379:6379 -p 8081:8081 flyfish
-
-# 6、浏览器访问
-# #http://127.0.0.1:8364
-
-# 7、进入docker操作
-# #根据开发需要【非必操作项】
-$ docker exec -it flyfish /bin/bash
-```
 
 ## 升级流程
 

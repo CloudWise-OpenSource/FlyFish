@@ -30,8 +30,3 @@ green "后端依赖安装完成"
 
 cd $WORKSPACE_DIR
 npm install --legacy-peer-deps --registry=https://r.npm.taobao.org >/dev/null
-
-cd $CUR_DIR
-green "初始化数据库开始"
-npm run init_database_dev
-green "初始化数据库完成"

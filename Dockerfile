@@ -16,4 +16,4 @@ EXPOSE 8364
 #安装依赖
 RUN sh scripts/flyfish-startup.sh
 
-CMD ["sh", "scripts/flyfish-docker-inner-startup.sh"]
+CMD ["sh", "scripts/linux/flyfish-docker-inner-startup.sh"]

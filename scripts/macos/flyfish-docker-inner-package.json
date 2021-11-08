@@ -1,0 +1,42 @@
+{
+  "name": "DB-Migrate-Init",
+  "description": "",
+  "version": "",
+  "scripts": {
+    "compile": "babel --no-babelrc src/ --presets think-node --out-dir app/",
+    "lint": "eslint src/",
+    "lint-fix": "eslint --fix src/",
+    "init_database_dev": "db-migrate up --config config/database.dev.json -e mysql -m ./migrations_init",
+    "init_database_production": "db-migrate up --config config/database.production.json -e mysql -m ./migrations_init",
+    "init_database_staging": "db-migrate up --config config/database.staging.json -e mysql -m ./migrations_init",
+    "init_database_development": "db-migrate up --config config/database.development.json -e mysql -m ./migrations_init"
+  },
+  "dependencies": {
+    "pm2": "^2.10.4",
+    "db-migrate": "^0.10.5",
+    "db-migrate-mysql": "^1.1.10"
+  },
+  "devDependencies": {
+  },
+  "standard-version": {
+    "scripts": {
+      "postchangelog": "npm run changelog && npm run replace && git add .",
+      "posttag": "git push origin --tags -f"
+    }
+  },
+  "apidoc": {
+    "name": "example",
+    "version": "1.0.0",
+    "description": "apiDoc basic example",
+    "apidoc": {
+      "title": "Custom apiDoc browser title",
+      "url": "https://api.github.com/v1"
+    }
+  },
+  "repository": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "readmeFilename": "README.md"
+}
