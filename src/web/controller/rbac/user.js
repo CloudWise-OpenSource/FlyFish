@@ -10,6 +10,7 @@ const EnumUserStatus = require('../../../common/constants/app/rbac/user').EnumUs
 const EnumLoginUserInfo = require('../../../common/constants/EnumCookie').EnumLoginUserInfo;
 const mkLoginUserCacheKey = require('../../../common/constants/EnumCache').mkWebLoginUserCacheKey;
 const mkUserPassword = require('../../../common/constants/app/rbac/user').mkUserPassword;
+const EnumPermissionSubjectType = require('../../../common/constants/app/rbac/permission').EnumPermissionSubjectType;
 module.exports = class extends Base {
     constructor(ctx) {
         super(ctx);
@@ -17,6 +18,7 @@ module.exports = class extends Base {
         this.cacheService = think.service('cache');
         this.helperService = think.service('helper');
         this.authService = think.service('rbac/auth');
+        this.permissionService = think.service('rbac/permission');
     }
 
     /**
@@ -234,6 +236,8 @@ module.exports = class extends Base {
 
         const addResult = await this.userService.addUser(1, {user_name, user_email, user_phone, user_password});
         if (think.isError(addResult)) return this.fail(addResult.message);
+
+        await this.permissionService.addOrUpdateMenuPermission(1, addResult, EnumPermissionSubjectType.user, ["2", "6", "2-1", "6-1"]);
 
         const userInfo = await this.userService.isAllowLogin(user_email, user_password);
         const cacheKey = mkLoginUserCacheKey(1, addResult);

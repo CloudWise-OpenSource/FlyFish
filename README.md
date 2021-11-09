@@ -4,6 +4,9 @@
 
 飞鱼（FlyFish）是一个数据可视化编码平台。通过简易的方式快速创建数据模型，通过拖拉拽的形式，快速生成一套数据可视化解决方案。
 
+## 在线地址
+- http://171.12.11.11:23368/
+
 ## 国内镜像
  - [Gitee](https://gitee.com/CloudWise/fly-fish)
 
@@ -59,26 +62,35 @@
 ```
 cd flyfish
 ```
-2、修改mysql、redis配置文件ip【如本地部署无需修改】
+2、修改mysql、redis配置文件ip
 ```
 vim src/common/config/adapter.js
+修改 127.0.0.1 为服务器对应ip
+
 ```
-3、修改code-server配置文件ip【如本地部署无需修改】
+3、修改code-server配置文件ip
 ```
+用于部署vscode编辑器开发组件
 vim code-server/linux/out/browser/pages/vscode.browserified.js
+查找127.0.0.1 替换127.0.0.1为服务器对应ip
+```
+4、修改后端服务接口ip
+```
+vim www/static/solution_platform_web/config/ENV.production.js
+修改 apiDomain  与 coderDomain 为服务器对应ip
 ```
 
-4、build dockerfile
+5、build dockerfile
 ```
 docker build -t flyfish .
 ```
 
-5、run docker
+6、run docker
 ```
 docker run -itd --name flyfish -p 8364:8364 -p 3306:3306 -p 6379:6379 -p 8081:8081 flyfish
 ```
 
-6、使用
+7、使用
 ```
 浏览器访问: http://127.0.0.1:8364
 ```
