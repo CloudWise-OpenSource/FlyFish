@@ -1,7 +1,7 @@
 {
   "mysql": {
     "driver": "mysql",
-    "host": "10.2.3.56",
+    "host": "127.0.0.1",
     "user": "Rootmaster",
     "password": "Rootmaster@777",
     "database": "flyfish"

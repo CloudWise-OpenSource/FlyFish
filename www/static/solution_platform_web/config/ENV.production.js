@@ -4,7 +4,7 @@
 
 window.ENV = (function () {
     var rootPath = '/pw/';     // 路由的根路径
-    var apiDomain = 'http://171.12.11.11:23368';    // api请求接口   测试服务器
+    var apiDomain = 'http://127.0.0.1:8364';    // api请求接口   测试服务器
     var coderDomain = "http://171.12.11.11:23369";    // vscode web server   测试服务器
 
     return {
