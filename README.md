@@ -99,7 +99,51 @@ $ bash scripts/flyfish-startup.sh
 
 # 8、进入docker操作
 # #根据开发需要【非必操作项】
-$ docker exec -it flyfish /bin/bash
+$ docker exec -it flyfish_database /bin/bash
+```
+
+模式三：所有服务都在本地运行
+- 优势：浸入式参与全程编译、运行
+- 缺点：安装软件及配置项啰嗦
+
+```
+# 0、系统版本
+$ sw_vers
+ProductName:    macOS
+ProductVersion: 12.0.1
+BuildVersion:   21A559
+
+# 1、启动 MySQL 服务
+$ mysql.server start
+$ mysql --version 
+mysql  Ver 14.14 Distrib 5.7.34, for osx10.16 (x86_64) using  EditLine wrapper
+
+# 2、创建数据库 flyfish
+$ mysql -h127.0.0.1 -uroot -p<root密码> -e "create database IF NOT EXISTS flyfish;"
+
+# 3、创建用户 Rootmaster
+$ mysql -h127.0.0.1 -uroot -p<root密码> -e "create user Rootmaster@% identified by '<见配置档>';"
+$ mysql -h127.0.0.1 -uroot -p<root密码> -e "grant all privileges on *.* to 'Rootmaster'@'%' identified by '<见配置档>';"
+$ mysql -h127.0.0.1 -uroot -p<root密码> -e "flush privileges;"
+
+# 4、初始化数据
+$ npm run init_database_dev
+
+# 5、启动 Redis 服务
+$ brew services start redis
+
+# 6、确认服务运行状态（端口）
+$ lsof -i:3306,6379
+COMMAND     PID     USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
+mysqld     5768 jaden.li   27u  IPv4 0x2b28571b878724bf      0t0  TCP localhost:mysql (LISTEN)
+redis-ser 12319 jaden.li    6u  IPv4 0x2b28571b87871a0f      0t0  TCP localhost:6379 (LISTEN)
+redis-ser 12319 jaden.li    7u  IPv6 0x2b28571b77d81b87      0t0  TCP localhost:6379 (LISTEN)
+
+# 7、启动本地前后端服务
+$ bash scripts/flyfish-startup.sh
+
+# 8、浏览器访问
+# #http://127.0.0.1:8364
 ```
 
 
