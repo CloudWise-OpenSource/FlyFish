@@ -122,5 +122,5 @@ $ docker container rm flyfish
 
 *获取更多关于FlyFish的技术资料，或加入FlyFish开发者交流群，可扫描下方二维码咨询。*
 
-<img src="doc/images/Susie.png" width="550px"/>
+<img src="https://gitee.com/CloudWise/fly-fish/raw/main/doc/images/Susie.png" width="550px"/>
 
