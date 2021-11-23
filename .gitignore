@@ -9,4 +9,4 @@ www/index.html
 www/static/solution_platform_web/platform/*
 webapp/
 .vscode
-./package-lock.json
+package-lock.json
