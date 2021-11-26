@@ -1,5 +1,5 @@
 <div align="center">
-  <a href="https://github.com/CloudWise-OpenSource/FlyFish"><img src="https://github.com/CloudWise-OpenSource/FlyFish/blob/main/flyfishicon.png" alt="flyfish" /></a>
+  <a href="https://github.com/CloudWise-OpenSource/FlyFish"><img src="https://cdn.jsdelivr.net/gh/CloudWise-OpenSource/FlyFish/flyfishicon.png" alt="flyfish" /></a>
   <div align="center">
     <a href="https://github.com/CloudWise-OpenSource/FlyFish/pulls"><img src="https://badgen.net/github/prs/CloudWise-OpenSource/FlyFish" /></a>
     <a href="https://github.com/CloudWise-OpenSource/FlyFish/blob/main/LICENSE"><img src="https://badgen.net/github/license/CloudWise-OpenSource/FlyFish" /></a>
