@@ -15,7 +15,7 @@
 
 ## 在线地址
 
-- [171.12.11.11:23368](http://171.12.11.11:23368/)
+- [https://flyfish-demo.opscloudwise.com:23368/](https://flyfish-demo.opscloudwise.com:23368/)
 
 ## 国内镜像
 
