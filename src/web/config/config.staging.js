@@ -1,7 +1,7 @@
 module.exports = {
   // platform 静态资源前缀
   platformPrefix: "/",
-  indexTitle: "",
+  indexTitle: "飞鱼（FlyFish）| 数据可视化编码平台",
 
   // paas API conf
   paasAPIConf: {

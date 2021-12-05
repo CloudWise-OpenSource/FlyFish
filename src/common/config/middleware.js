@@ -48,7 +48,7 @@ module.exports = [
         enable: true,              //是否开启该中间件
         options: {
             root: think.config("custom.wwwDirPath"),
-            publicPath: /^\/(static|webApiDoc|upload)/
+            publicPath: /^\/(static|webApiDoc|upload|favicon.ico)/
         }
     },
 
