@@ -1,0 +1,12 @@
+# Created by .ignore support plugin (hsz.mobi)
+.idea
+node_modules
+www/webApiDoc
+build
+yarn.lock
+yarn-error.log
+package-lock.json
+.vscode
+.DS_Store
+download/screen_source
+download/screen_source.zip
