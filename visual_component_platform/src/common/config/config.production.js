@@ -54,9 +54,5 @@ module.exports = {
 
         // 缓存key值的前缀
         cacheKeyPrefix: "vcp_platform",
-				gitLab: {
-					namespace_id: 2721,
-					private_token: 'cetyg4VERmdwxQBAGgsF',
-				}
     }
 };

@@ -273,21 +273,4 @@ module.exports = class extends Base{
 
         return this.success({}, "上传成功");
     }
-
-    async componentHistoryAction() {
-        const {component_id, start, limit} = this.get();
-        const result = await this.devComponentIOService.getComponentHistory(component_id, {start, limit});
-        if(think.isError(result)) return this.fail(result.message);
-
-        return this.success(result, '获取成功');
-    }
-
-    async componentCommitDetailAction() {
-        const {component_id, hash} = this.get();
-        const result = await this.devComponentIOService.getComponentCommitDetail(component_id, hash);
-        if(think.isError(result)) return this.fail(result.message);
-
-        this.header('content-type', 'text/html');
-        this.body = result;
-    }
 }

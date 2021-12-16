@@ -34,7 +34,7 @@ exports.up = function (db, callback) {
         // 2.初始化数据
         const fields = ['account_id', 'name', 'created_at', 'updated_at'];
         const values = [
-            [1, '天机数据', '1515467647000', '1515467647000'],
+            [1, 'flyfish', '1515467647000', '1515467647000'],
         ];
 
         values.forEach(value => db.insert(tableName, fields, value, callback));

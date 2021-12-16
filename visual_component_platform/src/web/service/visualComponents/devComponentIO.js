@@ -6,7 +6,6 @@ const util = require("util");
 const axios = require('axios');
 const child_process = require("child_process");
 const child_process_exec = util.promisify(child_process.exec);
-const simpleGit = require('simple-git');
 const Diff2html = require('diff2html');
 const minify = require('html-minifier').minify;
 
@@ -237,37 +236,6 @@ module.exports = class extends think.Service {
         );
       }
 
-      // 初始化git仓库
-      if (isFirstInit) {
-        try {
-          const git = simpleGit(target.componentMarkPath);
-
-          const gitLabConfig = think.config("custom.gitLab");
-          const reqBody = {
-            name: `${org_mark}.${component_mark}`,
-            path: `${org_mark}.${component_mark}`,
-            namespace_id: gitLabConfig.namespace_id,
-          }
-          const newRepo = await axios.post(`https://git.cloudwise.com/api/v4/projects?private_token=${gitLabConfig.private_token}`, reqBody).catch((e) => (think.isError(e) ? e : new Error(e)));
-          if (think.isError(newRepo)) return newRepo;
-          const {data: {id: newRepoId, ssh_url_to_repo: newRepoUrl}} = newRepo;
-
-          await git
-          .init()
-          .add('.')
-          .commit(`first commit by ${user_name}`)
-          .addRemote('origin', newRepoUrl)
-          .push(['-u', '--set-upstream', 'origin', 'master']);
-
-          await this.modelVisualComponentsIns
-          .where({ component_id })
-          .update({ git_lab_project_id: newRepoId, need_push: 2, last_change_time: Date.now()})
-          .catch((e) => console.log(e));
-        } catch (e) {
-          think.logger.error(e);
-        }
-      }
-      
     } catch (e) {
       think.logger.error(e);
       return think.isError(e) ? e : new Error(e);
@@ -361,20 +329,6 @@ module.exports = class extends think.Service {
       ).catch((e) => (think.isError(e) ? e : new Error(e)));
       resp = stdout;
       if (think.isError(stderr)) return stderr;
-    }
-
-    // 判断组件仓库是否有改动
-    try {
-      const git = simpleGit(target.componentMarkPath);
-      const status = await git.status();
-      if (!status.isClean()) {
-        await this.modelVisualComponentsIns
-          .where({ component_id })
-          .update({ need_push: 1, last_change_time: Date.now(), update_user_id: user_id})
-          .catch((e) => console.log(e));
-      }
-    } catch (e) {
-      console.log(e);
     }
     
     return resp;
@@ -816,37 +770,6 @@ module.exports = class extends think.Service {
 
     await fs.writeFile(target.gitignoreFile, "node_modules\npackage-lock.json\nrelease\nrelease_code\ncomponents");
 
-    try {
-      const git = simpleGit(target.componentMarkPath);
-      const component_mark = targetComponent.component_mark;
-      const org_mark = targetComponent.org_mark;
-
-      const gitLabConfig = think.config("custom.gitLab");
-      const reqBody = {
-        name: `${org_mark}.${component_mark}`,
-        path: `${org_mark}.${component_mark}`,
-        namespace_id: gitLabConfig.namespace_id,
-      }
-      const newRepo = await axios.post(`https://git.cloudwise.com/api/v4/projects?private_token=${gitLabConfig.private_token}`, reqBody).catch((e) => (think.isError(e) ? e : new Error(e)));
-      if (think.isError(newRepo)) return newRepo;
-      const {data: {id: newRepoId, ssh_url_to_repo: newRepoUrl}} = newRepo;
-
-      await git
-      .init()
-      .add('.')
-      .commit(`first commit by ${user_name}`)
-      .addRemote('origin', newRepoUrl)
-      .push(['-u', '--set-upstream', 'origin', 'master']);
-
-      await this.modelVisualComponentsIns
-      .where({ component_id: target_component_id })
-      .update({ git_lab_project_id: newRepoId, need_push: 2, last_change_time: Date.now()})
-      .catch((e) => console.log(e));
-    } catch (e) {
-      think.logger.error(e);
-    }
-
-
     return true;
   }
   /**
@@ -898,51 +821,5 @@ module.exports = class extends think.Service {
     }
 
     return true;
-  }
-
-  async getComponentHistory(component_id, options = {}) {
-    const {start, limit} = options;
-    const { org_mark, component_mark } = await this.getComponentInfoById(component_id);
-    const target = EnumComponentIOPath.target(org_mark, component_mark);
-
-    try {
-      const git = simpleGit(target.componentMarkPath);
-      const {all: totalLogs} = await git.log();
-      const total = totalLogs.length;
-      const selectedLogs = totalLogs.slice(start, start + limit);
-
-      return {
-        total,
-        list: selectedLogs.map(log => {
-          return {
-            hash: log.hash,
-            message: log.message,
-            time: new Date(log.date).getTime()
-          }
-        })
-      };
-    } catch (e) {
-      return think.isError(e) ? e : new Error(e);
-    }
-  }
-
-  async getComponentCommitDetail(component_id, hash) {
-    const { org_mark, component_mark } = await this.getComponentInfoById(component_id);
-    const target = EnumComponentIOPath.target(org_mark, component_mark);
-
-    try {
-      const git = simpleGit(target.componentMarkPath);
-      const diffStr = await git.show(hash);
-      const diffJson = Diff2html.parse(diffStr);
-      const diffHtml = Diff2html.html(diffJson, { drawFileList: true });
-      const compressHtml = minify(diffHtml, {
-        collapseWhitespace: true,
-        collapseInlineTagWhitespace: true,
-        conservativeCollapse: true,
-      });
-      return compressHtml;
-    } catch (e) {
-      return think.isError(e) ? e : new Error(e);
-    }
   }
 };
