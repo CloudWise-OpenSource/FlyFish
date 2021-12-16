@@ -80,7 +80,7 @@ var apiDomain = 'http://ip:port';    // api请求接口
 ```
 vim www/static/visual_component_platform/config/ENV.js
 
-platformClassify: [ 
+platformClassify: [
     {
         label: '组件开发平台',
         url: 'http://${服务器ip}:8363',
