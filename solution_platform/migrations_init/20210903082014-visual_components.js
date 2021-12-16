@@ -6,7 +6,7 @@ const tableName = 'visual_components';
 exports.up = function (db, callback) {
     // 创建表
     db.createTable(tableName, {
-        id: {
+        component_id: {
             type: 'int',
             primaryKey: true,
             autoIncrement: true,
