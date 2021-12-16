@@ -31,16 +31,12 @@ window.ENV = (function () {
 
         platformClassify: [ // 平台分类
             {
-                label: '数据处理平台',
-                url: 'http://ff-dev.tianjishuju.com/de/dataSource/list',
-            },
-            {
                 label: '组件开发平台',
-                url: 'http://vc-dev.tianjishuju.com/de/visual/component/list',
+                url: 'http://127.0.0.1:8363',
             },
             {
                 label: '数据应用平台',
-                url: 'http://solution-dev.tianjishuju.com/de/dataVisual/bigScreen',
+                url: 'http://127.0.0.1:8362',
             }
         ]
     };

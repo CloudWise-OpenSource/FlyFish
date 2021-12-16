@@ -74,7 +74,22 @@ vim www/static/visual_component_platform/config/ENV.js
 
 var rootPath = '/pw/';     // 路由的根路径
 var apiDomain = 'http://ip:port';    // api请求接口
+```
 
+2. 编辑平台入口配置文件
+```
+vim www/static/visual_component_platform/config/ENV.js
+
+platformClassify: [ 
+    {
+        label: '组件开发平台',
+        url: 'http://${服务器ip}:8363',
+    },
+    {
+        label: '数据应用平台',
+        url: 'http://${服务器ip}:8362',
+    }
+]
 ```
 
 #### 六、启动项目

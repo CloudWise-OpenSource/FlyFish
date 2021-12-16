@@ -96,17 +96,35 @@ cp www/static/big_screen/editor.html www/static/big_screen/editor.production.htm
 
 vim www/static/big_screen/editor.production.html
 
+添加：
 <script type="text/javascript" src="{飞鱼平台domain}/static/public_visual_component/{飞鱼平台account_id}/env.component.js"></script>
-例如： <script type="text/javascript" src="http://localhost:8360/static/public_visual_component/1/env.component.js"></script>
+例如： <script type="text/javascript" src="http://localhost:8362/static/public_visual_component/1/env.component.js"></script>
 ------------------------------
 2. 第二步
 cp www/static/big_screen/index.html www/static/big_screen/index.production.html
 
 vim www/static/big_screen/index.production.html
 
+添加：
 <script type="text/javascript" src="{飞鱼平台domain}/static/public_visual_component/{飞鱼平台account_id}/env.component.js"></script>
-例如： <script type="text/javascript" src="http://localhost:8360/static/public_visual_component/1/env.component.js"></script>
+例如： <script type="text/javascript" src="http://localhost:8362/static/public_visual_component/1/env.component.js"></script>
 
+```
+
+4. 编辑平台入口配置文件
+```
+vim www/static/solution_platform_web/config/ENV.js
+
+platformClassify: [ 
+    {
+        label: '组件开发平台',
+        url: 'http://${服务器ip}:8363',
+    },
+    {
+        label: '数据应用平台',
+        url: 'http://${服务器ip}:8362',
+    }
+]
 ```
 
 #### 四、启动项目

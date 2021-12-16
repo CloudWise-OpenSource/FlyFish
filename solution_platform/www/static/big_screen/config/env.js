@@ -14,7 +14,6 @@ window.DATAVI_ENV = (function() {
 
     return {
         debug: true,
-        // apiDomain: 'http://10.0.1.154:9090',
         apiDomain: apiDomain,
         getComponentCover,
         componentsDir: 'http://10.2.2.236:8362/static/public_visual_component/1',
