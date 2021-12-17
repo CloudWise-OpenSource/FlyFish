@@ -23,9 +23,9 @@ npm install
 ```
 
 
-3. 查找127.0.0.1 替换127.0.0.1为服务器对应ip【本地部署无需修改】
+1. 修改bind-addr为服务器ip
 ```
-vim linux-amd64/dist/pages/vscode.js
+vim config.yaml
 ```
 
 #### 三、启动服务
