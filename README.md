@@ -56,13 +56,15 @@
 
 ### 部署流程
 ```
-包含两个服务：
+包含三个服务：
 visual_component_platform：组件开发平台
 solution_platform：应用平台
+code_server: web编辑器服务
 
 需要分别部署, 部署文档见：
 doc/solution_platform部署流程.md
 doc/visual_component_platform部署流程.md
+doc/code_server部署流程.md
 ```
 ## 升级流程
 
