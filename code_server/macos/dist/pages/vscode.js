@@ -14,7 +14,7 @@ parcelRequire = function(e, r, t, n) {
     // save
     document.onkeydown = function (event = {}) {
         // Command + S
-        if (event.keyCode == 83 && event.metaKey) {
+        if (event.keyCode == 83 && (event.metaKey || event.ctrlKey)) {
             const host = 'http://127.0.0.1:8363';
             const target = host + '/visual/component/create';
 
@@ -29,7 +29,7 @@ parcelRequire = function(e, r, t, n) {
                             'Content-Type': 'application/json' 
                         },
                         method: 'PUT',
-                        body: JSON.stringify({component_id})
+                        body: JSON.stringify({component_id, user_id: +geturl('user_id')})
                     });
 
                     if (result.ok) {

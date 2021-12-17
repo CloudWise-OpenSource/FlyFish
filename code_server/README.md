@@ -13,6 +13,6 @@
 ## 部署
 
 - mac
-	npm run macos-start
+	npm run mac-start
 - linux
 	npm run linux-start
