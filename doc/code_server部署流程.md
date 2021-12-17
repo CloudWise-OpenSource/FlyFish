@@ -25,7 +25,7 @@ npm install
 
 3. 查找127.0.0.1 替换127.0.0.1为服务器对应ip【本地部署无需修改】
 ```
-vim macos/dist/pages/vscode.js
+vim linux-amd64/dist/pages/vscode.js
 ```
 
 #### 三、启动服务
