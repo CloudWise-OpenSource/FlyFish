@@ -5,7 +5,7 @@
 window.ENV = (function () {
     var rootPath = '/pw/';     // 路由的根路径
     var publicPath = '/static/visual_component_platform/platform';     // webpack.output.publicPath
-    var apiDomain = 'http://127.0.0.1:8363';    // api请求接口
+    var apiDomain = '';    // api请求接口
 
     return {
         apiDomain: apiDomain,           // api请求接口

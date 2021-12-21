@@ -6,7 +6,7 @@ window.DATAVI_ENV = (function() {
     function formatEditorThumbSrc(imgName){
         return '/static/big_screen/asserts/img/components/' + imgName;
     }
-    var apiDomain = 'http://127.0.0.1:8362';
+    var apiDomain = '';
 
     function getComponentCover(component_mark, account_id) {
       return `${apiDomain}/static/public_visual_component/${account_id}/${component_mark}/cover.png`;
@@ -16,7 +16,7 @@ window.DATAVI_ENV = (function() {
         debug: true,
         apiDomain: apiDomain,
         getComponentCover,
-        componentsDir: 'http://10.2.2.236:8362/static/public_visual_component/1',
+        componentsDir: '/static/public_visual_component/1',
         apiSuccessCode: 200,     // API接口响应成功的code
 
         screenAPI: {    // 大屏展示和编辑用到的API
