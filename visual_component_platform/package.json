@@ -48,6 +48,7 @@
     "pm2": "^2.9.1",
     "sequelize": "^6.6.5",
     "simple-git": "^2.45.1",
+    "svg-captcha": "^1.4.0",
     "think-cache": "^1.1.0",
     "think-cache-file": "^1.1.0",
     "think-cache-redis": "^1.2.0",

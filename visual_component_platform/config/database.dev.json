@@ -1,7 +1,7 @@
 {
   "mysql": {
     "driver": "mysql",
-    "host": "10.2.3.56",
+    "host": "10.2.3.153",
     "user": "Rootmaster",
     "password": "Rootmaster@777",
     "database": "visual_component_platform"

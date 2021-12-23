@@ -26,6 +26,7 @@ window.ENV = (function () {
 
             noCheckIsLoginRoutes: [ // 不需要验证是否登录的路由配置
                 rootPath + 'login',
+                rootPath + 'registry',
             ]
         },
 

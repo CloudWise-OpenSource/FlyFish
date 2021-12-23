@@ -13,16 +13,16 @@ const isDev = think.env === 'development';
  * @type {Object}
  */
 exports.cache = {
-    type: 'redis',
+    type: "redis",
     common: {
-        timeout: 24 * 3600 * 1000       // 默认过期时间24 hour
+        timeout: 24 * 3600 * 1000, // 默认过期时间24 hour
     },
     redis: {
         handle: redisCache,
         port: 6379,
-        host: '10.2.3.56',
-        password: ''
-    }
+        host: "10.2.3.153",
+        password: "",
+    },
 };
 
 /**
@@ -57,29 +57,29 @@ exports.logger = (() => {
  * @type {Object}
  */
 exports.model = {
-    type: 'mysql',
+    type: "mysql",
     common: {
         logConnect: isDev,
         logSql: isDev,
-        logger: msg => think.logger.info(msg)
+        logger: (msg) => think.logger.info(msg),
     },
     mysql: {
         handle: mysql,
-        database: 'solution_platform',
+        database: "solution_platform",
         // database: 'test_migrate_solution',
         user: "Rootmaster",
         password: "Rootmaster@777",
-        host: '10.2.3.56',
-        port: '3306',
-        prefix: '',
-        encoding: 'utf8',
-        connectTimeout: 30 * 1000,      // 普通方式创建连接的超时时间 30s
-        acquireTimeout: 30 * 1000,      // 连接池方式创建连接的超时时间 30s
+        host: "10.2.3.153",
+        port: "3306",
+        prefix: "",
+        encoding: "utf8",
+        connectTimeout: 30 * 1000, // 普通方式创建连接的超时时间 30s
+        acquireTimeout: 30 * 1000, // 连接池方式创建连接的超时时间 30s
         // debug: isDev,
-        connectionLimit: 10,    // 数据库最大连接数
+        connectionLimit: 10, // 数据库最大连接数
         dateStrings: true,
-        pageSize: 15,   // 设置默认分页数
-    }
+        pageSize: 15, // 设置默认分页数
+    },
 };
 
 /**

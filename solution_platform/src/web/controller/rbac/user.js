@@ -7,13 +7,15 @@ const EnumUserStatus = require('../../../common/constants/app/rbac/user').EnumUs
 const EnumLoginUserInfo = require('../../../common/constants/EnumCookie').EnumLoginUserInfo;
 const mkLoginUserCacheKey = require('../../../common/constants/EnumCache').mkWebLoginUserCacheKey;
 const mkUserPassword = require('../../../common/constants/app/rbac/user').mkUserPassword;
+const svgCaptcha = require("svg-captcha");
+const { v4: uuidv4 } = require("uuid");
 module.exports = class extends Base {
     constructor(ctx) {
         super(ctx);
-        this.userService = think.service('rbac/user');
-        this.cacheService = think.service('cache');
-        this.helperService = think.service('helper');
-        this.authService = think.service('rbac/auth');
+        this.userService = think.service("rbac/user");
+        this.cacheService = think.service("cache");
+        this.helperService = think.service("helper");
+        this.authService = think.service("rbac/auth");
     }
 
     /**
@@ -28,14 +30,17 @@ module.exports = class extends Base {
      *
      * @apiSuccessExample Success-Response:
      *  {
-	 *      "code": 0,
-	 *      "message": "ok"
-	 *      "data": {}
-	 *  }
+     *      "code": 0,
+     *      "message": "ok"
+     *      "data": {}
+     *  }
      */
     async loginAction() {
-        const {user_email, user_password} = this.post();
-        const userInfo = await this.userService.isAllowLogin(user_email, user_password);
+        const { user_email, user_password } = this.post();
+        const userInfo = await this.userService.isAllowLogin(
+            user_email,
+            user_password
+        );
 
         if (think.isError(userInfo)) {
             return this.fail(userInfo.message);
@@ -43,16 +48,18 @@ module.exports = class extends Base {
             return this.fail("邮箱或密码不正确");
         }
 
-        const cacheKey = mkLoginUserCacheKey(userInfo.account_id, userInfo.user_id);
+        const cacheKey = mkLoginUserCacheKey(
+            userInfo.account_id,
+            userInfo.user_id
+        );
         // 设置用户信息缓存
         const result = await this.setCacheUserInfo(cacheKey, userInfo);
 
-        if(think.isError(result)) return this.fail("登录失败");
+        if (think.isError(result)) return this.fail("登录失败");
 
         const loginInfo = await this.authService.getUserLoginInfo(userInfo);
         this.success(loginInfo, "登录成功");
     }
-
 
     /**
      * @api {GET} /web/rbac/user/logout 用户退出登录
@@ -62,27 +69,29 @@ module.exports = class extends Base {
      *
      * @apiSuccessExample Success-Response:
      *  {
-	 *      "code": 0,
-	 *      "message": "退出成功"
-	 *      "data": {}
-	 *  }
+     *      "code": 0,
+     *      "message": "退出成功"
+     *      "data": {}
+     *  }
      */
     async logoutAction() {
         // 删除用户缓存信息
-        await this.cacheService.del(this.cookie(EnumLoginUserInfo.key)).catch(err => {
-            think.logger.error(err);
-            return think.isError(err) ? err : new Error(err)
-        });
+        await this.cacheService
+            .del(this.cookie(EnumLoginUserInfo.key))
+            .catch((err) => {
+                think.logger.error(err);
+                return think.isError(err) ? err : new Error(err);
+            });
 
         // 发送用户信息缓存cookie
-        this.cookie(EnumLoginUserInfo.key, 'no', {
-            maxAge: -1
+        this.cookie(EnumLoginUserInfo.key, "no", {
+            maxAge: -1,
         });
 
         this.success({}, "退出成功");
     }
 
-     /**
+    /**
      * @api {GET} /web/rbac/user/delete 禁用用户
      * @apiGroup User
      * @apiVersion 1.0.0
@@ -90,17 +99,17 @@ module.exports = class extends Base {
      *
      * @apiSuccessExample Success-Response:
      *  {
-	 *      "code": 0,
-	 *      "message": "禁用成功"
-	 *      "data": {}
-	 *  }
+     *      "code": 0,
+     *      "message": "禁用成功"
+     *      "data": {}
+     *  }
      */
-      async deleteAction() {
+    async deleteAction() {
         const { user_id } = this.post();
         await this.userService.disableUser(user_id);
         return this.success({}, "禁用成功");
     }
-    
+
     /**
      * @api {GET} /web/rbac/user/getPageList 获取用户分页列表
      * @apiGroup User
@@ -140,10 +149,16 @@ module.exports = class extends Base {
             }
      *  }
      */
-    async getPageListAction(){
+    async getPageListAction() {
         const { account_id } = await this.getCacheUserInfo();
         const { user_status, page, search } = this.get();
-        const result = await this.userService.getUserPageList(account_id, EnumUserStatus.normal, page, 15, search);
+        const result = await this.userService.getUserPageList(
+            account_id,
+            EnumUserStatus.normal,
+            page,
+            15,
+            search
+        );
 
         if (think.isError(result)) return this.fail(result.message);
 
@@ -177,7 +192,7 @@ module.exports = class extends Base {
             ]
      *  }
      */
-    async getAllAction(){
+    async getAllAction() {
         const { account_id } = await this.getCacheUserInfo();
         const result = await this.userService.getAllUser(account_id);
 
@@ -201,21 +216,83 @@ module.exports = class extends Base {
      *
      * @apiSuccessExample Success-Response:
      *  {
-	 *      "code": 0,
-	 *      "message": "ok"
-	 *      "data": {}
-	 *  }
+     *      "code": 0,
+     *      "message": "ok"
+     *      "data": {}
+     *  }
      */
     async addAction() {
         const { account_id } = await this.getCacheUserInfo();
-        let { user_name, user_email, user_phone, user_password, user_status } = this.post();
-        if (await this.userService.isExist(account_id, {user_email})) return this.fail("邮箱已存在");
-        if (await this.userService.isExist(account_id, {user_phone})) return this.fail("手机号已存在");
+        let { user_name, user_email, user_phone, user_password, user_status } =
+            this.post();
+        if (await this.userService.isExist(account_id, { user_email }))
+            return this.fail("邮箱已存在");
+        if (await this.userService.isExist(account_id, { user_phone }))
+            return this.fail("手机号已存在");
 
-        const result = await this.userService.addUser(account_id, {user_name, user_email, user_phone, user_password, user_status});
+        const result = await this.userService.addUser(account_id, {
+            user_name,
+            user_email,
+            user_phone,
+            user_password,
+            user_status,
+        });
         if (think.isError(result)) return this.fail(result.message);
 
         this.success({}, "添加成功");
+    }
+
+    async registryAction() {
+        let { user_name, user_email, user_phone, user_password, key, captcha } =
+            this.post();
+        if (await this.userService.isExist(1, { user_email }))
+            return this.fail("邮箱已存在");
+        if (await this.userService.isExist(1, { user_phone }))
+            return this.fail("手机号已存在");
+
+        const captchaCache = (await this.cacheService.get(key)) || "";
+        if (captchaCache.toLowerCase() !== captcha.trim().toLowerCase())
+            return this.fail("验证码错误");
+
+        const addResult = await this.userService.addUser(1, {
+            user_name,
+            user_email,
+            user_phone,
+            user_password,
+        });
+        if (think.isError(addResult)) return this.fail(addResult.message);
+
+        const userInfo = await this.userService.isAllowLogin(
+            user_email,
+            user_password
+        );
+        const cacheKey = mkLoginUserCacheKey(1, addResult);
+        await this.setCacheUserInfo(cacheKey, userInfo);
+
+        const loginInfo = await this.authService.getUserLoginInfo(userInfo);
+
+        this.success(loginInfo, "注册成功");
+    }
+
+    async captchaAction() {
+        const captcha = svgCaptcha.create({
+            size: 4, //验证码长度
+            fontSize: 45, //验证码字号
+            noise: 1, //干扰线条数目
+            width: 120, //宽度
+            height: 36, //高度
+            color: true, //验证码字符是否有颜色，默认是没有，但是如果设置了背景颜色，那么默认就是有字符颜色
+            background: "#ccc", //背景
+        });
+        const key = uuidv4();
+        await this.cacheService.set(key, captcha.text);
+        this.success(
+            {
+                key: key,
+                captcha: captcha.data,
+            },
+            "获取成功"
+        );
     }
 
     /**
@@ -228,13 +305,13 @@ module.exports = class extends Base {
      *
      * @apiSuccessExample Success-Response:
      *  {
-	 *      "code": 0,
-	 *      "message": "ok"
-	 *      "data": {
-	 *          name: "",       // 用户名称
-	 *          config: "",     // 配置
-	 *      }
-	 *  }
+     *      "code": 0,
+     *      "message": "ok"
+     *      "data": {
+     *          name: "",       // 用户名称
+     *          config: "",     // 配置
+     *      }
+     *  }
      */
     async getDetailAction() {
         const { account_id } = await this.getCacheUserInfo();
@@ -261,18 +338,26 @@ module.exports = class extends Base {
      *
      * @apiSuccessExample Success-Response:
      *  {
-	 *      "code": 0,
-	 *      "message": "ok"
-	 *      "data": {}
-	 *  }
+     *      "code": 0,
+     *      "message": "ok"
+     *      "data": {}
+     *  }
      */
     async updateAction() {
         const { account_id } = await this.getCacheUserInfo();
-        const { user_id, user_name, user_email, user_phone, user_status } = this.post();
-        if (await this.userService.isExist(account_id, {user_email}, user_id)) return this.fail("邮箱已存在");
-        if (await this.userService.isExist(account_id, {user_phone}, user_id)) return this.fail("手机号已存在");
+        const { user_id, user_name, user_email, user_phone, user_status } =
+            this.post();
+        if (await this.userService.isExist(account_id, { user_email }, user_id))
+            return this.fail("邮箱已存在");
+        if (await this.userService.isExist(account_id, { user_phone }, user_id))
+            return this.fail("手机号已存在");
 
-        const result = await this.userService.updateUser(account_id, user_id, { user_name, user_email, user_phone, user_status});
+        const result = await this.userService.updateUser(account_id, user_id, {
+            user_name,
+            user_email,
+            user_phone,
+            user_status,
+        });
 
         if (think.isError(result)) return this.fail(result.message);
 
@@ -292,21 +377,28 @@ module.exports = class extends Base {
      *
      * @apiSuccessExample Success-Response:
      *  {
-	 *      "code": 0,
-	 *      "message": "ok"
-	 *      "data": {}
-	 *  }
+     *      "code": 0,
+     *      "message": "ok"
+     *      "data": {}
+     *  }
      */
     async resetPasswordAction() {
         const { account_id } = await this.getCacheUserInfo();
         const { user_id, old_password, new_password } = this.post();
-        if (!await this.userService.isExist(account_id, {user_id, user_password: mkUserPassword(old_password)})) return this.fail("老密码不正确");
+        if (
+            !(await this.userService.isExist(account_id, {
+                user_id,
+                user_password: mkUserPassword(old_password),
+            }))
+        )
+            return this.fail("老密码不正确");
 
-        const result = await this.userService.updateUser(account_id, user_id, { user_password: mkUserPassword(new_password) });
+        const result = await this.userService.updateUser(account_id, user_id, {
+            user_password: mkUserPassword(new_password),
+        });
 
         if (think.isError(result)) return this.fail(result.message);
 
         this.success({}, "更新成功");
     }
-
-}
+};
