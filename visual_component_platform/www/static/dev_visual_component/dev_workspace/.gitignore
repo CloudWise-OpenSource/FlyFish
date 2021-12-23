@@ -1,2 +1,5 @@
-# Created by .ignore support plugin (hsz.mobi)
-node_modules
+*
+!webpack.config.base.js
+!package.json
+!package-lock.json
+!.gitignore
