@@ -195,4 +195,7 @@ module.exports = {
             filename: "[name].css",
         }),
     ],
+    node: {
+        fs: "empty",
+    },
 };
