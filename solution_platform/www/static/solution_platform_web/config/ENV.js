@@ -4,7 +4,7 @@
 
 window.ENV = (function () {
     var rootPath = '/pw/';     // 路由的根路径
-    var apiDomain = 'http://127.0.0.1:8362';    // api请求接口   测试服务器
+    var apiDomain = '';    // api请求接口   测试服务器
 
     return {
         apiDomain: apiDomain,         // api请求接口   测试服务器
