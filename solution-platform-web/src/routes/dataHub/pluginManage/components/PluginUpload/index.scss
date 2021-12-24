@@ -1,0 +1,24 @@
+.col-text{
+  text-align: right;
+  box-sizing: border-box;
+  padding-right: 10px;
+  line-height: 30px;
+}
+.upload-Row{
+  margin-top: 20px;
+}
+.file-select{
+  width: 100px;
+  position:relative
+}
+.file-inp{
+  width:100px;
+  height:30px;
+  position:absolute;
+  left:0;
+  top:0;
+  opacity:0
+}
+.fileName{
+  text-align: left;
+}

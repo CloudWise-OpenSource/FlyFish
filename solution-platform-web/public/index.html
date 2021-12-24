@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+      <meta charset="UTF-8">
+      <title>飞鱼</title>
+
+      <meta name="keywords" content="@yield('keywords')">
+      <meta name="description" content="@yield('description')">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+
+      <link rel="shortcut icon" href="/favicon.ico" title="Favicon">
+      <link rel="stylesheet" type="text/css" href="/public/vendor.css">
+  </head>
+
+  <body>
+    <div id="wrapper"></div>
+    <script type="text/javascript" src="/config/ENV.js"></script>
+    <script type="text/javascript" src="/public/runtime.js"></script>
+    <script type="text/javascript" src="/public/vendor.js"></script>
+    <script type="text/javascript" src="/public/app.js"></script>
+  </body>
+  <script>
+      document.title = ENV.logoTitle
+  </script>
+</html>

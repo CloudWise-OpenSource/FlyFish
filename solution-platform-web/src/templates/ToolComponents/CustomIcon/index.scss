@@ -1,0 +1,36 @@
+
+.custom-icon-spin:before {
+	display: inline-block;
+	-webkit-animation: loadingCircle 1s infinite linear;
+	animation: loadingCircle 1s infinite linear;
+}
+
+:global {
+	// --兼容自定义icon的菜单操作--
+
+	.ant-btn > .iconfont + span,
+	.ant-btn > span + .iconfont {
+		margin-left: 8px;
+	}
+
+	.ant-menu-inline-collapsed > .ant-menu-item .iconfont,
+	.ant-menu-inline-collapsed > .ant-menu-item-group > .ant-menu-item-group-list > .ant-menu-item .iconfont,
+	.ant-menu-inline-collapsed > .ant-menu-submenu > .ant-menu-submenu-title .iconfont {
+		font-size: 16px;
+		line-height: 40px;
+		margin: 0;
+	}
+	.ant-menu-inline-collapsed > .ant-menu-item .iconfont + span,
+	.ant-menu-inline-collapsed > .ant-menu-item-group > .ant-menu-item-group-list > .ant-menu-item .iconfont + span,
+	.ant-menu-inline-collapsed > .ant-menu-submenu > .ant-menu-submenu-title .iconfont + span {
+		max-width: 0;
+		display: inline-block;
+		opacity: 0;
+	}
+	.ant-menu-inline-collapsed-tooltip {
+		pointer-events: none;
+	}
+	.ant-menu-inline-collapsed-tooltip .iconfont {
+		display: none;
+	}
+}

@@ -1,0 +1,37 @@
+.Tj_Button {
+
+	// &:global(.ant-btn) {
+	// 	border: 1px solid #6b7799;
+	// 	color: #6b7799;
+	// 	background-color: rgba(63, 77, 115, 0.2);
+	// }
+	:global {
+		.anticon {
+			transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+			// color: #6b7799;
+		}
+	}
+	// 默认hover样式
+	// &:global(.ant-btn:hover){
+	// 	color: #0099ff;
+	// 	background-color: rgba(63, 77, 115, 0.2);
+	// 	border: 1px solid #0099ff;
+	// }
+	// &:global(.ant-btn:hover .anticon){
+	// 	color: #0099ff;
+	// }
+
+	// 删除hover
+	// &:global(.ant-btn-danger:hover){
+	// 	color: #ff592e;
+	// 	background-color: rgba(63, 77, 115, 0.2);
+	// 	border: 1px solid #ff592e;
+	// }
+	// &:global(.ant-btn-danger:hover .anticon){
+	// 	color: #ff592e;
+	// }
+	&:global(.ant-btn[disabled]) {
+		background: rgba(0, 0, 0, 0);
+		border-color: #6b7799 !important;
+	}
+}

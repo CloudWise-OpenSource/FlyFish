@@ -1,0 +1,85 @@
+.code_editor{
+	:global {
+		.item-group {
+			margin-bottom: 10px;
+		}
+
+		.editor-card {
+			.ant-card-head {
+				.ant-card-head-wrapper {
+					.ant-card-extra {
+						padding: 0px;
+						display: flex;
+						align-items: center;
+					}
+				}
+			}
+		}
+
+		.code-file-tree {
+			overflow: hidden;
+			height: 100%;
+
+			.inner {
+				overflow: auto;
+				padding-left: 16px;
+				height: calc(100% - 33px);
+				position: relative;
+				.ant-tree-node-content-wrapper {
+					padding: 0;
+					width: 160px;
+					border-radius: 2px 0 0 2px;
+					border-right: 2px solid transparent;
+				}
+
+				//被选中样式
+				.ant-tree-node-content-wrapper {
+					&.ant-tree-node-selected {
+						background-color: #d9e7ff;
+						border-right: 2px solid #5e97f3;
+						.name {
+							color: #1A96FF;
+						}
+						.btn {
+							display: flex;
+						}
+					}
+
+					// 鼠标hover事件
+					&:not(.ant-tree-node-selected):hover {
+						background-color: #d9e7ff;
+						.btn {
+							display: flex;
+						}
+					}
+				}
+			}
+
+			// 树结构子分支标题
+			.tree-item-header {
+				height: 24px;
+				line-height: 24px;
+				display: flex;
+				padding: 0 4px 0 4px;
+				width: 100%;
+				justify-content: space-between;
+				.name {
+					min-width: 80px;
+					white-space: nowrap;
+					overflow: hidden;
+					text-overflow: ellipsis;
+				}
+				.btn {
+					font-size: 12px;
+					position: relative;
+					display: none;
+					margin-right: 18px;
+					.add {
+						margin-right: 5px;
+						cursor: pointer;
+					}
+				}
+			}
+		}
+	}
+}

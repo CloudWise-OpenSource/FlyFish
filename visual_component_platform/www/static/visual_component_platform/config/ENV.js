@@ -6,11 +6,12 @@ window.ENV = (function () {
     var rootPath = '/pw/';     // 路由的根路径
     var publicPath = '/static/visual_component_platform/platform';     // webpack.output.publicPath
     var apiDomain = '';    // api请求接口
-
+    var coderDomain = '';
     return {
         apiDomain: apiDomain,           // api请求接口
         rootPath: rootPath,             // 路由的根路径
         publicPath: publicPath,         // webpack.output.publicPath
+        coderDomain,
         apiSuccessCode: 0,              // API接口响应成功的code
 
         visualComponent: { // 可视化组件配置

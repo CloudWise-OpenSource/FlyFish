@@ -1,0 +1,41 @@
+.tj_table{
+	background: #fff;
+	padding: 10px;
+	margin-bottom: 20px;
+	border-radius: 3px;
+	:global {
+		.ant-table-title {
+			background: #fff;
+			padding: 0px 0px 10px;
+			font-size: 16px;
+		}
+		.ant-table-content {
+			.ant-table-header {
+				table {
+					thead tr th {
+						background-color: #edf1f5 !important;
+						color: #7e858c;
+						padding: 8px 10px;
+					}
+				}
+			}
+			.ant-table-body {
+				table {
+					thead tr th {
+						background-color: #edf1f5;
+						color: #7e858c;
+						padding: 8px 10px;
+					}
+					tbody {
+						tr td {
+							padding: 8px 10px;
+						}
+						tr:nth-of-type(odd) td {
+							background-color: #f7fafc;
+						}
+					}
+				}
+			}
+		}
+	}
+}
