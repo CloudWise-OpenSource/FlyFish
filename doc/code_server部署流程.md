@@ -17,13 +17,7 @@ cd code_server
 
 ```
 
-2. 安装项目依赖包
-```
-npm install
-```
-
-
-1. 修改bind-addr为服务器ip
+2. 修改bind-addr为服务器ip
 ```
 vim config.yaml
 ```

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "mac-start": "NODE_ENV=mac pm2 start main.js --name code-server",
+    "macos-start": "NODE_ENV=macos pm2 start main.js --name code-server",
     "linux-start": "NODE_ENV=linux pm2 start main.js --name code-server"
   },
   "repository": {
