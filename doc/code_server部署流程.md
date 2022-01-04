@@ -25,4 +25,5 @@ vim config.yaml
 #### 三、启动服务
 ```
 npm run linux-start
+npm run macos-start
 ```
