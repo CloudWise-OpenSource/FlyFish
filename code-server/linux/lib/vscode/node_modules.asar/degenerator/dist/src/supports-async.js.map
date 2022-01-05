@@ -1,1 +1,0 @@
-{"version":3,"file":"supports-async.js","sourceRoot":"","sources":["../../src/supports-async.ts"],"names":[],"mappings":";;AAAA,2BAAqC;AAErC,MAAM,aAAa,GAAG,CAAC,GAAY,EAAE;IACpC,IAAI;QACH,MAAM,EAAE,GAAG,oBAAe,CAAC,wBAAwB,CAAC,CAAC;QACrD,OAAO,EAAE,CAAC,WAAW,CAAC,IAAI,KAAK,eAAe,CAAC;KAC/C;IAAC,OAAO,GAAG,EAAE;QACb,OAAO,KAAK,CAAC;KACb;AACF,CAAC,CAAC,EAAE,CAAC;AAEL,kBAAe,aAAa,CAAC"}
