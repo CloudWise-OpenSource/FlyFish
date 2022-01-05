@@ -91,24 +91,43 @@ platformClassify: [
     }
 ]
 ```
+#### 四、项目内使用code-server
+```
+1:vim visual_component_platform_web/src/routes/dataVisualComponents/components/ComponentCreate/CodeEditor.jsx
 
-#### 六、启动项目
-1.创建数据库
+2: 修改 codeServerUrl 地址为组件所在目录地址，注意：修改截图红框内前缀即可：
+```
+<img src="./pic/pic_1.jpg" height=150px>
+
+```
+3: 更新前端工程文件即可，参考【五、启动项目（4.更新前端代码）】
+```
+#### 五、启动项目
+1. 创建数据库
 ```
 CREATE DATABASE IF NOT EXISTS visual_component_platform DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
 
 ```
 
-2.初始化表
+2. 初始化表
 ```
 npm run init_database_dev
 
 ```
 
-3.启动应用
+3. 启动应用
 ```
 pm2 start dev.js -n 'flyfish_visual_component_platform'
 ```
 
+4. 更新前端工程代码
+```
+cd visual_component_platform_web
+npm run build
 
+rm -rf ../visual_component_platform/www/static/visual_component_platform/platform
+mv ./platform ../visual_component_platform/www/static/visual_component_platform/
+
+pm2 restart flyfish_visual_component_platform
+```
 
