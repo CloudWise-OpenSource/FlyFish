@@ -1,0 +1,1 @@
+{"messages":["The URL provided is invalid","Yes","Never","Would you like to save a configuration in your launch.json for easy access later?","No"],"keys":["debugLink.invalidUrl","yes","never","debugLink.savePrompt","no"],"filePath":"ui/debugLinkUI"}

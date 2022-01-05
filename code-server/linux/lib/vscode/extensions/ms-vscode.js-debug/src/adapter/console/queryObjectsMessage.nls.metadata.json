@@ -1,0 +1,1 @@
+{"messages":["Only objects can be queried","Could not query the provided object","Could generate preview: {0}"],"keys":["queryObject.invalidObject","queryObject.couldNotQuery","queryObject.errorPreview"],"filePath":"adapter/console/queryObjectsMessage"}
