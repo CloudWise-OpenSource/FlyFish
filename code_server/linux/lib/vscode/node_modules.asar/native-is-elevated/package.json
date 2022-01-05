@@ -1,0 +1,28 @@
+{
+  "name": "native-is-elevated",
+  "version": "0.4.3",
+  "description": "Native module for checking if the process is being run with elevated privileges",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "engine": {
+    "node": ">=10.0.0"
+  },
+  "scripts": {
+    "configure": "node-gyp configure",
+    "build": "node-gyp build",
+    "test": "ava"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arkon/native-is-elevated.git"
+  },
+  "author": "Eugene Cheung",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/arkon/native-is-elevated/issues"
+  },
+  "homepage": "https://github.com/arkon/native-is-elevated#readme",
+  "devDependencies": {
+    "ava": "^3.13.0"
+  }
+}
