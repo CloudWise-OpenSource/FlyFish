@@ -1,6 +1,5 @@
 # Created by .ignore support plugin (hsz.mobi)
 .idea
-node_modules
 build
 yarn.lock
 yarn-error.log
