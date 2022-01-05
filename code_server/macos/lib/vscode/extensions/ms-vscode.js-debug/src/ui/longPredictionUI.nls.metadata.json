@@ -1,1 +1,0 @@
-{"messages":["It's taking a while to configure your breakpoints. You can speed this up by updating the 'outFiles' in your launch.json.","Open launch.json","Don't show again","No workspace folder open."],"keys":["longPredictionWarning.message","longPredictionWarning.open","longPredictionWarning.disable","longPredictionWarning.noFolder"],"filePath":"ui/longPredictionUI"}

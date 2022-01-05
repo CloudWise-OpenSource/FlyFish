@@ -1,1 +1,0 @@
-{"extension":{"messages":["Format uri ('{0}') uses a substitution placeholder but pattern did not capture anything.","Format uri ('{0}') must contain exactly one substitution placeholder."],"keys":["server.ready.nocapture.error","server.ready.placeholder.error"]}}
