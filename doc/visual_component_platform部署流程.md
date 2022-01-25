@@ -4,7 +4,7 @@
 ```
  Node >= 8.9.3
  
- MySQL >= 5.6.38
+ MySQL = 5.x
  
  Redis >= 4.0.8
  
