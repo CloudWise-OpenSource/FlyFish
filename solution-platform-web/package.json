@@ -1,121 +1,121 @@
 {
-  "name": "Solution-Platform-Web",
-  "version": "1.4.0",
-  "author": "chencheng <cheng.chen@tianjishuju.com>",
-  "description": "解决方案前端",
-  "main": "src/index",
-  "scripts": {
-    "dev": "BUILD_DEV=1 node server.js",
-    "intl": "rimraf ./i18n-messages && BABEL_ENV=i18n babel --quiet ./src > /dev/null && babel-node --presets es2015 ./scripts/translateIntl.js && rimraf ./i18n-messages",
-    "build": "BUILD_DEV=0 node ./scripts/build.js",
-    "publish-alone": "BUILD_DEV=0 node ./scripts/publish.js ~/Desktop/webapp /static/solution_platform_web/",
-    "publish": "BUILD_DEV=0 node ./scripts/publish.js ~/Desktop/webapp /static/solution_platform_web/",
-    "release": "standard-version",
-    "release:minor": "npm run release -- --release-as minor",
-    "release:major": "npm run release -- --release-as major",
-    "replace": "replace '\\* #' '*' CHANGELOG.md",
-    "changelog": "conventional-changelog --config ./node_modules/@cloudwise-fe/web-changelog/lib/log -i CHANGELOG.md -s -r 0"
-  },
-  "dependencies": {
-    "antd": "^3.26.19",
-    "axios": "^0.18.0",
-    "classnames": "^2.2.5",
-    "eslint-plugin-react": "^7.11.1",
-    "flex.css": "^1.1.7",
-    "highcharts": "^5.0.14",
-    "immutability-helper": "^2.6.4",
-    "jquery": "^3.2.1",
-    "js-cookie": "^2.2.0",
-    "lodash": "^4.17.4",
-    "moment": "^2.21.0",
-    "onfire.js": "^1.0.6",
-    "promise-polyfill": "^7.0.0",
-    "prop-types": "^15.6.0",
-    "query-string": "^5.0.1",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-intl": "^2.4.0",
-    "react-redux": "^5.0.6",
-    "react-router-dom": "^4.3.1",
-    "redux": "^3.7.2",
-    "redux-logger": "^3.0.6",
-    "redux-thunk": "^2.2.0",
-    "url-search-params-polyfill": "^2.0.2"
-  },
-  "devDependencies": {
-    "autoprefixer": "^7.2.5",
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.0",
-    "babel-eslint": "^8.2.1",
-    "babel-jest": "^22.4.1",
-    "babel-loader": "^7.1.2",
-    "babel-plugin-import": "^1.6.3",
-    "babel-plugin-react-intl": "^2.3.1",
-    "babel-plugin-transform-decorators": "^6.24.1",
-    "babel-plugin-transform-decorators-legacy": "^1.3.4",
-    "babel-polyfill": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
-    "babel-preset-react": "^6.24.1",
-    "babel-preset-stage-0": "^6.24.1",
-    "bundle-loader": "^0.5.5",
-    "cli-color": "^2.0.0",
-    "commitizen": "^4.2.4",
-    "conventional-changelog-cli": "^2.1.1",
-    "css-loader": "^0.28.9",
-    "css-to-string-loader": "^0.1.3",
-    "cz-conventional-changelog": "^3.3.0",
-    "enzyme": "^3.3.0",
-    "eslint": "^4.15.0",
-    "eslint-config-alloy": "^1.4.0",
-    "file-loader": "^1.1.6",
-    "jest": "^22.4.2",
-    "less": "^2.7.3",
-    "less-loader": "^4.0.5",
-    "mini-css-extract-plugin": "^0.4.0",
-    "node-sass": "^4.14.1",
-    "optimize-css-assets-webpack-plugin": "^5.0.4",
-    "postcss-flexbugs-fixes": "^3.2.0",
-    "postcss-loader": "^2.0.10",
-    "react-test-renderer": "^16.2.0",
-    "replace": "^1.2.1",
-    "sass-loader": "^6.0.6",
-    "standard-version": "^9.3.0",
-    "style-loader": "^0.19.1",
-    "uglifyjs-webpack-plugin": "^2.2.0",
-    "url-loader": "^0.6.2",
-    "webpack": "^4.6.0",
-    "webpack-bundle-analyzer": "^2.11.1",
-    "webpack-dev-server": "^3.1.3"
-  },
-  "standard-version": {
+    "name": "Solution-Platform-Web",
+    "version": "1.4.0",
+    "author": "chencheng <cheng.chen@tianjishuju.com>",
+    "description": "解决方案前端",
+    "main": "src/index",
     "scripts": {
-      "postchangelog": "yarn changelog && yarn replace && git add .",
-      "posttag": "git push origin --tags -f"
-    }
-  },
-  "jest": {
-    "moduleFileExtensions": [
-      "js",
-      "jsx"
-    ],
-    "moduleNameMapper": {
-      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
-      ".*\\.(css|less|scss)$": "<rootDir>/__mocks__/styleMock.js"
+        "dev": "BUILD_DEV=1 node server.js",
+        "intl": "rimraf ./i18n-messages && BABEL_ENV=i18n babel --quiet ./src > /dev/null && babel-node --presets es2015 ./scripts/translateIntl.js && rimraf ./i18n-messages",
+        "build": "BUILD_DEV=0 node ./scripts/build.js",
+        "publish-alone": "BUILD_DEV=0 node ./scripts/publish.js ~/Desktop/webapp /static/solution_platform_web/",
+        "publish": "BUILD_DEV=0 node ./scripts/publish.js ~/Desktop/webapp /static/solution_platform_web/",
+        "release": "standard-version",
+        "release:minor": "npm run release -- --release-as minor",
+        "release:major": "npm run release -- --release-as major",
+        "replace": "replace '\\* #' '*' CHANGELOG.md",
+        "changelog": "conventional-changelog --config ./node_modules/@cloudwise-fe/web-changelog/lib/log -i CHANGELOG.md -s -r 0"
     },
-    "transform": {
-      "^.+\\.js(x)?$": "babel-jest"
+    "dependencies": {
+        "antd": "^3.26.19",
+        "axios": "^0.18.0",
+        "classnames": "^2.2.5",
+        "eslint-plugin-react": "^7.11.1",
+        "flex.css": "^1.1.7",
+        "highcharts": "^5.0.14",
+        "immutability-helper": "^2.6.4",
+        "jquery": "^3.2.1",
+        "js-cookie": "^2.2.0",
+        "lodash": "^4.17.4",
+        "moment": "^2.21.0",
+        "onfire.js": "^1.0.6",
+        "promise-polyfill": "^7.0.0",
+        "prop-types": "^15.6.0",
+        "query-string": "^5.0.1",
+        "react": "^17.0.2",
+        "react-dom": "^17.0.2",
+        "react-intl": "^2.4.0",
+        "react-redux": "^5.0.6",
+        "react-router-dom": "^4.3.1",
+        "redux": "^3.7.2",
+        "redux-logger": "^3.0.6",
+        "redux-thunk": "^2.2.0",
+        "url-search-params-polyfill": "^2.0.2"
     },
-    "setupFiles": [
-      "<rootDir>/__mocks__/setup.js"
-    ]
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://gitee.com/TJDS-Project-To-Product/Solution-Platform-Web.git"
-  },
-  "license": "ISC",
-  "bugs": {
-    "url": "https://gitee.com/TJDS-Project-To-Product/Solution-Platform-Web/issues"
-  },
-  "homepage": "https://gitee.com/TJDS-Project-To-Product/Solution-Platform-Web#readme"
+    "devDependencies": {
+        "autoprefixer": "^7.2.5",
+        "babel-cli": "^6.26.0",
+        "babel-core": "^6.26.0",
+        "babel-eslint": "^8.2.1",
+        "babel-jest": "^22.4.1",
+        "babel-loader": "^7.1.2",
+        "babel-plugin-import": "^1.6.3",
+        "babel-plugin-react-intl": "^2.3.1",
+        "babel-plugin-transform-decorators": "^6.24.1",
+        "babel-plugin-transform-decorators-legacy": "^1.3.4",
+        "babel-polyfill": "^6.26.0",
+        "babel-preset-env": "^1.6.1",
+        "babel-preset-react": "^6.24.1",
+        "babel-preset-stage-0": "^6.24.1",
+        "bundle-loader": "^0.5.5",
+        "cli-color": "^2.0.0",
+        "commitizen": "^4.2.4",
+        "conventional-changelog-cli": "^2.1.1",
+        "css-loader": "^0.28.9",
+        "css-to-string-loader": "^0.1.3",
+        "cz-conventional-changelog": "^3.3.0",
+        "enzyme": "^3.3.0",
+        "eslint": "^4.15.0",
+        "eslint-config-alloy": "^1.4.0",
+        "file-loader": "^1.1.6",
+        "jest": "^22.4.2",
+        "less": "^2.7.3",
+        "less-loader": "^4.0.5",
+        "mini-css-extract-plugin": "^0.4.0",
+        "optimize-css-assets-webpack-plugin": "^5.0.4",
+        "postcss-flexbugs-fixes": "^3.2.0",
+        "postcss-loader": "^2.0.10",
+        "react-test-renderer": "^16.2.0",
+        "replace": "^1.2.1",
+        "sass": "^1.42.1",
+        "sass-loader": "^7.3.1",
+        "standard-version": "^9.3.0",
+        "style-loader": "^0.19.1",
+        "uglifyjs-webpack-plugin": "^2.2.0",
+        "url-loader": "^0.6.2",
+        "webpack": "^4.6.0",
+        "webpack-bundle-analyzer": "^2.11.1",
+        "webpack-dev-server": "^3.1.3"
+    },
+    "standard-version": {
+        "scripts": {
+            "postchangelog": "yarn changelog && yarn replace && git add .",
+            "posttag": "git push origin --tags -f"
+        }
+    },
+    "jest": {
+        "moduleFileExtensions": [
+            "js",
+            "jsx"
+        ],
+        "moduleNameMapper": {
+            "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
+            ".*\\.(css|less|scss)$": "<rootDir>/__mocks__/styleMock.js"
+        },
+        "transform": {
+            "^.+\\.js(x)?$": "babel-jest"
+        },
+        "setupFiles": [
+            "<rootDir>/__mocks__/setup.js"
+        ]
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://gitee.com/TJDS-Project-To-Product/Solution-Platform-Web.git"
+    },
+    "license": "ISC",
+    "bugs": {
+        "url": "https://gitee.com/TJDS-Project-To-Product/Solution-Platform-Web/issues"
+    },
+    "homepage": "https://gitee.com/TJDS-Project-To-Product/Solution-Platform-Web#readme"
 }
