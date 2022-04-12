@@ -35,37 +35,43 @@
 - [用户快速上手](http://docs.aiops.cloudwise.com/zh/flyfish/getting-started/)
 - [开发快速上手](http://docs.aiops.cloudwise.com/zh/flyfish/component/basic.html)
 - [内网部署文档](http://docs.aiops.cloudwise.com/zh/flyfish/deploy.html)
-- [AIOps社区](https://www.cloudwise.ai/#/datalaker/dashboard)
+- [AIOps 社区](https://www.cloudwise.ai/#/datalaker/dashboard)
 
 ## 安装说明
 
 ### 分支说明
 
-| 分支        | 说明        |
-| ----------- | ----------- |
-| master      | 主分支      |
-| dev         | 测试分支    |
+| 分支 | 说明     |
+| ---- | -------- |
+| main | 主分支   |
+| dev  | 测试分支 |
 
 ### 环境依赖
 
-| 环境  | 说明      |
-| ----- | --------- |
-| node  | >= 8.9.3  |
-| redis | >= 4.0.8  |
-| mysql | >= 5.6.38 |
+| 环境  | 说明         |
+| ----- | ------------ |
+| node  | 推荐@12、@14 |
+| redis | >= 4.0.8     |
+| mysql | >= 5.6.38    |
 
 ### 部署流程
+
+> 推荐使用 doc 目录内 flyfish 部署文档，后续有关部署流程、学习资料、FAQ 等统一放置 doc 目录中管理。
+
 ```
 包含三个服务：
-visual_component_platform：组件开发平台
-solution_platform：应用平台
 code_server: web编辑器服务
+solution_platform：应用平台
+visual_component_platform：组件开发平台
 
-需要分别部署, 部署文档见：
-doc/solution_platform部署流程.md
-doc/visual_component_platform部署流程.md
+部署文档见：
+doc/基础环境准备篇.md
 doc/code_server部署流程.md
+doc/应用平台部署篇v2.0.md
+doc/组件开发平台部署篇.md
+
 ```
+
 ## 升级流程
 
 ```
@@ -80,7 +86,6 @@ $ pm2 restart ${id}
 
 ## 欢迎加入
 
-*获取更多关于FlyFish的技术资料，或加入FlyFish开发者交流群，可扫描下方二维码咨询。*
+_获取更多关于 FlyFish 的技术资料，或加入 FlyFish 开发者交流群，可扫描下方二维码咨询。_
 
 <img src="https://gitee.com/CloudWise/fly-fish/raw/main/doc/images/Susie.png" width="550px"/>
-
