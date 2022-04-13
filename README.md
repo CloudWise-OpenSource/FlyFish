@@ -34,7 +34,6 @@
 - [架构及目录](http://docs.aiops.cloudwise.com/zh/flyfish/design.html)
 - [用户快速上手](http://docs.aiops.cloudwise.com/zh/flyfish/getting-started/)
 - [开发快速上手](http://docs.aiops.cloudwise.com/zh/flyfish/component/basic.html)
-- [内网部署文档](http://docs.aiops.cloudwise.com/zh/flyfish/deploy.html)
 - [AIOps 社区](https://www.cloudwise.ai/#/datalaker/dashboard)
 
 ## 安装说明
@@ -56,25 +55,19 @@
 
 ### 部署流程
 
-> :heavy_exclamation_mark:部署流程已废弃，推荐使用 doc 目录内 flyfish 部署文档，后续有关部署流程、学习资料、FAQ 等统一放置 doc 目录中管理。
+> 持续更新中……
 
-```
-# 1、进入项目目录
-$ cd flyfish
+**推荐**
 
-# 2、修改mysql、redis配置文件ip
-# #修改 127.0.0.1 为服务器对应ip【本地部署无需修改】
-$ vim src/common/config/adapter.js
+- [基础环境准备篇](./doc/基础环境准备篇.md)
+- [code_server 部署篇](./doc/code_server部署篇.md)
+- [应用平台部署篇 v1.0](./doc/应用平台部署篇v1.0.md)
 
-# 3、修改code-server配置文件ip
-# 用于部署vscode编辑器开发组件
-# #查找127.0.0.1 替换127.0.0.1为服务器对应ip【本地部署无需修改】
-$ vim code-server/linux/out/browser/pages/vscode.browserified.js
+**不推荐**
 
-# 4、修改后端服务接口ip
-# #修改 apiDomain  与 coderDomain 为服务器对应ip【本地部署无需修改】
-$ vim www/static/solution_platform_web/config/ENV.production.js
-```
+> :heavy_exclamation_mark:以下部署流程已废弃，doc 中已更新标准版部署流程，但未包含 Docker 部署、以及本地部署。因此以下部署流程暂作保留，提供参考。推荐您使用 doc 中部署流程。
+
+- [内网部署文档](http://docs.aiops.cloudwise.com/zh/flyfish/deploy.html)
 
 模式一：Docker 中运行所有服务
 
