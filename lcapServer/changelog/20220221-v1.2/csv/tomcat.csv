@@ -1,0 +1,8 @@
+﻿modeId,metric_key（指标标识）,metric_desc_cn（指标描述）,"单位
+",指标显示单位,指标类型,对应组件,对应模板位置,参考,备注,,,,,,,,,,
+tomcat-node,tomcat.processing_time,每秒由请求处理器处理的所有请求的处理时间之和（以毫秒为单位）。,毫秒,毫秒,性能类型,折线面积图,1、2,观测云,需计算,,,,,,,,,,
+tomcat-node,tomcat.request_count,所有请求处理器每秒的请求数。,请求/秒,请求/秒,性能类型,折线面积图,3、4,观测云,count,,,,,,,,,,
+tomcat-node,tomcat.error_count,所有请求处理器上每秒的错误数。,错误/秒,错误/秒,性能类型,折线面积图,5、6,观测云,count,,,,,,,,,,
+tomcat-node,tomcat.threads.count,线程池管理的线程数。,线程,个,性能类型,折线面积图,7、8,观测云,,,,,,,,,,,
+tomcat-node,tomcat.threads.busy,正在使用的线程数。,线程,个,性能类型,折线面积图,9、10,观测云,,,,,,,,,,,
+tomcat-node,tomcat.threads.max,允许的最大worker线程数。,线程,个,性能类型,折线面积图,11、12,观测云,,,,,,,,,,,

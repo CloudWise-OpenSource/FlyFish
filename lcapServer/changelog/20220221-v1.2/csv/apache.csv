@@ -1,0 +1,13 @@
+﻿modeId,metric_key（指标标识）,metric_desc_cn（指标描述）,"单位
+",指标显示单位,指标类型,对应组件,对应模板位置,参考,备注,,,,,,,,,,
+apache-node,apache.performance.uptime,服务器运行的时间。,秒,-天-小时-分,状态类型,数字看板,1,,,,,,,,,,,,
+apache-node,apache.performance.cpu_load,使用的 CPU 百分比。,百分比,%,百分比类型,仪表盘,2,观测云,,,,,,,,,,,
+apache-node,apache.conns_total,执行的连接总数。,连接,个,数值类型,折线图,3、4,GrafanaLabs,,,,,,,,,,,
+apache-node,apache.net.hits,执行的请求总数。,请求,个,数值类型,折线图,5、6,,,,,,,,,,,,
+apache-node,apache.net.bytes,提供的总字节数。,字节,字节,性能类型,折线面积图,7、8,GrafanaLabs,,,,,,,,,,,
+apache-node,apache.net.request_per_s,每秒执行的请求数。,请求/秒,请求/秒,性能类型,折线面积图,9、10,观测云,需计算,,,,,,,,,,
+apache-node,apache.net.bytes_per_s,每秒服务的字节数。,字节/秒,字节/秒,性能类型,折线面积图,11、12,观测云,需计算,,,,,,,,,,
+apache-node,apache.scoreboard.keepalive,worker打算从同一客户端发出新请求，因为它要求保持连接处于活动状态。,线程,个,数值类型,折线图,13、14,GrafanaLabs/观测云,,,,,,,,,,,
+apache-node,apache.performance.idle_workers,空闲worker的数量。,线程,个,数值类型,折线图,15、16,观测云,,,,,,,,,,,
+apache-node,apache.performance.busy_workers,服务请求的worker数量。,线程,个,数值类型,折线图,17、18,GrafanaLabs/观测云,,,,,,,,,,,
+apache-node,apache.scoreboard.open_slot,在达到最大worker数量之前，Apache 仍可以启动的worker数量。,线程,个,数值类型,折线图,19、20,,,,,,,,,,,,

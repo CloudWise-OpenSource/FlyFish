@@ -1,0 +1,8 @@
+﻿modeId,metric_key（指标标识）,metric_desc_cn（指标描述）,"单位
+",指标显示单位,指标类型,对应组件,对应模板位置,参考,备注,,,,,,,,,,
+kafka-node,kafka.server.replicamanager.offlinereplicacount,没有活动leader的分区数。,,,性能类型,折线面积图,1、2,,,,,,,,,,,,
+kafka-node,kafka.server.replicamanager.partitioncount,集群中所有主题的分区数。,,,性能类型,折线面积图,3、4,,,,,,,,,,,,
+kafka-node,kafka.server.replicamanager.underreplicatedpartitions,复制不足的分区数。,,,性能类型,折线面积图,5、6,观测云,,,,,,,,,,,
+kafka-node,kafka.network.requestchannel.requestqueuesize,排队的请求数。,请求,请求,性能类型,折线面积图,7、8,观测云,,,,,,,,,,,
+kafka-node,process.virtual.memory.bytes,常驻内存大小(以字节为单位),,,数值类型,折线图,9、10,观测云,,,,,,,,,,,
+kafka-node,process.resident.memory.bytes,以字节为单位的虚拟内存大小,,,数值类型,折线图,11、12,观测云,,,,,,,,,,,
