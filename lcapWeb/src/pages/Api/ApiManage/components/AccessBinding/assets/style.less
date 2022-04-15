@@ -1,0 +1,41 @@
+.controlContainer {
+    .topTitleContainer{
+        font-size: 16px;
+        padding:10px 32px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #e9e9e9;
+    }
+    .container{
+        height: calc(100vh - 248px);
+        .title{
+            padding:15px  20px;
+            margin: 0 32px;
+            background-color: rgb(240, 240, 240);
+            font-size: 14px;
+        }
+    }
+    .timeOfValidity{
+        padding: 40px 20px;
+        .red{
+            color: red;
+            font-size: 16px;
+        }
+    }
+    :global{
+        .cw-searchbar-form .cw-search-wrapper{
+            // position: absolute;
+            border: none ;
+        }
+        .cw-searchbar-form{
+            padding-bottom:0;
+        }
+        .cw-pagination-wrapper{
+            position: absolute;
+            width: calc(100% - 48px);
+            bottom: 24px;
+        }
+    }
+}

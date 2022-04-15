@@ -1,0 +1,40 @@
+<!--
+ * @Descripttion: 
+ * @Author: zhangzhiyong
+ * @Date: 2021-12-29 15:13:02
+ * @LastEditors: zhangzhiyong
+ * @LastEditTime: 2022-01-07 11:07:28
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Data-VI 数据可视化</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../../common/editor.css" />
+</head>
+<body>
+<div id="container" style="height: 100%;"></div>
+<script type="text/javascript" src="config/env.js"></script>
+<script type="text/javascript" src="../../common/data-vi.js"></script>
+<script type="text/javascript" src="../../common/editor.js"></script>
+<script type="text/javascript">
+    window.onload = function () {
+        require(['data-vi/helpers', 'data-vi/modal', 'datavi-editor/adapter'], function (_, modal, adapter) {
+
+            var id = _.getUrlParam('id');
+            window.flyfishToken = _.getUrlParam('token');
+
+            if (!id) {
+
+                modal.showAlert('URL缺少参数[id]');
+
+            } else {
+
+                adapter.initEditorById(id);
+            }
+        });
+    };
+</script>
+</body>
+</html>

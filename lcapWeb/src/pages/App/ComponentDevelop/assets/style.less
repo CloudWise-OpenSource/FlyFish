@@ -1,0 +1,159 @@
+.wraper{
+  color: red;
+}
+.layoutWrap{
+  :global{
+    .ant-layout-sider{
+      background-color: #fff;
+    }
+  }
+}
+.collapsedClass{
+  :global{
+    .ant-layout-sider{
+      width: 0px !important;
+      flex: none !important;
+      min-width: 0 !important;
+    }
+  }
+}
+.leftWrap{
+  position: relative;
+  height: 100%;
+  border-right: 1px solid #eee;
+  // padding: 5px 10px;
+  // display: flex;
+  // align-items: center;
+}
+.treeWrap{
+  height:calc(~'100% - 30px');
+  width: 100%;
+  overflow:hidden;
+  background-color:#fff;
+}
+.rightWraper{
+  // background-color: #eee;
+  height: 100%;
+  border-left: 1px solid #eee;
+  // padding: 10px;
+}
+.handleWrap{
+  display: flex;
+  flex-wrap: wrap;
+  padding: 10px 20px;
+  background-color: #fff;
+  border-bottom: 1px solid #eee;
+  &>div{
+    margin: 4px 10px;
+  }
+  // margin-bottom: 10px;
+}
+.handleLeft{
+  display: flex;
+  &>div{
+    margin-right: 20px;
+  }
+}
+.listWraper{
+  padding: 20px;
+  background-color: #fff;
+  height: calc(~"100% - 53px");
+  overflow-y: auto;
+  :global{
+    .ant-pagination-options{
+      position: absolute;
+      left: -15px;
+    }
+    .ant-pagination-total-text{
+      position: absolute;
+      left: 105px;
+    }
+  }
+}
+.btnWraper{
+  color:#449CF2;
+  &>div{
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+}
+.allBtn{
+  height: 30px;
+  display: flex;
+  align-items: center;
+  margin: 5px 0;
+  padding-left: 35px;
+  cursor: pointer;
+  font-weight: 800;
+  background-color: #fff;
+  cursor: pointer;
+  &:hover{
+    background-color: rgba(68, 156, 242,0.5);
+  }
+}
+.selected{
+  background-color: rgba(68, 156, 242,0.5);
+}
+.nameLink{
+  color:rgba(68, 156, 242,1);
+  text-decoration:underline;
+  &:hover{
+    color:rgba(68, 156, 242,0.5);
+  }
+}
+.collbar{
+  position: absolute;
+  right: -18px;
+  background: #fff;
+  border-radius: 3px;
+  bottom: 10px;
+  padding: 0 2px;
+}
+.imgPreviewBody{
+  :global{
+    .ant-modal-content{
+      height: 100%;
+    }
+    .ant-modal-body{
+      height: calc(~'100% - 80px');
+    }
+  }
+}
+.descWrap{
+  width: 90px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.descPopWrap{
+  max-width: 500px;
+  max-height: 600px;
+  overflow: hidden;
+}
+
+.uploadText{
+  color: #ccc;
+}
+.uploadIcon{
+  font-size: 50px;
+  color: #3A91FE;
+}
+.progressWrap{
+  display: flex;
+  justify-content: center;
+  &>div{
+    width: 60%;
+  }
+}
+.uploadFileIcon{
+  width: 10px;
+  height: 18px;
+  background: url(./file.png);
+  margin-right: 10px;
+}
+.uploadResultWrap{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}

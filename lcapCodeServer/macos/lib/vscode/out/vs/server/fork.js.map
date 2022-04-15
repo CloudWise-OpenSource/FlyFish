@@ -1,0 +1,1 @@
+{"version":3,"sources":["out-vscode/vs/server/fork.js"],"sourcesContent":["// This must be a JS file otherwise when it gets compiled it turns into AMD\n// syntax which will not work without the right loader.\nrequire('../../bootstrap-amd').load('vs/server/entry');\n"],"mappings":"AAEA,QAAQ,uBAAuB,KAAK","names":[],"file":"fork.js"}

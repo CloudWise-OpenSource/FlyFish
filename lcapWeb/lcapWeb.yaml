@@ -1,0 +1,60 @@
+# 类型定义，发布应用服务时,产品包含的服务指定类型为 service （类型：string）
+kind: service
+# 服务在平台显示的名称，请与服务目录名称保持一致，建议字符：英文、数字、_ （类型：string）
+name: lcapWeb
+# 上传后显示的服务版本，建议字符： 数字、字母、_ 、. （类型：string）
+version: 1.2.0
+product:
+  # 产品名称 （类型: string)
+  name: lcap
+  # 产品版本 （类型: string)
+  version: 5.4.0
+# 指定该服务安装后是否需要启动 （类型：boolean)
+auto_launch: false
+# 指定服务是否为基础环境组件，如 jdk, 该类组件以基础环境方式安装 （类型：boolean)
+base_env: false
+# 定义服务所需端口号，如不启用端口，可留空 （类型：list[map,map...])
+ports:
+
+# 服务监控相关配置，定义该服务在安装后如何监控 ，如果不需要监控可留空 （类型： map）
+monitor:
+  # 监控进程名称，如“service_a”，平台在发现service_a进程不存在后，会发送告警提醒,不需要监控可留空（类型：string）
+  process_name:
+  # 监控端口号，请根据 ports 中的变量设置，不需要监控可留空 （类型： {string}）
+  metric_port:
+  # 新增type类型, 前端展示对应类型的grafana面板
+  type: ""
+# 安装顺序 0、1 默认为0, 例如除了portalWeb外其他的web静态页面均置为 1
+level: 1
+# 绑定设置，可以为空
+affinity: tengine
+# 定义该组件安装所需依赖组件名称与版本,如不需其他组件依赖，可留空 （类型： list[map,map..])
+dependencies:
+  - name: tengine
+    version: 1.20.1
+# 该组件所需最小资源需求 （类型：map)
+resources:
+
+# 定义安装组件时所需参数，该参数会传入到 安装脚本中 （类型：list[map,map...]）
+install:
+    # 传入参数中文描述名称，该名称会在用户安装组件时显示到表单中 （类型： string）
+  - name: "安装目录"
+    # 传入参数key值，会将该key与值 传入到安装脚本中 （类型：string）
+    key: base_dir
+    # 上面key默认值 （类型： string）
+    default: "{data_path}/app/portalWeb/lcapWeb"  # 注： {data_path} 为主机数据目录占位符，请勿使用其他代替
+control:
+   # 启动脚本路径，如没有可留空,脚本名称建议与服务名称一致  （类型：string）
+  start:
+  # 停止脚本路径，如没有可留空，脚本名称建议与服务名称一致 （类型：string）
+  stop:
+  # 重启脚本路径，如没有可留空，脚本名称建议与服务名称一致 （类型：string）
+  restart:
+  # 重载脚本路径，如没有可留空 （类型：string）
+  reload:
+  # 安装脚本路径，必填 （类型：string）
+  install: "./scripts/install.py"
+  # 初始化脚本路径，如没有可留空  （类型：string）
+  init:
+post_action:
+deploy:

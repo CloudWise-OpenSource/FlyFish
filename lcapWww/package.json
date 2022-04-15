@@ -1,0 +1,29 @@
+{
+  "name": "FlyFish",
+  "version": "1.0.0",
+  "description": "FlyFish Www repo",
+  "private": true,
+  "egg": {
+    "declarations": true
+  },
+  "dependencies": {
+    "simple-git": "^2.47.0",
+    "moment": "^2.29.1"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=10.0.0"
+  },
+  "scripts": {
+    "build": "node build.js"
+  },
+  "ci": {
+    "version": "10"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "",
+  "license": "MIT"
+}

@@ -9,16 +9,16 @@ module.exports = appInfo => {
   const staticDir = '/data/www';
   const commonDirPath = '';
 
-  const serverIp = '10.2.3.56';
+  const serverIp = '127.0.0.1';
   const serverPort = 7001;
 
-  const yapiServerIp = '10.2.3.56';
+  const yapiServerIp = '127.0.0.1';
   const yapiServerPort = 3001;
 
-  const mongodbIp = '10.2.3.56';
+  const mongodbIp = '127.0.0.1';
   const mongodbPort = 27017;
 
-  const docpServerIp = '10.0.3.142';
+  const docpServerIp = '127.0.0.1';
   const docpServerPort = 18080;
 
   /**
