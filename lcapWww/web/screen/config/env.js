@@ -11,12 +11,12 @@
 'use strict';
 
 window.DATAVI_ENV = (function() {
-  const apiDomain = '/gateway/lcap';
+  const apiDomain = '/api';
 
   return {
     debug: true,
     apiDomain,
-    componentsDir: 'lcapWeb/www/components',
+    componentsDir: 'www/components',
     apiSuccessCode: 200,
 
     yapiAddress: 'http://${CW_YAPI_SERVER_IP}:${CW_YAPI_SERVER_PORT}',

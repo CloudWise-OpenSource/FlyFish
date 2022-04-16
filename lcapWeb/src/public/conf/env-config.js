@@ -7,7 +7,7 @@
  */
 
 window.LCAP_CONFIG = (function () {
-  const hostname = '10.2.3.153';
+  const hostname = '127.0.0.1';
   
   return {
     basename: "", // 路由统一前缀，注册为微服务后必须有唯一值
