@@ -12,12 +12,14 @@ const _ = require('lodash');
 const mongoUrl = config.get('mongoose.clients.flyfish.url');
 const staticDir = config.get('pathConfig.staticDir');
 const componentsPath = config.get('pathConfig.componentsPath');
+const initComponentVersion = config.get('pathConfig.initComponentVersion');
 
 const uploadDir = path.resolve('upload');
 
 const filename = process.argv[2];
-const extractDir = `${uploadDir}/${filename.slice(0, -4)}`;
+const newStaticPathPrefix = process.argv[3];
 
+const extractDir = `${uploadDir}/${filename.slice(0, -4)}`;
 
 let mongoClient,
   db;
@@ -44,18 +46,16 @@ async function init() {
     const admin = await db.collection('users').findOne({ username: 'admin' });
     const adminId = admin && admin._id.toString();
 
-    const categoryInfo = await fs.readJson(path.resolve(extractDir, 'category.json'));
-    Object.assign(categoryInfo, {
-      create_time: new Date(),
-      update_time: new Date(),
-    });
-    const categoryObjectId = ObjectId(categoryInfo._id);
-    delete categoryInfo._id;
-    await db.collection('component_categories').updateOne(
-      { _id: categoryObjectId },
-      { $set: categoryInfo, $setOnInsert: { _id: categoryObjectId } },
-      { upsert: true }
-    );
+    const categoriesInfo = await db.collection('component_categories').find({}, { sort: { create_time: -1 }, limit: 1 }).toArray();
+    if (_.isEmpty(categoriesInfo[0])) {
+      console.log('upload fail: no categoryInfo!!!');
+      return;
+    }
+
+    const curCategoryInfo = categoriesInfo[0];
+
+    const basicCategoryInfo = (curCategoryInfo.categories || []).find(category => category.name === '2D图表组件') || {};
+    const basicSubCategoryInfo = (basicCategoryInfo.children || []).find(subCategory => subCategory.name === '基础组件');
 
     await fs.copy(
       path.resolve(extractDir, 'components'),
@@ -73,12 +73,20 @@ async function init() {
             version.time = new Date(version.time);
             return version;
           }),
+          applications: [],
+          projects: [],
+          tags: [],
+          type: 'common',
+          cover: newStaticPathPrefix ? `${newStaticPathPrefix}${component.cover}` : component.cover,
+          category: basicCategoryInfo.id,
+          sub_category: basicSubCategoryInfo.id,
           creator: adminId,
           updater: adminId,
           create_time: new Date(),
           update_time: new Date(),
         });
 
+        delete component.project_id;
         await db.collection('components').updateOne(
           { _id: ObjectId(componentId) },
           { $set: component, $setOnInsert: { _id: ObjectId(componentId) } },
@@ -86,6 +94,19 @@ async function init() {
         );
 
         await exec(`cd ${staticDir}/${componentsPath} && tar -xzvf ${componentId}.tar`, { maxBuffer: 1024 * 1024 * 1024 });
+
+        if (newStaticPathPrefix) {
+          // editor.html
+          await exec(`sed -i -e "s#\/components\/#${newStaticPathPrefix}\/components\/#g" ${staticDir}/${componentsPath}/${componentId}/${initComponentVersion}/editor.html`);
+          await exec(`sed -i -e "s#\/common\/#${newStaticPathPrefix}\/common\/#g" ${staticDir}/${componentsPath}/${componentId}/${initComponentVersion}/editor.html`);
+          // index.html
+          await exec(`sed -i -e "s#\/components\/#${newStaticPathPrefix}\/components\/#g" ${staticDir}/${componentsPath}/${componentId}/${initComponentVersion}/index.html`);
+          await exec(`sed -i -e "s#\/common\/#${newStaticPathPrefix}\/common\/#g" ${staticDir}/${componentsPath}/${componentId}/${initComponentVersion}/index.html`);
+
+          // env.js
+          await exec(`sed -i -e "s#\'components\'#\'${newStaticPathPrefix.slice(1)}\/components\'#g" ${staticDir}/${componentsPath}/${componentId}/${initComponentVersion}/env.js`);
+        }
+
         await fs.remove(`${staticDir}/${componentsPath}/${componentId}.tar`);
       }));
     }
