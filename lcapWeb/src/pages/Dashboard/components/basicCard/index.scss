@@ -1,0 +1,100 @@
+
+.basicCard{
+    display: flex;
+    .tag{
+        position: absolute;
+        width: auto;
+        display: inline-block;
+        top: 20px;
+        left: -2px;
+        width: 78px;
+        height: 24px;
+                z-index: 1;
+        }
+    .imgContainer{
+        position:relative;
+        overflow:hidden;
+        width:100%;
+        height: 100%;
+        padding-bottom:56%;
+        >img{
+            width: 100%;
+        }
+        &:hover{
+            .mask{
+                opacity: 1;
+            }
+        }
+        
+        .mask{
+            position: absolute;
+            opacity: 0;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            flex-wrap: wrap;
+            transition: opacity 0.5s;
+            background-color: rgba(0, 0, 0, 0.6);
+            a:first-child>.btn{
+                top: 30%;
+                left: 50%;
+                background-color: transparent;
+                color: white;
+            }
+            .btn{
+                width: 88px;
+                position: absolute;
+                top: 55%;
+                left: 50%;
+                transform: translate(-50%,0);
+               
+            }
+        }
+    }
+    .img{
+        position: absolute;
+        left: 0;
+        top: 0;
+        text-align: center;
+        background-color:#FAFAFA;
+        img{
+          width: 100%;
+          height: 100%;
+        }
+        .spin{
+          position: absolute;
+          left: 50%;
+          top: 50%;
+        }
+        
+      }
+      .zhan{
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        visibility: hidden;
+      }
+      .ben{
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%,-50%);
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+    
+}
+:global {
+    .ant-carousel .slick-dots-bottom{
+        bottom: 0px !important;
+    }
+    .ant-carousel .slick-dots li button{
+        background-color: #1890ff !important;
+    }
+    .ant-carousel .slick-dots li.slick-active button{
+        background-color: #1890ff !important;
+    }
+}

@@ -1,0 +1,13 @@
+﻿modeId,metric_key（指标标识）,metric_desc_cn（指标描述）,"单位
+",指标显示单位,指标类型,对应组件,对应模板位置,参考,备注,,,,,,,,,,
+squid-node,squid.cachemgr.cd.memory,启用缓存摘要功能所使用的内存量,千字节/秒,Kbytes/s,状态类型,数字看板,1,https://grafana.com/grafana/dashboards/3154,需计算,,,,,,,,,,
+squid-node,squid.cachemgr.client_http.errors,导致错误的客户端事务数,错误/秒,错误/秒,状态类型,线图看板,2,,需计算,,,,,,,,,,
+squid-node,squid.cachemgr.server.http.errors,导致错误的服务器端HTTP请求的数量,错误/秒,错误/秒,状态类型,线图看板,3,,需计算,,,,,,,,,,
+squid-node,squid.cachemgr.cpu_time,鱿鱼的CPU使用量，由getrusage()报告,百分比,%,百分比类型,仪表盘,4,,,,,,,,,,,,
+squid-node,squid.cachemgr.icp.times_used,日志含义由于cache miss而选择邻居作为下一跳的次数,/秒,个/秒,数值类型,折线图,5、6,,需计算,,,,,,,,,,
+squid-node,squid.cachemgr.client_http.hits,响应客户端请求的缓存命中数,命中/秒,命中/秒,性能类型,折线面积图,7、8,,需计算,,,,,,,,,,
+squid-node,squid.cachemgr.cd.local_memory,用于存储Squid自己的缓存摘要的内存量,千字节/秒,Kbytes/s,性能类型,折线面积图,9、10,,需计算,,,,,,,,,,
+squid-node,squid.cachemgr.client_http.kbytes_in,从客户端请求中接收到的通信量,千字节/秒,Kbytes/s,性能类型,折线面积图,11、12,,需计算,,,,,,,,,,
+squid-node,squid.cachemgr.client_http.kbytes_out,在响应中发送给客户端的流量,千字节/秒,Kbytes/s,性能类型,折线面积图,13、14,,需计算,,,,,,,,,,
+squid-node,squid.cachemgr.server.all.kbytes_in,所有协议从服务器端读取的通信量,千字节/秒,Kbytes/s,性能类型,折线面积图,15、16,,需计算,,,,,,,,,,
+squid-node,squid.cachemgr.server.all.kbytes_out,服务器端请求写入源服务器和/或邻居缓存的流量,千字节/秒,Kbytes/s,性能类型,折线面积图,17、18,,需计算,,,,,,,,,,

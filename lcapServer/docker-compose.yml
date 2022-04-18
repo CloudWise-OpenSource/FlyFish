@@ -1,0 +1,63 @@
+version: "3"
+
+services:
+  flyfish-server:
+    build: .
+    restart: always
+    container_name: "flyfish-server"
+    volumes:
+      - ./www/:/data/app/flyfish2.0-server/www
+      - ./changelog/upload:/data/app/flyfish2.0-server/changelog/upload
+      - ./logs:/data/app/flyfish2.0-server/logs
+    networks:
+      - flyfish
+    depends_on:
+      - flyfish-mongo
+    ports:
+      - "0.0.0.0:7001:7001"
+  flyfish-mongo:
+    container_name: "flyfish-mongo"
+    image: "mongo:4.0.27"
+    restart: always
+    networks:
+      - flyfish
+    ports:
+      - "0.0.0.0:27017:27017"
+    volumes: 
+      - ./mongo/data:/data/db
+      - ./mongo/conf:/data/configdb
+  flyfish-nginx:
+    container_name: "flyfish-nginx"
+    image: "nginx"
+    restart: always
+    networks:
+      - flyfish
+    volumes:
+      - "./nginx.conf:/etc/nginx/nginx.conf"
+      - "./dist:/home/dist"
+    ports:
+      - "0.0.0.0:8089:8089"
+  flyfish-code-server:
+    container_name: "flyfish-code-server"
+    build: ../code-server/
+    restart: always
+    volumes:
+      - ./www/components:/www/components
+    networks:
+      - flyfish
+    ports:
+      - "0.0.0.0:8081:8081"
+  flyfish-yapi:
+    container_name: "flyfish-yapi"
+    build: ../yapi
+    restart: always
+    networks:
+      - flyfish
+    depends_on:
+      - flyfish-mongo
+    ports:
+      - "0.0.0.0:3001:3001"
+networks:
+  flyfish:
+    driver:
+      bridge

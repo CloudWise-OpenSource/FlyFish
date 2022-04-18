@@ -1,0 +1,62 @@
+.dashboard {
+    
+    // background-color: #e9f0ff;
+    .container{
+        background-color: white;
+        padding: 20px 30px 0 30px;
+       .titleContainer{
+           display: flex;
+           justify-content: space-between;
+        .title{
+            font-size: 16px;
+            font-weight: 700;
+            padding-left: 10px;
+            margin-right: 10px;
+            border-left: 4px solid #1890ff;
+        }
+        .grayTitle{
+            color: lightgray;
+        }
+       }
+    }
+    .carouselContainer{
+        position: relative;
+        &:hover{
+            .leftBtn{
+               opacity: 1;
+            }
+            .RightBtn{
+                opacity: 1;
+             }
+        }
+        .leftBtn{
+            cursor: pointer;
+            position: absolute;
+            opacity: 0;
+            left: 10px;
+            top: 30%;
+            font-size: 22px;
+            z-index: 99;
+            color: white;
+            transform: rotate(180deg);
+            transition: opacity 0.5s;
+        }
+        .RightBtn{
+            cursor: pointer;
+            position: absolute;
+            right: 10px;
+            opacity: 0;
+            top: 30%;
+            font-size: 22px;
+            z-index: 99;
+            color: white;
+           transition: opacity 0.5s;
+        }
+    }
+    :global{
+        .flexContainer{
+            display: none;
+        }
+    }
+    
+}

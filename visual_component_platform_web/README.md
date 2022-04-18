@@ -1,2 +1,0 @@
-# Visual_Component_Platform_Web
-可视化组件平台Web

@@ -1,0 +1,121 @@
+'use strict';
+
+const config = require('config');
+const { MongoClient, ObjectId } = require('mongodb');
+const fs = require('fs-extra');
+const path = require('path');
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
+
+const mongoUrl = config.get('mongoose.url');
+const staticDir = config.get('pathConfig.staticDir');
+const uploadDir = path.resolve('upload');
+
+const appId = process.argv[2];
+const extractDir = `${uploadDir}/${appId}`;
+
+
+let mongoClient,
+  db;
+
+async function init() {
+  mongoClient = new MongoClient(mongoUrl);
+  await mongoClient.connect();
+  db = mongoClient.db('flyfish');
+}
+
+(async () => {
+  try {
+    await init();
+
+    /**
+     * 1. 插入applications表
+     * 2. 插入projects表
+     * 3. 复制components表
+     * 4. 复制应用静态资源
+     * 5. 复制组件资源
+     */
+
+    await exec(`cd upload && tar -xzvf ${appId}.tar`, { maxBuffer: 1024 * 1024 * 1024 });
+
+    const admin = await db.collection('users').findOne({ username: 'admin' });
+    const adminId = admin && admin._id.toString();
+
+    const application = await fs.readJson(path.resolve(extractDir, 'application.json'));
+    const appObjectId = ObjectId(application._id);
+    delete application._id;
+    Object.assign(application, {
+      creator: adminId,
+      updater: adminId,
+      create_time: new Date(),
+      update_time: new Date(),
+    });
+    await db.collection('applications').updateOne(
+      { _id: appObjectId },
+      { $set: application, $setOnInsert: { _id: appObjectId } },
+      { upsert: true }
+    );
+
+    const project = await fs.readJson(path.resolve(extractDir, 'project.json'));
+    const projectObjectId = ObjectId(project._id);
+    delete project._id;
+    Object.assign(project, {
+      creator: adminId,
+      updater: adminId,
+      create_time: new Date(),
+      update_time: new Date(),
+    });
+    await db.collection('projects').updateOne(
+      { _id: projectObjectId },
+      { $set: project, $setOnInsert: { _id: projectObjectId } },
+      { upsert: true }
+    );
+
+    const categoryDoc = await db.collection('component_categories').findOne({}, { sort: [[ 'create_time', -1 ]] });
+    const category = categoryDoc.categories[0].id;
+    const subCategory = categoryDoc.categories[0].children[0].id;
+
+    const components = await fs.readJson(path.resolve(extractDir, 'component.json'));
+    for (const component of components) {
+      const componentObjectId = ObjectId(component._id);
+      delete component._id;
+      Object.assign(component, {
+        versions: (component.versions || []).map(version => {
+          version.time = new Date(version.time);
+          return version;
+        }),
+        category,
+        sub_category: subCategory,
+        creator: adminId,
+        updater: adminId,
+        create_time: new Date(),
+        update_time: new Date(),
+      });
+
+      await db.collection('components').updateOne(
+        { _id: componentObjectId },
+        { $set: component, $setOnInsert: { _id: componentObjectId } },
+        { upsert: true }
+      );
+
+      await fs.copy(
+        path.resolve(extractDir, 'components'),
+        path.resolve(staticDir, 'components')
+      );
+    }
+
+    await fs.copy(
+      path.resolve(extractDir, 'applications'),
+      path.resolve(staticDir, 'applications')
+    );
+
+  } catch (error) {
+    console.log(error.stack || error);
+  } finally {
+    console.log('upload success');
+    await fs.remove(extractDir);
+    mongoClient.close();
+    process.exit(0);
+  }
+})();
+

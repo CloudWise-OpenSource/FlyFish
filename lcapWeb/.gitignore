@@ -1,0 +1,44 @@
+*.class
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+.idea
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+node_modules
+.DS_Store
+npm-debug.log
+/static
+/dist
+/docp
+# /doia/doiaWeb
+# /doiaWeb
+# public/doiaWeb
+doiaWeb
+demoWeb
+/report*
+/index.html
+/ssoLogin.html
+ENV_CONFIG_LOCAL*
+### DLL File ###
+manifest.json
+
+.themes
+.history
+.vscode
+.eslintcache
+size-plugin.json
+
+publish
+.tmp/
+.DS_Store
+*/.DS_Store
+package-lock.json
+yarn.lock
+lcapWeb
+lcapWeb.zip

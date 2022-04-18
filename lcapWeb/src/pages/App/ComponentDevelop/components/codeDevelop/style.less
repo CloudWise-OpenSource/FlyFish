@@ -1,0 +1,57 @@
+.wrap{
+  height: 100%;
+  position: relative;
+  :global{
+    .vscodeSpinWrap{
+      position: relative;
+      height: calc(~'100% - 30px');
+    }
+    .ant-spin-container{
+      position: relative;
+      height: 100%;
+    }
+  }
+}
+.handleWrap{
+  height: 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff;
+}
+.main{
+  display: flex;
+  // height: calc(~'100% - 50px');
+  position: absolute;
+  width: 100%;
+}
+.CodeWrap{
+  border: 1px solid #ccc;
+  background-color: #fff;
+}
+.previewWrap{
+  border: 1px solid #ccc;
+  background-color: #fff;
+}
+.btnwrap{
+  display: flex;
+}
+.vscodeFrame{
+  height: 100%;
+  width: 100%;
+}
+.previewFrame{
+  height: calc(~'100% - 30px');
+  width: 100%;
+}
+.rowBar{
+  cursor: ew-resize;
+  width: 10px;
+  background-color: rgba(0,0,0,0.2);
+}
+.colBar{
+  cursor: ns-resize;
+  width: 100%;
+  height: 10px;
+  background-color: rgba(0,0,0,0.2);;
+}

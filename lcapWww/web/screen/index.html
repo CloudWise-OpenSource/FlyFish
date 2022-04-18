@@ -1,0 +1,45 @@
+<!--
+ * @Descripttion: 
+ * @Author: zhangzhiyong
+ * @Date: 2021-12-29 15:13:02
+ * @LastEditors: zhangzhiyong
+ * @LastEditTime: 2022-01-06 16:23:19
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>数据可视化 - 预览</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="/favicon.ico" title="Favicon">
+    <style type="text/css">
+        html, body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        #container {
+            width: 100%;
+            height: 100%;
+            max-width: 100%;
+            max-height: 100%;
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+<div id="container"></div>
+
+<script type="text/javascript" src="config/env.js"></script>
+<script type="text/javascript" src="../../common/data-vi.js"></script>
+<script type="text/javascript">
+    window.onload = function () {
+        require(['data-vi/start'], function (start) {
+            start.initialize(document.getElementById('container'));
+        });
+    };
+</script>
+</body>
+</html>

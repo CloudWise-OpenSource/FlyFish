@@ -1,0 +1,52 @@
+.UserLayout {
+  background: url('~./loginBg.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  height: 100%;
+  position: relative;
+  .loginForm {
+    width: 28vw;
+    min-width: 448px;
+    background: #fff;
+    border-radius: @border-radius-base;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(30%, -50%);
+    padding:40px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .logo {
+    height: 52px;
+    margin-bottom: 40px;
+  }
+  .captchaCodeImg {
+    width: 100%;
+    line-height: 1.5;
+    height: 32px;
+    margin: 4px 0;
+    background: #e6e6e6;
+    cursor: pointer;
+  }
+  .tips {
+    margin-top: 24px;
+      width: 100%;
+      margin-bottom: 0 !important;
+      color: rgba(0, 0, 0, 0.4);
+      text-align: right;
+  }
+  :global {
+    .ant-form-item{
+      margin-bottom:24px !important
+    }
+    .ant-input{
+      height: 40px !important;
+    }
+    .ant-form-explain, .ant-form-extra{
+      position: absolute;
+      margin-top: 2px;
+    }
+}
+}

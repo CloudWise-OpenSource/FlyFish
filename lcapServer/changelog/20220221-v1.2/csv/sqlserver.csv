@@ -1,0 +1,9 @@
+﻿modeId,metric_key（指标标识）,metric_desc_cn（指标描述）,"单位
+",指标显示单位,指标类型,对应组件,对应模板位置,参考,备注,,,,,,,,,,
+sqlserver-node,sqlserver.database.active_transactions,SQL Server 实例上所有数据库的活动事务数。,事务,事务,状态类型,折线图,1、2,观测云,,,,,,,,,,,
+sqlserver-node,sqlserver.buffer.page_reads,表示每秒发出的物理数据库页面读取数。此统计数据显示所有数据库中的物理页面读取总数。,页,页/秒,性能类型,折线面积图,3、4,观测云,需计算,,,,,,,,,,
+sqlserver-node,sqlserver.buffer.page_writes,表示每秒发出的物理数据库页面写入数。,页,页/秒,性能类型,折线面积图,5、6,观测云,需计算,,,,,,,,,,
+sqlserver-node,sqlserver.database.backup_restore_throughput,每秒数据库备份和恢复操作的读/写吞吐量。,,,性能类型,折线面积图,7、8,观测云,需计算,,,,,,,,,,
+sqlserver-node,sqlserver.database.log_flushes,每秒的日志刷新次数。,刷新,刷新/秒,性能类型,折线面积图,9、10,观测云,需计算,,,,,,,,,,
+sqlserver-node,sqlserver.memory.memory_grants_pending,指定等待工作区内存授予的进程总数。,,,性能类型,折线面积图,11、12,观测云,,,,,,,,,,,
+sqlserver-node,sqlserver.memory.total_server_memory,指定服务器已使用内存管理器提交的内存量。,千字节,千字节,性能类型,折线面积图,13、14,观测云,,,,,,,,,,,

@@ -1,9 +1,0 @@
-{
-  "mysql": {
-    "driver": "mysql",
-    "host": "10.2.3.247",
-    "user": "root",
-    "password": "Admin@123",
-    "database": "solution_platform"
-  }
-}

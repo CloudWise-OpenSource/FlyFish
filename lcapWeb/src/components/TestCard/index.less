@@ -1,0 +1,165 @@
+.cardList {
+  // min-height: calc(100vh - 320px);
+  
+  .mybtn{
+    text-align: center;
+    font-size: 12px;
+    transform: scale(0.8);
+    white-space: nowrap;
+    height: 40px;
+    line-height: 40px;
+    border-radius: 10px;
+    border: 1px solid gray;
+    background-color: white;
+  }
+  .tags:not(:last-child){
+    margin-right: 5px;
+  }
+  .tagButton{
+    padding: 5px;
+    height: 22px;
+    border: 1px solid #d9d9d9;
+  }
+  .imgContainer{
+   position:relative;
+   overflow:hidden;
+   width:100%;
+   height: 100%;
+   padding-bottom:56%;
+  }
+  .tag{
+			position: absolute;
+			width: auto;
+			display: inline-block;
+			top: 20px;
+			left: 0;
+      width: 78px;
+      height: 24px;
+			z-index: 1;
+  }
+  .deleteTag{
+    position: absolute;
+    width: auto;
+    display: flex;
+    width: 24px;
+    height: 24px;
+    justify-content: center;
+    align-items: center;
+    top: -10px;
+    left: -10px;
+    z-index: 1;
+    border-radius: 50%;
+}
+  .closeTag{
+    position: absolute;
+    width: auto;
+    display: inline-block;
+    top: -12px;
+    left: -10px;
+    z-index: 1;border-radius: 50%;
+  }
+  .zhan{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    visibility: hidden;
+  }
+  .ben{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .img{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    object-fit: contain;
+    background-color:#FAFAFA;
+    img{
+      width: 100%;
+      height: 100%;
+    }
+    .spin{
+     
+      position: absolute;
+      left: 50%;
+      top: 50%;
+     
+    }
+  }
+  
+  :global {
+    .ant-progress-bg{
+      height: 6px !important;
+    }
+    .myAddCard{
+      border: 1px dashed lightgray !important;
+      .hoverImg {
+        width: 100%;
+        content: url('../../public/img/dashboard/old.jpg');
+      }
+      .addApplication{
+        height: 137px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 16px;
+        cursor: pointer;
+        i{
+          margin-right: 5px;
+          
+        }
+      }
+      &:hover{  
+        border: 1px dashed #1890FF !important;
+        .hoverImg{
+              content: url('../../public/img/dashboard/new.jpg');
+        }
+        .addApplication{
+          color: #1890FF !important;
+        }
+        
+      }
+    }
+    .titleOverflow .ant-btn{
+      padding: 0 8px !important;
+      &:hover{
+        border-color: #d9d9d9;
+        color:rgba(0, 0, 0, 0.65);
+      }
+      &:focus{
+        border-color: #d9d9d9;
+        color:rgba(0, 0, 0, 0.65);
+      }
+    }
+    .ant-card-meta-detail > div:not(:last-child){
+      margin-bottom: 0 !important;
+    }
+    .ant-col-8  .ant-card-cover{
+      min-height: 162px !important;
+    }
+    .ant-col-6  .ant-card-cover{
+      min-height: 76px !important;
+    }
+    
+    .ant-card-body{
+      padding: 10px 16px;
+    }
+    .ant-card-meta-description{
+      margin: 3px 0;
+      p{
+        margin-bottom: 5px !important;
+        
+      }
+    }
+}
+}
