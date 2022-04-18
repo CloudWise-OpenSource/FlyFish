@@ -67,4 +67,4 @@ $ git pull
 
 _获取更多关于 FlyFish 的技术资料，或加入 FlyFish 开发者交流群，可扫描下方二维码咨询。_
 
-<img src="https://gitee.com/CloudWise/fly-fish/raw/main/doc/images/Susie.png" width="550px"/>
+<img src="./doc/images/Susie.png" width="550px"/>
