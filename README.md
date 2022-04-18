@@ -1,13 +1,14 @@
 <div align="center">
   <a href="https://github.com/CloudWise-OpenSource/FlyFish"><img src="https://cdn.jsdelivr.net/gh/CloudWise-OpenSource/FlyFish/flyfishicon.png" alt="flyfish" /></a>
-  <div align="center">
+</div>
+
+# 飞鱼（FlyFish）
+
+  <div align="left">
     <a href="https://github.com/CloudWise-OpenSource/FlyFish/pulls"><img src="https://badgen.net/github/prs/CloudWise-OpenSource/FlyFish" /></a>
     <a href="https://github.com/CloudWise-OpenSource/FlyFish/blob/main/LICENSE"><img src="https://badgen.net/github/license/CloudWise-OpenSource/FlyFish" /></a>
     <a href="https://github.com/CloudWise-OpenSource/FlyFish/releases"><img src="https://badgen.net/github/release/CloudWise-OpenSource/FlyFish" /></a>
   </div>
-</div>
-
-# 飞鱼（FlyFish）
 
 ## 见码如面
 
