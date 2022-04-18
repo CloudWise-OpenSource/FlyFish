@@ -4,10 +4,10 @@ const platform = process.env.NODE_ENV || 'macos';
 let command = '';
 switch (platform) {
 	case 'macos':
-		command = 'macos/bin/code-server --config config.yaml'
+		command = 'cd macos && ./bin/code-server --config ../config.yaml'
 		break;
 	case 'linux':
-		command = 'linux/bin/code-server --config config.yaml'
+		command = 'cd linux && ./bin/code-server --config ../config.yaml'
 		break;
 	default:
 		break;
