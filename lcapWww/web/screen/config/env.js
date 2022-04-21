@@ -19,7 +19,7 @@ window.DATAVI_ENV = (function() {
     componentsDir: 'www/components',
     apiSuccessCode: 200,
 
-    yapiAddress: 'http://${CW_YAPI_SERVER_IP}:${CW_YAPI_SERVER_PORT}',
+    yapiAddress: 'http://127.0.0.1:3001',
 
     screenAPI: {
       // 大屏展示和编辑用到的API

@@ -90,6 +90,21 @@ module.exports = appInfo => {
   config.pathConfig = {
     staticDir,
     commonDirPath,
+
+    applicationPath: commonDirPath ? `${commonDirPath}/applications` : 'applications',
+    appTplPath: commonDirPath ? `${commonDirPath}/application_tpl` : 'application_tpl',
+    appBuildPath: commonDirPath ? `${commonDirPath}/application_build` : 'application_build',
+    defaultApplicationCoverPath: commonDirPath ? `/${commonDirPath}/application_tpl/public/cover.jpeg` : '/application_tpl/public/cover.jpeg',
+    appSourceTpl: commonDirPath ? `${commonDirPath}/application_source_template` : 'application_source_template',
+
+    componentsPath: commonDirPath ? `${commonDirPath}/components` : 'components',
+    componentsTplPath: commonDirPath ? `${commonDirPath}/component_tpl` : 'component_tpl',
+
+    commonPath: commonDirPath ? `${commonDirPath}/common` : 'common',
+    webPath: commonDirPath ? `${commonDirPath}/web` : 'web',
+
+    defaultComponentCoverPath: commonDirPath ? `/${commonDirPath}/component_tpl/public/cover.jpeg` : '/component_tpl/public/cover.jpeg',
+    initComponentVersion: 'v-current',
   };
 
   config.static = {
