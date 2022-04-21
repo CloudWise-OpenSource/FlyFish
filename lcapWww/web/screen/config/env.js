@@ -11,12 +11,12 @@
 'use strict';
 
 window.DATAVI_ENV = (function() {
-  const apiDomain = '/api';
+  const apiDomain = '';
 
   return {
     debug: true,
     apiDomain,
-    componentsDir: 'www/components',
+    componentsDir: '/components',
     apiSuccessCode: 200,
 
     yapiAddress: 'http://127.0.0.1:3001',
