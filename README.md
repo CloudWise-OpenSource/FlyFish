@@ -37,8 +37,8 @@
 
 ### 分支说明
 
-| 分支 | 说明 |
-| ---- | ---- |
+| 分支 | 说明   |
+| ---- | ------ |
 | main | 主分支 |
 
 ### 环境依赖
@@ -50,39 +50,46 @@
 
 ### 部署流程
 
-> 推荐使用 doc 目录内 flyfish 部署文档，后续有关部署流程、学习资料、FAQ 等统一放置 doc 目录中管理。Ï
+> 推荐使用 doc 目录内 flyfish 部署文档，后续有关部署流程、学习资料、FAQ 等统一放置 doc 目录中管理。
 
-更新中……
+- [基础环境准备篇](./doc/基础环境准备篇.md)
+- [code_server部署篇](./doc/code_server部署篇.md)
+- [FlyFish平台部署篇](./doc/FlyFish平台部署篇.md)
 
 ## 升级流程
 
 ```
 # 1、更新代码
-$ git checkout master
+$ git checkout main
 $ git pull
 
 ```
+
 ## Roadmap
 
 > FlyFish 2022 Roadmap
 
 ### 系统
+
 - 支持创建网格化画布应用
 - 支持响应式布局
 - 新增表单类应用
 
 ### 数据源
+
 - 增加数据源管理
-- 对接MySQL、MongoDB、Redis、Postgres等数据存储数据源
-- 对接HTTP API数据源
+- 对接 MySQL、MongoDB、Redis、Postgres 等数据存储数据源
+- 对接 HTTP API 数据源
 - 支持对数据源进行模型建表
 
 ### 数据处理
-- 支持根据数据表进行SQL查询
+
+- 支持根据数据表进行 SQL 查询
 - 支持查询的可视化
 - 新增复杂数据处理
 
 ### 用户管理
+
 - 用户管理和权限管控
 
 ## 欢迎加入

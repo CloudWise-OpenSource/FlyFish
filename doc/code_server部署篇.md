@@ -1,10 +1,12 @@
-# code_server 部署篇
+# LCAPCodeServer 部署篇
 
 > vscode 在线编码！
 
 <img src="./images/code_server.png" width='700' >
 
 ### 一、修改配置
+
+> 默认就是以下配置，无需修改！
 
 ```bash
 # 进入 code-server 目录
@@ -32,4 +34,4 @@ npm run macos-start
 
 ### 三、验证 code-server 部署是否成功
 
-访问链接：http://ip:8080
+访问链接：http://ip:8081
