@@ -1,6 +1,7 @@
 # LCAP 平台部署篇
 
 > ⚠️ 包含 server 和 web 部署！部署路径 data/app/fly-fish/
+> 防火墙要开放对应端口，默认 code-server:8081、前端: 8089、server: 7001、mongodb:27017
 
 ### 一、前端源码打包部署
 
@@ -26,6 +27,7 @@ npm run build
 # 修改配置
 vim dist/conf/env-config.js
 
+# vscodeFolderPrefix 修改为以下路径
 # vscodeFolderPrefix: '/data/app/fly-fish/lcapWww'
 
 ```
@@ -78,13 +80,14 @@ http://ip:8089
 
 ```bash
 # 进入目录
-cd /data/app/lcapServer/changelog/scripts
+cd /data/app/fly-fish/lcapServer/changelog
 
 # 安装依赖
 npm install
 
 # 初始化数据库
-NODE_ENV=development node ./initDatabase.js
+# 以下命令在 lcapServer 目录下执行
+npm run init-development-database
 
 # 提示以下内容意味初始化成功
 # init menu success
@@ -101,14 +104,24 @@ NODE_ENV=development node ./initDatabase.js
 # 以下命令在 lcapServer 下执行
 vim ./config/config.development.js
 
+# staticDir 修改为以下路径
 # const staticDir = '/data/app/fly-fish/lcapWww'
 # const serverIp = 'IP';
 
 # 安装依赖
+# 这里推荐使用 yarn 或者 cnpm 安装依赖
+# 社区小伙伴已验证 yarn 安装只需 52s 左右
+# npm 需要十分钟
+# npm install -g yarn
+yarn install
+或
 npm install
 
 # 启动后端服务
 npm run development
+
+# 停止后端服务
+npm run stop
 
 ```
 
