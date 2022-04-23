@@ -26,6 +26,7 @@ npm run build
 # 修改配置
 vim dist/conf/env-config.js
 
+# hostname = IP
 # vscodeFolderPrefix 修改为以下路径
 # vscodeFolderPrefix: '/data/app/fly-fish/lcapWww'
 
@@ -46,13 +47,13 @@ vim /etc/nginx/conf.d/FlyFish-2.1.0.conf
 server {
   listen       8089;
   server_name  FlyFish-2.1.0;
-  include /etc/nginx/mime.types;
   default_type application/octet-stream;
 
   # lcapServer 反向代理
   location ^~ /api/ {
+    proxy_pass http://127.0.0.1:7001/;
     # IP 替换成当前主机IP
-    proxy_pass http://IP:7001/;
+    proxy_cookie_domain 127.0.0.1 IP;
   }
 
   # lcapWeb
