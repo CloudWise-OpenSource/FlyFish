@@ -1,8 +1,6 @@
 # LCAP 平台部署篇
 
 > ⚠️ 包含 server 和 web 部署！部署路径 data/app/fly-fish/
->
-> 防火墙要开放对应端口，默认 code-server:8081、前端: 8089、server: 7001、mongodb:27017
 
 ### 一、前端源码打包部署
 
@@ -138,5 +136,7 @@ npm install
 ```
 
 ### 三、验证
+
+> 防火墙要开放对应端口，默认 code-server:8081、前端: 8089、server: 7001、mongodb:27017
 
 访问：http:ip:8089 注册、登录、开发组件大屏。
