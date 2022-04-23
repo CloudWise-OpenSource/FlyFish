@@ -1,4 +1,4 @@
-# LCAP 平台部署篇
+# FlyFish 平台部署篇
 
 > ⚠️ 包含 server 和 web 部署！部署路径 data/app/fly-fish/
 
@@ -51,9 +51,9 @@ server {
 
   # lcapServer 反向代理
   location ^~ /api/ {
-    proxy_pass http://127.0.0.1:7001/;
+    proxy_pass http://0.0.0.0:7001/;
     # IP 替换成当前主机IP
-    proxy_cookie_domain 127.0.0.1 IP;
+    proxy_cookie_domain 0.0.0.0 IP;
   }
 
   # lcapWeb
@@ -106,7 +106,8 @@ vim ./config/config.development.js
 
 # staticDir 修改为以下路径
 # const staticDir = '/data/app/fly-fish/lcapWww'
-# const serverIp = 'IP';
+# serverIp 修改为 0.0.0.0
+# const serverIp = '0.0.0.0';
 
 # 安装依赖
 # 这里推荐使用 yarn 或者 cnpm 安装依赖

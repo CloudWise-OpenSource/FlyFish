@@ -1,5 +1,5 @@
 /*
- * @Descripttion: 
+ * @Descripttion:
  * @Author: zhangzhiyong
  * @Date: 2021-12-06 10:32:18
  * @LastEditors: zhangzhiyong
@@ -18,12 +18,12 @@ module.exports = {
   prettierFixed: false,
   hot:true,
   isNoticeUpdate: false, // 是否开启升级通知
-  routerType: 'hash', // 路由类型browser|hash  默认 hash  
+  routerType: 'hash', // 路由类型browser|hash  默认 hash
   themes: [
     {
       name: 'light',
       entryPath: path.resolve(__dirname, './themes/light.js')
-    }, 
+    },
     {
       name: 'dark',
       entryPath: path.resolve(__dirname, './themes/dark.js')
@@ -39,7 +39,7 @@ module.exports = {
   },
   htmlPlugin: config => {
     config.excludeAssets = [];
-    config.title = 'LCAP';
+    config.title = 'FlyFish';
     return config;
   },
   copyPlugin:config=>{
