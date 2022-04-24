@@ -76,15 +76,30 @@ http://ip:8089
 
 > lcapServer 后端源码
 
-1. 初始化数据库
+1. 安装后端依赖
 
 ```bash
 # 进入目录
 cd /data/app/fly-fish/lcapServer/changelog
 
-# 安装依赖
+# 安装依赖（数据库初始化依赖）
 npm install
 
+# 安装依赖（后端依赖）
+# 以下命令在 lcapServer 下执行
+# 这里推荐使用 yarn 或者 cnpm 安装依赖
+# 社区小伙伴已验证 yarn 安装只需 52s 左右
+# npm 需要十分钟
+# npm install -g yarn
+yarn install
+或
+npm install
+
+```
+
+2. 初始化数据库并启动后端服务
+
+```bash
 # 初始化数据库
 # 以下命令在 lcapServer 目录下执行
 npm run init-development-database
@@ -95,11 +110,6 @@ npm run init-development-database
 # init user success
 # init component_categories success
 
-```
-
-2. 修改配置并启动后端服务
-
-```bash
 # 修改后端配置
 # 以下命令在 lcapServer 下执行
 vim ./config/config.development.js
@@ -108,15 +118,6 @@ vim ./config/config.development.js
 # const staticDir = '/data/app/fly-fish/lcapWww'
 # serverIp 修改为 0.0.0.0
 # const serverIp = '0.0.0.0';
-
-# 安装依赖
-# 这里推荐使用 yarn 或者 cnpm 安装依赖
-# 社区小伙伴已验证 yarn 安装只需 52s 左右
-# npm 需要十分钟
-# npm install -g yarn
-yarn install
-或
-npm install
 
 # 启动后端服务
 npm run development
