@@ -48,7 +48,7 @@ module.exports = {
     const { ctx, config, logger } = this;
 
     const opt = {
-      domain: config.cookieConfig.domain,
+      //domain: config.cookieConfig.domain,
       path: '/',
       maxAge: 1000 * 60 * 60 * 24 * 7, // Unit : second  default Max-Age is one week
       httpOnly: false,

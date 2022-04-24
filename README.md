@@ -53,9 +53,9 @@
 
 > 推荐使用 doc 目录内 flyfish 部署文档，后续有关部署流程、学习资料、FAQ 等统一放置 doc 目录中管理。
 
-- [基础环境准备篇](./doc/基础环境准备篇.md)
-- [code_server部署篇](./doc/code_server部署篇.md)
-- [FlyFish平台部署篇](./doc/FlyFish平台部署篇.md)
+- [01-基础环境准备篇](./doc/01-基础环境准备篇.md)
+- [02-FlyFish平台部署篇](./doc/02-FlyFish平台部署篇.md)
+- [03-code_server部署篇](./doc/03-code_server部署篇.md)
 
 ## 升级流程
 
@@ -64,6 +64,7 @@
 $ git checkout main
 $ git pull
 
+参照上述部署步骤中的01 -> 02 -> 03依次操作。
 ```
 
 ## Roadmap
