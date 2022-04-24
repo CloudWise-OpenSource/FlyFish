@@ -6,10 +6,10 @@
  * @param {Egg.EggAppInfo} appInfo app info
  */
 module.exports = appInfo => {
-  const staticDir = '/data/www';
+  const staticDir = '/data/app/FlyFish/lcapWww';
   const commonDirPath = '';
 
-  const serverIp = '127.0.0.1';
+  const serverIp = '0.0.0.0';
   const serverPort = 7001;
 
   const yapiServerIp = '127.0.0.1';

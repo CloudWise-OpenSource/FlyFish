@@ -15,7 +15,7 @@ window.LCAP_CONFIG = (function () {
     screenEditAddress:`http://${hostname}:7001/web/screen/editor.html`,
     screenViewAddress: `http://${hostname}:7001/web/screen/index.html`,
     vscodeAddress: `http://${hostname}:8081`,
-    vscodeFolderPrefix: '/data/app/lcapEE/lcapWww',
+    vscodeFolderPrefix: '/data/app/FlyFish/lcapWww',
     yapiAddress:`http://${hostname}:3001`,
     apiDomain:'/api',
     wwwAddress:`http://${hostname}:7001`,

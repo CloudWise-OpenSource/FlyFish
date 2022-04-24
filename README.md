@@ -57,14 +57,26 @@
 - [02-FlyFish平台部署篇](./doc/02-FlyFish平台部署篇.md)
 - [03-code_server部署篇](./doc/03-code_server部署篇.md)
 
+>  或执行一键脚本：
+```bash
+# 须使用root账户
+mkdir -p /data/app/
+cd /data/app/
+
+git clone -b main https://github.com/CloudWise-OpenSource/FlyFish.git FlyFish
+or 
+git clone -b main https://gitee.com/CloudWise/fly-fish.git FlyFish
+
+cd /data/app/FlyFish
+bash install.sh install
+```
+
 ## 升级流程
 
 ```
 # 1、更新代码
 $ git checkout main
 $ git pull
-
-参照上述部署步骤中的01 -> 02 -> 03依次操作。
 ```
 
 ## Roadmap
