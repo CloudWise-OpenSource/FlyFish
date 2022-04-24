@@ -59,6 +59,7 @@
 
 >  或执行一键脚本：
 ```bash
+# CentOS 7.5/7.6  x86-64
 # 须使用root账户
 mkdir -p /data/app/
 cd /data/app/
