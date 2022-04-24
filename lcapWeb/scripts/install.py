@@ -12,7 +12,7 @@ if python_version == 2:
 # 服务名称，按需修改
 SERVICE_NAME = "lcapWeb"
 
-class InstallDoccWeb(Core):
+class InstallLcapWeb(Core):
 
     def __init__(self):
         """
@@ -61,5 +61,5 @@ class InstallDoccWeb(Core):
         self.replace(config_path, place_holder_config_script)
 
 if __name__ == '__main__':
-    auto = InstallDoccWeb()
+    auto = InstallLcapWeb()
     auto.run()
