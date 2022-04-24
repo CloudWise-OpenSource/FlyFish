@@ -95,10 +95,16 @@ http://ip:8089
 1. 安装依赖
 
 ```bash
+### 安装主服务依赖
+cd /data/app/FlyFish/lcapServer/
+npm install
+
+### 安装初始化脚本依赖
 cd /data/app/FlyFish/lcapServer/changelog
 npm install
 
-cd /data/app/FlyFish/lcapServer/
+### 安装组件开发依赖
+cd /data/app/FlyFish/lcapWww/components
 npm install
 ```
 
