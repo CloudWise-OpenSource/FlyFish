@@ -10,7 +10,7 @@
 
 ```bash
 # 进入 code-server 目录
-cd code-server/
+cd lcapCodeServer
 
 # 修改 bind-addr 为 0.0.0.0 外网访问
 vim config.yaml
