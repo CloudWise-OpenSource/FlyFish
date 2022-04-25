@@ -110,6 +110,11 @@ deploy_flyfish_web() {
 
   sed -i "s/127.0.0.1/$local_ip/g" ./dist/conf/env-config.js
 
+  # 提示缺少 conf.d
+  cd /
+  mkdir /etc/nginx/conf.d
+  cd /data/app/FlyFish/lcapWeb
+
   cp FlyFish-2.1.0.conf /etc/nginx/conf.d/FlyFish-2.1.0.conf
 
   sed -i "s/IP/$local_ip/g" /etc/nginx/conf.d/FlyFish-2.1.0.conf
