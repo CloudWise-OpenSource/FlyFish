@@ -58,7 +58,7 @@ function init_system() {
     echo "export NODE_HOME=/usr/local/node/node-v14.9.0-linux-x64" >> /etc/profile
     echo 'export PATH=$NODE_HOME/bin:$PATH' >> /etc/profile
     source /etc/profile
-    npm config set registry https://registry.npm.taobao.org
+    npm config set registry=https://registry.npmmirror.com
     echo "node版本：" `node -v`
 
     echo "start install nvm"
