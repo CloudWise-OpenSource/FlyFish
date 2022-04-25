@@ -191,28 +191,28 @@ remove_system() {
   echo "start uninstall nginx"
   # systemctl stop nginx
   chkconfig nginx off
+  yum remove nginx -y
   rm -rf /usr/sbin/nginx
   rm -rf /etc/nginx
   rm -rf /etc/init.d/nginx
   rm -rf /etc/yum.repos.d/nginx.repo
-  yum remove nginx
 
   echo "start uninstall mongodb"
   systemctl stop mongod.service
-  yum erase $(rpm -qa | grep mongodb-org)
+  yum erase $(rpm -qa | grep mongodb-org) -y
   rm -r /var/log/mongodb
   rm -r /var/lib/mongo
   rm -rf /etc/yum.repos.d/mongodb-org-4.0.repo
 
   echo "start uninstall node.js && nvm"
   rm -rf /usr/local/node/
-  sed '/NODE_HOME/d' /etc/profile
+  sed -i '/NODE_HOME/d' /etc/profile
   cd ~
   rm -rf nvm
-  sed '/nvm/d' ~/.bashrc
+  sed -i '/nvm/d' ~/.bashrc
 
   echo "start uninstall git"
-  yum remove git
+  yum remove git -y
 
   echo "基础环境移除完毕。"
 }
