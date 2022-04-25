@@ -112,6 +112,8 @@ deploy_flyfish_web() {
 
   cp FlyFish-2.1.0.conf /etc/nginx/conf.d/FlyFish-2.1.0.conf
 
+  sed -i "s/IP/$local_ip/g" /etc/nginx/conf.d/FlyFish-2.1.0.conf
+
   systemctl restart nginx
 
   echo "部署前端结束。"
