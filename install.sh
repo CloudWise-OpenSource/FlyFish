@@ -111,7 +111,7 @@ deploy_flyfish_web() {
 
     sed -i "s/127.0.0.1/$local_ip/g" ./dist/conf/env-config.js
 
-    echo FlyFish-2.1.0.conf /etc/nginx/conf.d/FlyFish-2.1.0.conf
+    cp FlyFish-2.1.0.conf /etc/nginx/conf.d/FlyFish-2.1.0.conf
 
     systemctl restart nginx
 
