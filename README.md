@@ -77,6 +77,9 @@ git clone -b main https://gitee.com/CloudWise/fly-fish.git FlyFish
 
 cd /data/app/FlyFish
 bash install.sh install
+
+一键卸载
+bash install.sh uninstall
 ```
 
 ## 升级流程
