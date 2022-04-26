@@ -269,7 +269,7 @@ class ComponentsController extends BaseController {
   }
 
   async uploadComponentSource() {
-    const { ctx, config: { pathConfig: { staticDir, componentsPath, initComponentVersion } } } = this;
+    const { ctx, config: { pathConfig: { staticDir, commonDirPath, componentsPath, initComponentVersion } } } = this;
     const componentId = ctx.params.componentId;
 
     const file = ctx.request.files[0];
@@ -296,6 +296,11 @@ class ComponentsController extends BaseController {
       await exec(`sed -i -e "s#${oldId}#${componentId}#g" ${currentPath}/options.json`);
       await exec(`sed -i -e "s#${oldId}#${componentId}#g" ${currentPath}/index.html`);
       await exec(`sed -i -e "s#${oldId}#${componentId}#g" ${currentPath}/editor.html`);
+      await exec(`sed -i -e "s#\/components\/#\/${commonDirPath}\/components\/#g" ${currentPath}/editor.html`);
+      await exec(`sed -i -e "s#\/common\/#\/${commonDirPath}\/common\/#g" ${currentPath}/editor.html`);
+      await exec(`sed -i -e "s#\/components\/#\/${commonDirPath}\/components\/#g" ${currentPath}/index.html`);
+      await exec(`sed -i -e "s#\/common\/#\/${commonDirPath}\/common\/#g" ${currentPath}/index.html`);
+      await exec(`sed -i -e "s#\'components\'#\'${commonDirPath}\/components\'#g" ${currentPath}/env.js`);
 
       const buildDevPath = `${currentPath}/components`;
       if (fs.pathExistsSync(buildDevPath)) {
