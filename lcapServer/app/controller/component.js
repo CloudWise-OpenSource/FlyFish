@@ -295,6 +295,15 @@ class ComponentsController extends BaseController {
       await exec(`sed -i -e "s#${oldId}#${componentId}#g" ${currentPath}/src/setting.js`);
       await exec(`sed -i -e "s#${oldId}#${componentId}#g" ${currentPath}/options.json`);
       await exec(`sed -i -e "s#${oldId}#${componentId}#g" ${currentPath}/index.html`);
+      await exec(`sed -i -e "s#${oldId}#${componentId}#g" ${currentPath}/editor.html`);
+
+      const buildDevPath = `${currentPath}/components`;
+      if (fs.pathExistsSync(buildDevPath)) {
+        await exec(`sed -i -e "s#${oldId}#${componentId}#g" ${currentPath}/components/main.js`);
+        await exec(`sed -i -e "s#${oldId}#${componentId}#g" ${currentPath}/components/main.js.map`);
+        await exec(`sed -i -e "s#${oldId}#${componentId}#g" ${currentPath}/components/setting.js`);
+        await exec(`sed -i -e "s#${oldId}#${componentId}#g" ${currentPath}/components/setting.js.map`);
+      }
     } finally {
       await fs.remove(file.filepath);
       await fs.remove(uploadDir);
