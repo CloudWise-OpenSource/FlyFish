@@ -218,9 +218,6 @@ remove_system() {
   rm -rf nvm
   sed -i '/nvm/d' ~/.bashrc
 
-  echo "start uninstall git"
-  yum remove git -y
-
   echo "基础环境移除完毕。"
 }
 
