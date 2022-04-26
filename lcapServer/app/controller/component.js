@@ -7,6 +7,9 @@ const BaseController = require('./base');
 const CODE = require('../lib/error');
 const _ = require('lodash');
 const Enum = require('../lib/enum');
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
+
 class ComponentsController extends BaseController {
   async updateCategory() {
     const { ctx, app, service } = this;
@@ -285,21 +288,13 @@ class ComponentsController extends BaseController {
         await fs.copy(uploadDir, currentPath);
       }
 
-      const mainJsPath = path.resolve(currentPath, 'src/main.js');
-      const mainJsOrigin = await fs.readFile(mainJsPath, { encoding: 'utf8' });
-      const mainJsReplacement = mainJsOrigin.replace(/registerComponent\((.+?)\,(.+?)\,\sComponent\);/, `registerComponent(\'${componentId}\', \'${initComponentVersion}\', Component);`);
-      await fs.writeFile(mainJsPath, mainJsReplacement);
+      const optionsJson = fs.readJSONSync(`${currentPath}/options.json`);
+      const oldId = _.get(optionsJson, [ 'components', 0, 'type' ]);
 
-      const settingJsPath = path.resolve(currentPath, 'src/setting.js');
-      const settingJsOrigin = await fs.readFile(settingJsPath, { encoding: 'utf8' });
-      const settingJsReplacement = settingJsOrigin.replace(/registerComponentOptionsSetting\((.+?)\,(.+?)\,\sOptionsSetting\);/, `registerComponentOptionsSetting(\'${componentId}\', \'${initComponentVersion}\', OptionsSetting);`)
-        .replace(/registerComponentDataSetting\((.+?)\,(.+?)\,\sDataSetting\);/, `registerComponentDataSetting(\'${componentId}\', \'${initComponentVersion}\', DataSetting);`);
-      await fs.writeFile(settingJsPath, settingJsReplacement);
-
-      const indexHtmlPath = path.resolve(currentPath, 'index.html');
-      const indexHtmlOrigin = await fs.readFile(indexHtmlPath, { encoding: 'utf8' });
-      const indexHtmlReplacement = indexHtmlOrigin.replace(/www\/components\/(.+?)\/(.+?)\/env.js/, `www/components/${componentId}/${initComponentVersion}/env.js`);
-      await fs.writeFile(indexHtmlPath, indexHtmlReplacement);
+      await exec(`sed -i -e "s#${oldId}#${componentId}#g" ${currentPath}/src/main.js`);
+      await exec(`sed -i -e "s#${oldId}#${componentId}#g" ${currentPath}/src/setting.js`);
+      await exec(`sed -i -e "s#${oldId}#${componentId}#g" ${currentPath}/options.json`);
+      await exec(`sed -i -e "s#${oldId}#${componentId}#g" ${currentPath}/index.html`);
     } finally {
       await fs.remove(file.filepath);
       await fs.remove(uploadDir);
