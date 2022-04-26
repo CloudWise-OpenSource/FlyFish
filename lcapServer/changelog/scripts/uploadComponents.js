@@ -17,7 +17,7 @@ const initComponentVersion = config.get('pathConfig.initComponentVersion');
 const uploadDir = path.resolve('upload');
 
 const filename = process.argv[2];
-const newStaticPathPrefix = process.argv[3];
+const newStaticPathPrefix = process.argv[3] || '/lcapWeb/www';
 
 const extractDir = `${uploadDir}/${filename.slice(0, -4)}`;
 
@@ -68,43 +68,46 @@ async function init() {
       await Promise.all(chunk.map(async component => {
         const componentId = component._id;
         delete component._id;
-        Object.assign(component, {
+
+        component.cover = (component.cover === '/component_tpl/public/cover.png') ? '/component_tpl/public/cover.jpeg' : component.cover;
+        const updateComponentInfo = {
+          projects: [],
+          tags: [],
+          applications: [],
+          develop_status: component.develop_status,
+          status: 'valid',
+          name: component.name,
+          category: basicCategoryInfo.id,
+          sub_category: basicSubCategoryInfo.id,
+          type: 'common',
           versions: (component.versions || []).map(version => {
             version.time = new Date(version.time);
             return version;
           }),
-          applications: [],
-          projects: [],
-          tags: [],
-          type: 'common',
           cover: newStaticPathPrefix ? `${newStaticPathPrefix}${component.cover}` : component.cover,
-          category: basicCategoryInfo.id,
-          sub_category: basicSubCategoryInfo.id,
           creator: adminId,
           updater: adminId,
           create_time: new Date(),
           update_time: new Date(),
-        });
+        };
 
-        delete component.project_id;
         await db.collection('components').updateOne(
           { _id: ObjectId(componentId) },
-          { $set: component, $setOnInsert: { _id: ObjectId(componentId) } },
+          { $set: updateComponentInfo, $setOnInsert: { _id: ObjectId(componentId) } },
           { upsert: true }
         );
 
         await exec(`cd ${staticDir}/${componentsPath} && tar -xzvf ${componentId}.tar`, { maxBuffer: 1024 * 1024 * 1024 });
 
         if (newStaticPathPrefix) {
-          // editor.html
-          await exec(`sed -i -e "s#\/components\/#${newStaticPathPrefix}\/components\/#g" ${staticDir}/${componentsPath}/${componentId}/${initComponentVersion}/editor.html`);
-          await exec(`sed -i -e "s#\/common\/#${newStaticPathPrefix}\/common\/#g" ${staticDir}/${componentsPath}/${componentId}/${initComponentVersion}/editor.html`);
-          // index.html
-          await exec(`sed -i -e "s#\/components\/#${newStaticPathPrefix}\/components\/#g" ${staticDir}/${componentsPath}/${componentId}/${initComponentVersion}/index.html`);
-          await exec(`sed -i -e "s#\/common\/#${newStaticPathPrefix}\/common\/#g" ${staticDir}/${componentsPath}/${componentId}/${initComponentVersion}/index.html`);
-
-          // env.js
-          await exec(`sed -i -e "s#\'components\'#\'${newStaticPathPrefix.slice(1)}\/components\'#g" ${staticDir}/${componentsPath}/${componentId}/${initComponentVersion}/env.js`);
+          const comVersion = `${staticDir}/${componentsPath}/${componentId}/${initComponentVersion}`;
+          if (fs.pathExistsSync(comVersion)) {
+            await exec(`sed -i -e "s#\/components\/#${newStaticPathPrefix}\/components\/#g" ${comVersion}/editor.html`);
+            await exec(`sed -i -e "s#\/common\/#${newStaticPathPrefix}\/common\/#g" ${comVersion}/editor.html`);
+            await exec(`sed -i -e "s#\/components\/#${newStaticPathPrefix}\/components\/#g" ${comVersion}/index.html`);
+            await exec(`sed -i -e "s#\/common\/#${newStaticPathPrefix}\/common\/#g" ${comVersion}/index.html`);
+            await exec(`sed -i -e "s#\'components\'#\'${newStaticPathPrefix.slice(1)}\/components\'#g" ${comVersion}/env.js`);
+          }
         }
 
         await fs.remove(`${staticDir}/${componentsPath}/${componentId}.tar`);
