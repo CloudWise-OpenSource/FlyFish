@@ -182,6 +182,9 @@ stop_flyfish() {
   echo "停止运行FlyFish前端："
   systemctl stop nginx
 
+  cd ~
+  source nvm/nvm.sh
+
   echo "停止运行FlyFish后端："
   cd /data/app/FlyFish/lcapServer/
   npm run stop
@@ -193,7 +196,7 @@ stop_flyfish() {
 }
 
 remove_system() {
-  echo "开始移除基础环境：nginx mongodb pm2 node.js nvm git"
+  echo "开始移除基础环境：nginx mongodb pm2 node.js nvm"
 
   echo "start uninstall nginx"
   # systemctl stop nginx
