@@ -52,9 +52,9 @@
 ### 开放端口
 |服务台 | 端口 |
 | ----- | ------ |
-| LcapWeb端口(nginx静态资源代理)   | 8089 |
-| LcapCodeServer(在线编辑器)端口   | 8081 |
-| LcapServer(主后端服务)端口       | 7001 |
+| FlyfishWeb端口(nginx静态资源代理)   | 8089 |
+| FlyfishCodeServer(在线编辑器)端口   | 8081 |
+| FlyfishServer(主后端服务)端口       | 7001 |
 
 ### 部署流程
 
