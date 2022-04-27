@@ -112,7 +112,10 @@ deploy_flyfish_web() {
 
   # 提示缺少 conf.d
   cd /
-  mkdir /etc/nginx/conf.d
+  tempPath="/etc/nginx/conf.d"
+  if [ ! -d "$tempPath" ]; then
+    mkdir $tempPath
+  fi
   cd /data/app/FlyFish/lcapWeb
 
   cp FlyFish-2.1.0.conf /etc/nginx/conf.d/FlyFish-2.1.0.conf
@@ -200,7 +203,8 @@ remove_system() {
 
   echo "start uninstall nginx"
   # systemctl stop nginx
-  chkconfig nginx off
+  # chkconfig nginx off
+  systemctl disable nginx.service
   yum remove nginx -y
   rm -rf /usr/sbin/nginx
   rm -rf /etc/nginx
