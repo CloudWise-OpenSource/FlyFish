@@ -112,7 +112,10 @@ deploy_flyfish_web() {
 
   # 提示缺少 conf.d
   cd /
-  mkdir /etc/nginx/conf.d
+  tempPath="/etc/nginx/conf.d"
+  if [ ! -d "$tempPath" ]; then
+    mkdir $tempPath
+  fi
   cd /data/app/FlyFish/lcapWeb
 
   cp FlyFish-2.1.0.conf /etc/nginx/conf.d/FlyFish-2.1.0.conf
@@ -182,6 +185,9 @@ stop_flyfish() {
   echo "停止运行FlyFish前端："
   systemctl stop nginx
 
+  cd ~
+  source nvm/nvm.sh
+
   echo "停止运行FlyFish后端："
   cd /data/app/FlyFish/lcapServer/
   npm run stop
@@ -193,11 +199,12 @@ stop_flyfish() {
 }
 
 remove_system() {
-  echo "开始移除基础环境：nginx mongodb pm2 node.js nvm git"
+  echo "开始移除基础环境：nginx mongodb pm2 node.js nvm"
 
   echo "start uninstall nginx"
   # systemctl stop nginx
-  chkconfig nginx off
+  # chkconfig nginx off
+  systemctl disable nginx.service
   yum remove nginx -y
   rm -rf /usr/sbin/nginx
   rm -rf /etc/nginx
