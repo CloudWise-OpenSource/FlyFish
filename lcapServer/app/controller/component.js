@@ -297,13 +297,13 @@ class ComponentsController extends BaseController {
       await exec(`sed -i -e "s#${oldId}#${componentId}#g" ${currentPath}/index.html`);
       await exec(`sed -i -e "s#${oldId}#${componentId}#g" ${currentPath}/editor.html`);
 
-      if (commonDirPath) {
-        await exec(`sed -i -e 's#src=".*/components/#src="/${commonDirPath}/components/#g' ${currentPath}/editor.html`);
-        await exec(`sed -i -e 's#src=".*/common/#src="/${commonDirPath}/common/#g' ${currentPath}/editor.html`);
-        await exec(`sed -i -e 's#src=".*/components/#src="/${commonDirPath}/components/#g' ${currentPath}/index.html`);
-        await exec(`sed -i -e 's#src=".*/common/#src="/${commonDirPath}/common/#g' ${currentPath}/index.html`);
-        await exec(`sed -i -e "s#componentsDir.*components'#componentsDir: '${commonDirPath}/components'#g" ${currentPath}/env.js`);
-      }
+      const replaceStr = commonDirPath ? `/${commonDirPath}` : commonDirPath;
+      await exec(`sed -i -e 's#src=".*/components/#src="${replaceStr}/components/#g' ${currentPath}/editor.html`);
+      await exec(`sed -i -e 's#src=".*/common/#src="${replaceStr}/common/#g' ${currentPath}/editor.html`);
+      await exec(`sed -i -e 's#src=".*/components/#src="${replaceStr}/components/#g' ${currentPath}/index.html`);
+      await exec(`sed -i -e 's#src=".*/common/#src="${replaceStr}/common/#g' ${currentPath}/index.html`);
+
+      await exec(`sed -i -e "s#componentsDir.*components'#componentsDir: '${commonDirPath ? commonDirPath + '/components' : 'components'}'#g" ${currentPath}/env.js`);
 
       const buildDevPath = `${currentPath}/components`;
       if (fs.pathExistsSync(buildDevPath)) {
