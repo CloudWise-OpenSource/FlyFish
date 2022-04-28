@@ -300,6 +300,7 @@ class ComponentsController extends BaseController {
       const replaceStr = commonDirPath ? `/${commonDirPath}` : commonDirPath;
       await exec(`sed -i -e 's#src=".*/components/#src="${replaceStr}/components/#g' ${currentPath}/editor.html`);
       await exec(`sed -i -e 's#src=".*/common/#src="${replaceStr}/common/#g' ${currentPath}/editor.html`);
+      await exec(`sed -i -e 's#href=".*/common/#href="${replaceStr}/common/#g' ${currentPath}/editor.html`);
       await exec(`sed -i -e 's#src=".*/components/#src="${replaceStr}/components/#g' ${currentPath}/index.html`);
       await exec(`sed -i -e 's#src=".*/common/#src="${replaceStr}/common/#g' ${currentPath}/index.html`);
 
