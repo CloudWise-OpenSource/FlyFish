@@ -277,6 +277,8 @@ class ComponentsController extends BaseController {
     const uploadDir = `${staticDir}/${componentsPath}/${componentId}/${filename}_${Date.now()}`;
     const currentPath = `${staticDir}/${componentsPath}/${componentId}/${initComponentVersion}`;
     try {
+      await exec(`cd ${currentPath} && rm -rf ./*`);
+
       await fs.copy(file.filepath, `${uploadDir}/${file.filename}`);
       const zip = new AdmZip(`${uploadDir}/${file.filename}`);
       zip.extractAllTo(uploadDir, true);
