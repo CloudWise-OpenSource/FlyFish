@@ -300,6 +300,7 @@ class ComponentsController extends BaseController {
       if (commonDirPath) {
         await exec(`sed -i -e 's#src=".*/components/#src="/${commonDirPath}/components/#g' ${currentPath}/editor.html`);
         await exec(`sed -i -e 's#src=".*/common/#src="/${commonDirPath}/common/#g' ${currentPath}/editor.html`);
+        await exec(`sed -i -e 's#href=".*/common/#href="/${commonDirPath}/common/#g' ${currentPath}/editor.html`);
         await exec(`sed -i -e 's#src=".*/components/#src="/${commonDirPath}/components/#g' ${currentPath}/index.html`);
         await exec(`sed -i -e 's#src=".*/common/#src="/${commonDirPath}/common/#g' ${currentPath}/index.html`);
         await exec(`sed -i -e "s#componentsDir.*components'#componentsDir: '${commonDirPath}/components'#g" ${currentPath}/env.js`);
