@@ -46,7 +46,8 @@ function init_system() {
   echo "开始准备环境：git node.js nvm pm2 mongodb nginx"
 
   echo "start install git"
-  yum install git
+  yum install git -y
+  yum install at-spi2-atk libxkbcommon nss -y
 
   echo "start install node.js"
   mkdir -p /usr/local/node/
@@ -130,10 +131,10 @@ deploy_flyfish_web() {
 deploy_flyfish_server() {
   echo "开始部署FlyFish后端："
   cd /data/app/FlyFish/lcapServer/changelog
-  npm install
+  npm install -g puppeteer --unsafe-perm=true
 
   cd /data/app/FlyFish/lcapServer/
-  npm install
+  npm install -g puppeteer --unsafe-perm=true
 
   echo " 开始初始化数据库："
   npm run init-development-database
