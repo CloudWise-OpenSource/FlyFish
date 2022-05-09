@@ -256,10 +256,57 @@ function uninstall_flyfish() {
   fi
 }
 
+get_source_code() {
+
+  echo "获取FlyFish最新代码"
+  git checkout main
+  git pull origin main
+
+}
+
+reinstall_flyfish() {
+
+  systemctl start nginx
+  deploy_flyfish_web
+
+  echo "开始部署FLyFish后端："
+  cd /data/app/FlyFish/lcapServer/
+  npm install
+  npm run development
+  echo "部署后端结束。"
+
+  deploy_flyfish_code_server
+
+}
+
+function update_flyfish() {
+  read -p "是否更新FlyFish？是(Y)，否（N）" value
+
+  if [[ $value == "Y" ]] || [[ $value == "y" ]]; then
+
+    get_local_ip
+
+    stop_flyfish
+
+    reinstall_flyfish
+
+    echo_flyfish_info
+
+    echo "更新成功！"
+    exit 1
+  elif [[ $value == "N" ]] || [[ $value == "n" ]]; then
+    echo "取消更新！"
+    exit 1
+  else
+    echo "请输入Y或者N"
+    exit 1
+  fi
+}
+
 check_user
 
 if [[ $# -eq 0 ]]; then
-  echo "bash install.sh [ install | uninstall ]"
+  echo "bash flyfish.sh [ install | uninstall | update ]"
 else
   case $1 in
   install)
@@ -269,6 +316,10 @@ else
   uninstall)
     shift
     uninstall_flyfish
+    ;;
+  update)
+    shift
+    update_flyfish
     ;;
   esac
 fi
