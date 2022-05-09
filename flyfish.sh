@@ -131,18 +131,18 @@ deploy_flyfish_web() {
 deploy_flyfish_server() {
   echo "开始部署FlyFish后端："
   cd /data/app/FlyFish/lcapServer/changelog
-  npm install -g puppeteer --unsafe-perm=true
+  npm install
 
   cd /data/app/FlyFish/lcapServer/
-  npm install -g puppeteer --unsafe-perm=true
+  npm install --unsafe-perm=true
 
-  echo " 开始初始化数据库："
+  echo "开始初始化数据库："
   npm run init-development-database
-  echo " 初始化数据库结束。"
+  echo "初始化数据库结束。"
 
   npm run development
 
-  echo " 初始化组件开发环境:"
+  echo "初始化组件开发环境:"
   cd /data/app/FlyFish/lcapWww/components
   npm install
   echo "部署后端结束。"
