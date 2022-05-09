@@ -102,11 +102,11 @@ async function init() {
         if (newStaticPathPrefix) {
           const comVersion = `${staticDir}/${componentsPath}/${componentId}/${initComponentVersion}`;
           if (fs.pathExistsSync(comVersion)) {
-            await exec(`sed -i -e 's#src=".*/components/#src="/${newStaticPathPrefix}/components/#g' ${comVersion}/editor.html`);
-            await exec(`sed -i -e 's#src=".*/common/#src="/${newStaticPathPrefix}/common/#g' ${comVersion}/editor.html`);
-            await exec(`sed -i -e 's#src=".*/components/#src="/${newStaticPathPrefix}/components/#g' ${comVersion}/index.html`);
-            await exec(`sed -i -e 's#src=".*/common/#src="/${newStaticPathPrefix}/common/#g' ${comVersion}/index.html`);
-            await exec(`sed -i -e "s#componentsDir.*components'#componentsDir: '${newStaticPathPrefix}/components'#g" ${comVersion}/env.js`);
+            await exec(`sed -i -e 's#src=".*/components/#src="${newStaticPathPrefix}/components/#g' ${comVersion}/editor.html`);
+            await exec(`sed -i -e 's#src=".*/common/#src="${newStaticPathPrefix}/common/#g' ${comVersion}/editor.html`);
+            await exec(`sed -i -e 's#src=".*/components/#src="${newStaticPathPrefix}/components/#g' ${comVersion}/index.html`);
+            await exec(`sed -i -e 's#src=".*/common/#src="${newStaticPathPrefix}/common/#g' ${comVersion}/index.html`);
+            await exec(`sed -i -e "s#componentsDir.*components'#componentsDir: '${newStaticPathPrefix.slice(1)}/components'#g" ${comVersion}/env.js`);
           }
         }
 

@@ -193,13 +193,13 @@ const ComponentDevelop = observer((props) => {
                                         setCopyModalvisible(true);
                                     }}
                                 >复制组件</div>
-                                {/* <div
+                                <div
                                     onClick={() => {
                                         setUploadId(record.id);
                                         setUploadProgress(0);
                                         setImportModalvisible(true);
                                     }}
-                                >导入源码</div> */}
+                                >导入源码</div>
                                 <div
                                     onClick={() => {
                                         if (record.exportStatus) {
