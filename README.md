@@ -84,6 +84,10 @@ bash flyfish.sh install
 bash flyfish.sh uninstall
 
 # 一键更新
+# FlyFish-2.1.1 升级至 FlyFish-2.1.2
+git checkout main
+git pull origin main
+
 bash flyfish.sh update
 ```
 
