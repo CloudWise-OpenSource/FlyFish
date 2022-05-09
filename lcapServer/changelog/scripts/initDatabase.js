@@ -214,11 +214,6 @@ async function initMenu() {
     const menuInfo = {
       menus: [
         {
-          name: '工作台',
-          url: '/dashboard',
-          index: 1,
-        },
-        {
           name: '应用创建',
           url: '/app',
           index: 2,
@@ -241,23 +236,6 @@ async function initMenu() {
           ],
         },
         {
-          name: '模板库',
-          url: '/template',
-          index: 6,
-          children: [
-            {
-              name: '应用模板库',
-              url: '/template/apply-template',
-              index: 7,
-            },
-            {
-              name: '组件库',
-              url: '/template/library-template',
-              index: 8,
-            },
-          ],
-        },
-        {
           name: '用户管理',
           url: '/user',
           index: 9,
@@ -271,23 +249,6 @@ async function initMenu() {
               name: '角色列表',
               url: '/user/role-manage',
               index: 11,
-            },
-          ],
-        },
-        {
-          name: 'API应用服务层',
-          url: '/api',
-          index: 12,
-          children: [
-            {
-              name: 'API列表',
-              url: '/api/api-list',
-              index: 13,
-            },
-            {
-              name: '应用管理',
-              url: '/api/api-manage',
-              index: 14,
             },
           ],
         },
