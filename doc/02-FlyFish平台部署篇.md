@@ -1,10 +1,11 @@
 # FlyFish 平台部署篇
 
 > ⚠️ 包含 server 和 web 部署！部署路径 /data/app/FlyFish/
-```
+
+```bash
 cd /data/app/FlyFish
-# 切换Node源
-npm config set registry https://registry.npm.taobao.org
+# 切换 npm 源
+npm config set registry https://registry.npmmirror.com
 ```
 
 ### 一、前端源码打包部署
@@ -62,6 +63,7 @@ server {
   listen       8089;
   server_name  FlyFish-2.1.0;
   default_type application/octet-stream;
+  client_max_body_size 100m;
 
   # lcapServer 反向代理
   location ^~ /api/ {
@@ -109,6 +111,7 @@ npm install
 ```
 
 2. 初始化数据库
+
 ```bash
 # 初始化数据库
 cd /data/app/FlyFish/lcapServer/
@@ -160,5 +163,5 @@ npm install
 
 访问：http:ip:8089 注册、登录、开发组件大屏。
 
- - 初始账号：admin
- - 密码：utq#SpV!
+- 初始账号：admin
+- 密码：utq#SpV!
