@@ -82,6 +82,9 @@ bash flyfish.sh install
 
 # 一键卸载
 bash flyfish.sh uninstall
+
+# 一键更新
+bash flyfish.sh update
 ```
 
 ## 升级流程
