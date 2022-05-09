@@ -288,9 +288,9 @@ function update_flyfish() {
 
     stop_flyfish
 
-    get_source_code
-
     reinstall_flyfish
+
+    echo_flyfish_info
 
     echo "更新成功！"
     exit 1
