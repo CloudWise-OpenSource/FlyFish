@@ -129,7 +129,7 @@ $ git pull
 ### 贡献者名单
 感谢那些为FlyFish做出贡献的开发者，无论是issue问题、文档翻译、代码贡献，FlyFish的发展离不开你的支持
 | 第一列    | 第二列   |  第三列   | 
-| --------| ---------| -------- |
+| :--------| :---------| :-------- |
 | [maxDwq](https://github.com/maxDwq)| [jincheny](https://github.com/jincheny) | [Neeke](https://github.com/Neeke) |
 | [tiger wang](https://github.com/xiaohu12685)| [Jaden.Li](https://github.com/imjaden) | [osramywj](https://github.com/osramywj)|
 | [suger](https://github.com/sssssssugar)| [Cary Zhou](https://github.com/YouYe) | [soulferryman](https://github.com/soulferryman) |
