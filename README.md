@@ -126,6 +126,16 @@ $ git pull
 
 - 用户管理和权限管控
 
+### 贡献者名单
+感谢那些为FlyFish做出贡献的开发者，无论是issue问题、文档翻译、代码贡献，FlyFish的发展离不开你的支持
+| 第一列    | 第二列   |  第三列   | 
+| --------| ---------| -------- |
+| [maxDwq](https://github.com/maxDwq)| [jincheny](https://github.com/jincheny) | [Neeke](https://github.com/Neeke) |
+| [tiger wang](https://github.com/xiaohu12685)| [Jaden.Li](https://github.com/imjaden) | [osramywj](https://github.com/osramywj)|
+| [suger](https://github.com/sssssssugar)| [Cary Zhou](https://github.com/YouYe) | [soulferryman](https://github.com/soulferryman) |
+| [aiwhj](https://github.com/aiwhj) | [zengqiu](https://github.com/zengqiu) | [Rise.Hao（郝玉鹏)](https://github.com/RiseHao1029) |
+| [Markuuuu](https://github.com/Markuuuu) | [郝少聪](https://github.com/laocong) | |
+
 ## 欢迎加入
 
 _获取更多关于 FlyFish 的技术资料，或加入 FlyFish 开发者交流群，可扫描下方二维码咨询。_
