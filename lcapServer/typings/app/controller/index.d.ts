@@ -3,8 +3,10 @@
 
 import 'egg';
 import ExportApplication = require('../../../app/controller/application');
+import ExportApplicationOpensource = require('../../../app/controller/application_opensource');
 import ExportBase = require('../../../app/controller/base');
 import ExportComponent = require('../../../app/controller/component');
+import ExportComponentOpensource = require('../../../app/controller/component_opensource');
 import ExportDashboard = require('../../../app/controller/dashboard');
 import ExportMenu = require('../../../app/controller/menu');
 import ExportProject = require('../../../app/controller/project');
@@ -16,8 +18,10 @@ import ExportUser = require('../../../app/controller/user');
 declare module 'egg' {
   interface IController {
     application: ExportApplication;
+    applicationOpensource: ExportApplicationOpensource;
     base: ExportBase;
     component: ExportComponent;
+    componentOpensource: ExportComponentOpensource;
     dashboard: ExportDashboard;
     menu: ExportMenu;
     project: ExportProject;

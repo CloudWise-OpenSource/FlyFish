@@ -6,21 +6,22 @@
  * @param {Egg.EggAppInfo} appInfo app info
  */
 module.exports = appInfo => {
-  const staticDir = '/data/app/FlyFish/lcapWww';
+  const staticDir = '/data/www';
   const commonDirPath = '';
 
-  const serverIp = '0.0.0.0';
+  const serverIp = '10.2.3.56';
   const serverPort = 7001;
 
-  const yapiServerIp = '127.0.0.1';
+  const yapiServerIp = '10.2.3.56';
   const yapiServerPort = 3001;
 
-  const mongodbIp = '127.0.0.1';
+  const mongodbIp = '10.2.3.56';
   const mongodbPort = 27017;
+  const mongodbUsername = 'admin';
+  const mongodbPassword = encodeURIComponent('Yzh@redis_123');
 
-  const docpServerIp = '127.0.0.1';
+  const docpServerIp = '10.0.3.142';
   const docpServerPort = 18080;
-
   /**
    * built-in config
    * @type {Egg.EggAppConfig}
@@ -79,21 +80,6 @@ module.exports = appInfo => {
   config.pathConfig = {
     staticDir,
     commonDirPath,
-
-    applicationPath: commonDirPath ? `${commonDirPath}/applications` : 'applications',
-    appTplPath: commonDirPath ? `${commonDirPath}/application_tpl` : 'application_tpl',
-    appBuildPath: commonDirPath ? `${commonDirPath}/application_build` : 'application_build',
-    defaultApplicationCoverPath: commonDirPath ? `/${commonDirPath}/application_tpl/public/cover.jpeg` : '/application_tpl/public/cover.jpeg',
-    appSourceTpl: commonDirPath ? `${commonDirPath}/application_source_template` : 'application_source_template',
-
-    componentsPath: commonDirPath ? `${commonDirPath}/components` : 'components',
-    componentsTplPath: commonDirPath ? `${commonDirPath}/component_tpl` : 'component_tpl',
-
-    commonPath: commonDirPath ? `${commonDirPath}/common` : 'common',
-    webPath: commonDirPath ? `${commonDirPath}/web` : 'web',
-
-    defaultComponentCoverPath: commonDirPath ? `/${commonDirPath}/component_tpl/public/cover.jpeg` : '/component_tpl/public/cover.jpeg',
-    initComponentVersion: 'v-current',
   };
 
   config.services = {

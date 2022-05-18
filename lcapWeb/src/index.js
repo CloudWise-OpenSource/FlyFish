@@ -1,3 +1,10 @@
+/*
+ * @Descripttion: 
+ * @Author: zhangzhiyong
+ * @Date: 2022-05-10 15:55:28
+ * @LastEditors: zhangzhiyong
+ * @LastEditTime: 2022-05-11 15:44:11
+ */
 import React from 'react';
 import ReactDOM from 'react-dom';
 
@@ -7,8 +14,8 @@ import './assets/css/index.less';
 import singleSpaReact from 'single-spa-react';
 
 const isInPortal = !!document.querySelector('#singlespa-container');
-const rootEle = isInPortal?document.getElementById("lcap-root"):document.getElementById("root"); // 根据产品名称进行修改 xxx-root
-
+// const rootEle = isInPortal?document.getElementById("lcap-root"):document.getElementById("root"); // 根据产品名称进行修改 xxx-root
+const rootEle = document.getElementById("lcap-root");
 if(rootEle) {
   ReactDOM.render(
     <Root />,

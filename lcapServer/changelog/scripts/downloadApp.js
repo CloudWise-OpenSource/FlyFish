@@ -9,7 +9,7 @@ const exec = util.promisify(require('child_process').exec);
 const _ = require('lodash');
 
 const mongoUrl = config.get('mongoose.clients.flyfish.url');
-const staticDir = config.get('pathConfig.staticDir');
+const staticDir = config.get('pathConfig.staticDir') + config.get('pathConfig.commonDirPath');
 
 const appId = process.argv[2];
 const downloadDir = `download/${appId}`;

@@ -1,6 +1,0 @@
-﻿modeId,metric_key（指标标识）,metric_desc_cn（指标描述）,"单位
-",指标显示单位,指标类型,对应组件,对应模板位置,参考,备注,,,,,,,,,,
-harbor-node,harbor.projects.count,项目数量,count,,状态类型,数字看板,1,,,,,,,,,,,,
-harbor-node,harbor.disk.free,磁盘空闲空间,count,,状态类型,数字看板,2,,,,,,,,,,,,
-harbor-node,harbor.disk.total,磁盘空间容量,count,,状态类型,数字看板,3,,,,,,,,,,,,
-harbor-node,harbor.registry.read_only,是否注册为只读,count,,状态类型,数字看板,4,,,,,,,,,,,,

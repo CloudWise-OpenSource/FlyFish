@@ -12,10 +12,13 @@ const mongoUrl = config.get('mongoose.clients.flyfish.url');
 const staticDir = config.get('pathConfig.staticDir');
 const componentsPath = config.get('pathConfig.componentsPath');
 const applicationPath = config.get('pathConfig.applicationPath');
+const initComponentVersion = config.get('pathConfig.initComponentVersion');
 
 const uploadDir = path.resolve('upload');
 
 const filename = process.argv[2];
+const newStaticPathPrefix = process.argv[3];
+
 const appId = filename.slice(0, -4); // xxx.tar文件
 const extractDir = `${uploadDir}/${appId}`;
 
@@ -47,10 +50,36 @@ async function init() {
     const admin = await db.collection('users').findOne({ username: 'admin' });
     const adminId = admin && admin._id.toString();
 
+    const categoriesInfo = await db.collection('component_categories').find({}, { sort: { create_time: -1 }, limit: 1 }).toArray();
+    if (_.isEmpty(categoriesInfo[0])) {
+      console.log('upload fail: no categoryInfo!!!');
+      return;
+    }
+
+    const curCategoryInfo = categoriesInfo[0];
+    const basicCategoryInfo = (curCategoryInfo.categories || []).find(category => category.name === '2D图表组件') || {};
+    const basicSubCategoryInfo = (basicCategoryInfo.children || []).find(subCategory => subCategory.name === '基础组件');
+
     const application = await fs.readJson(path.resolve(extractDir, 'application.json'));
     const appObjectId = ObjectId(application._id);
     delete application._id;
+
+    application.cover = (application.cover === '/application_tpl/public/cover.png') ? '/application_tpl/public/cover.jpeg' : application.cover;
+
+    if (newStaticPathPrefix) {
+      for (const page of application.pages) {
+        if (page.options) page.options.backgroundImage = `${newStaticPathPrefix.slice(1)}/${page.options.backgroundImage}`;
+      }
+
+      for (const page of application.pages) {
+        for (const component of page.components) {
+          if (component.options) component.options.image = `${newStaticPathPrefix.slice(1)}/${component.options.image}`;
+        }
+      }
+    }
+
     Object.assign(application, {
+      cover: newStaticPathPrefix ? `${newStaticPathPrefix}${application.cover}` : application.cover,
       creator: adminId,
       updater: adminId,
       create_time: new Date(),
@@ -78,19 +107,6 @@ async function init() {
       { upsert: true }
     );
 
-    const categoryInfo = await fs.readJson(path.resolve(extractDir, 'category.json'));
-    Object.assign(categoryInfo, {
-      create_time: new Date(),
-      update_time: new Date(),
-    });
-    const categoryObjectId = ObjectId(categoryInfo._id);
-    delete categoryInfo._id;
-    await db.collection('component_categories').updateOne(
-      { _id: categoryObjectId },
-      { $set: categoryInfo, $setOnInsert: { _id: categoryObjectId } },
-      { upsert: true }
-    );
-
     await fs.copy(
       path.resolve(extractDir, 'applications'),
       path.resolve(staticDir, applicationPath)
@@ -107,11 +123,20 @@ async function init() {
       await Promise.all(chunk.map(async component => {
         const componentId = component._id;
         delete component._id;
+
+        component.cover = (component.cover === '/component_tpl/public/cover.png') ? '/component_tpl/public/cover.jpeg' : component.cover;
         Object.assign(component, {
           versions: (component.versions || []).map(version => {
             version.time = new Date(version.time);
             return version;
           }),
+          applications: [],
+          projects: [],
+          tags: [],
+          type: 'common',
+          cover: newStaticPathPrefix ? `${newStaticPathPrefix}${component.cover}` : component.cover,
+          category: basicCategoryInfo.id,
+          sub_category: basicSubCategoryInfo.id,
           creator: adminId,
           updater: adminId,
           create_time: new Date(),
@@ -125,6 +150,18 @@ async function init() {
         );
 
         await exec(`cd ${staticDir}/${componentsPath} && tar -xzvf ${componentId}.tar`, { maxBuffer: 1024 * 1024 * 1024 });
+
+        if (newStaticPathPrefix) {
+          const comVersion = `${staticDir}/${componentsPath}/${componentId}/${initComponentVersion}`;
+          if (fs.pathExistsSync(comVersion)) {
+            await exec(`sed -i -e "s#\/components\/#${newStaticPathPrefix}\/components\/#g" ${comVersion}/editor.html`);
+            await exec(`sed -i -e "s#\/common\/#${newStaticPathPrefix}\/common\/#g" ${comVersion}/editor.html`);
+            await exec(`sed -i -e "s#\/components\/#${newStaticPathPrefix}\/components\/#g" ${comVersion}/index.html`);
+            await exec(`sed -i -e "s#\/common\/#${newStaticPathPrefix}\/common\/#g" ${comVersion}/index.html`);
+            await exec(`sed -i -e "s#\'components\'#\'${newStaticPathPrefix.slice(1)}\/components\'#g" ${comVersion}/env.js`);
+          }
+        }
+
         await fs.remove(`${staticDir}/${componentsPath}/${componentId}.tar`);
       }));
     }

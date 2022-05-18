@@ -1,5 +1,5 @@
 /*
- * @Descripttion:
+ * @Descripttion: 
  * @Author: zhangzhiyong
  * @Date: 2021-11-09 10:45:26
  * @LastEditors: Rise.Hao
@@ -487,7 +487,7 @@ const ComponentDevelop = observer((props) => {
                             <div>
                                 <span>　</span>
                                 <Input
-                                    // style={{width:'100%'}}
+                                    // style={{width:'100%'}} 
                                     style={{ width: 250 }}
                                     placeholder='输入描述/标签/创建人查找组件'
                                     value={searchKey}

@@ -7,9 +7,6 @@ const BaseController = require('./base');
 const CODE = require('../lib/error');
 const _ = require('lodash');
 const Enum = require('../lib/enum');
-const util = require('util');
-const exec = util.promisify(require('child_process').exec);
-
 class ComponentsController extends BaseController {
   async updateCategory() {
     const { ctx, app, service } = this;
@@ -57,7 +54,6 @@ class ComponentsController extends BaseController {
       tags: app.Joi.array().items(app.Joi.string().length(24)),
       trades: app.Joi.array().items(app.Joi.string().length(24)),
       projectId: app.Joi.string().length(24),
-      isLib: app.Joi.boolean(),
       developStatus: app.Joi.string(),
       type: app.Joi.string().valid(...Object.values(Enum.COMPONENT_TYPE)),
       category: app.Joi.number(),
@@ -269,7 +265,7 @@ class ComponentsController extends BaseController {
   }
 
   async uploadComponentSource() {
-    const { ctx, config: { pathConfig: { staticDir, commonDirPath, componentsPath, initComponentVersion } } } = this;
+    const { ctx, config: { pathConfig: { staticDir, componentsPath, initComponentVersion } } } = this;
     const componentId = ctx.params.componentId;
 
     const file = ctx.request.files[0];
@@ -277,8 +273,6 @@ class ComponentsController extends BaseController {
     const uploadDir = `${staticDir}/${componentsPath}/${componentId}/${filename}_${Date.now()}`;
     const currentPath = `${staticDir}/${componentsPath}/${componentId}/${initComponentVersion}`;
     try {
-      await exec(`cd ${currentPath} && rm -rf ./*`);
-
       await fs.copy(file.filepath, `${uploadDir}/${file.filename}`);
       const zip = new AdmZip(`${uploadDir}/${file.filename}`);
       zip.extractAllTo(uploadDir, true);
@@ -290,31 +284,21 @@ class ComponentsController extends BaseController {
         await fs.copy(uploadDir, currentPath);
       }
 
-      const optionsJson = fs.readJSONSync(`${currentPath}/options.json`);
-      const oldId = _.get(optionsJson, [ 'components', 0, 'type' ]);
+      const mainJsPath = path.resolve(currentPath, 'src/main.js');
+      const mainJsOrigin = await fs.readFile(mainJsPath, { encoding: 'utf8' });
+      const mainJsReplacement = mainJsOrigin.replace(/registerComponent\((.+?)\,(.+?)\,\sComponent\);/, `registerComponent(\'${componentId}\', \'${initComponentVersion}\', Component);`);
+      await fs.writeFile(mainJsPath, mainJsReplacement);
 
-      await exec(`sed -i -e "s#${oldId}#${componentId}#g" ${currentPath}/src/main.js`);
-      await exec(`sed -i -e "s#${oldId}#${componentId}#g" ${currentPath}/src/setting.js`);
-      await exec(`sed -i -e "s#${oldId}#${componentId}#g" ${currentPath}/options.json`);
-      await exec(`sed -i -e "s#${oldId}#${componentId}#g" ${currentPath}/index.html`);
-      await exec(`sed -i -e "s#${oldId}#${componentId}#g" ${currentPath}/editor.html`);
+      const settingJsPath = path.resolve(currentPath, 'src/setting.js');
+      const settingJsOrigin = await fs.readFile(settingJsPath, { encoding: 'utf8' });
+      const settingJsReplacement = settingJsOrigin.replace(/registerComponentOptionsSetting\((.+?)\,(.+?)\,\sOptionsSetting\);/, `registerComponentOptionsSetting(\'${componentId}\', \'${initComponentVersion}\', OptionsSetting);`)
+        .replace(/registerComponentDataSetting\((.+?)\,(.+?)\,\sDataSetting\);/, `registerComponentDataSetting(\'${componentId}\', \'${initComponentVersion}\', DataSetting);`);
+      await fs.writeFile(settingJsPath, settingJsReplacement);
 
-      const replaceStr = commonDirPath ? `/${commonDirPath}` : commonDirPath;
-      await exec(`sed -i -e 's#src=".*/components/#src="${replaceStr}/components/#g' ${currentPath}/editor.html`);
-      await exec(`sed -i -e 's#src=".*/common/#src="${replaceStr}/common/#g' ${currentPath}/editor.html`);
-      await exec(`sed -i -e 's#href=".*/common/#href="${replaceStr}/common/#g' ${currentPath}/editor.html`);
-      await exec(`sed -i -e 's#src=".*/components/#src="${replaceStr}/components/#g' ${currentPath}/index.html`);
-      await exec(`sed -i -e 's#src=".*/common/#src="${replaceStr}/common/#g' ${currentPath}/index.html`);
-
-      await exec(`sed -i -e "s#componentsDir.*components'#componentsDir: '${commonDirPath ? commonDirPath + '/components' : 'components'}'#g" ${currentPath}/env.js`);
-
-      const buildDevPath = `${currentPath}/components`;
-      if (fs.pathExistsSync(buildDevPath)) {
-        await exec(`sed -i -e "s#${oldId}#${componentId}#g" ${currentPath}/components/main.js`);
-        await exec(`sed -i -e "s#${oldId}#${componentId}#g" ${currentPath}/components/main.js.map`);
-        await exec(`sed -i -e "s#${oldId}#${componentId}#g" ${currentPath}/components/setting.js`);
-        await exec(`sed -i -e "s#${oldId}#${componentId}#g" ${currentPath}/components/setting.js.map`);
-      }
+      const indexHtmlPath = path.resolve(currentPath, 'index.html');
+      const indexHtmlOrigin = await fs.readFile(indexHtmlPath, { encoding: 'utf8' });
+      const indexHtmlReplacement = indexHtmlOrigin.replace(/www\/components\/(.+?)\/(.+?)\/env.js/, `www/components/${componentId}/${initComponentVersion}/env.js`);
+      await fs.writeFile(indexHtmlPath, indexHtmlReplacement);
     } finally {
       await fs.remove(file.filepath);
       await fs.remove(uploadDir);

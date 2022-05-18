@@ -13,7 +13,7 @@ module.exports = config => {
     if (reqUrlWhiteList.includes(ctx.url)) {
       await next();
 
-    // docp用户鉴权
+      // docp用户鉴权
     } else if (docpCookieValue) {
       const userInfo = await ctx.service.userDouc.syncUser();
       if (!userInfo.username || !userInfo.userId || !userInfo.role) {
@@ -29,7 +29,7 @@ module.exports = config => {
       ctx.userInfo = userInfo;
       await next();
 
-    // lcap用户鉴权
+      // lcap用户鉴权
     } else if (lcapCookieValue) {
       const userInfo = ctx.helper.getCookie();
       if (!userInfo.username || !userInfo.userId || !userInfo.role) {
@@ -44,7 +44,7 @@ module.exports = config => {
       if (syncUserList.includes(ctx.url)) await ctx.service.userYapi.syncUser(userInfo);
       ctx.userInfo = userInfo;
       await next();
-    } else if (ctx.apiKey === apiKey) {
+    } else if (ctx.header.apikey === apiKey) {
       await next();
     } else {
       ctx.body = {

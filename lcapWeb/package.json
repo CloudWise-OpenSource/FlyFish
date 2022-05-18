@@ -7,7 +7,7 @@
     "@chaoswise/cw-mobx": "^0.0.13",
     "@chaoswise/request": "^0.0.23",
     "@chaoswise/scaffold": "0.0.63",
-    "@chaoswise/ui": "^0.0.119",
+    "@chaoswise/ui": "0.0.141",
     "@chaoswise/utils": "^0.0.26",
     "ace-builds": "^1.4.13",
     "moment": "^2.29.1",

@@ -96,9 +96,9 @@ class ComponentService extends Service {
   async getList(requestData) {
     const { ctx } = this;
 
-    let orderField = 'updateTime';
+    const orderField = 'updateTime';
     const queryProjects = [];
-    const { key, name, isLib, tags, trades, projectId, developStatus, type, category, subCategory, curPage, pageSize } = requestData;
+    const { key, name, tags, trades, projectId, developStatus, type, category, subCategory, curPage, pageSize } = requestData;
     const queryCond = { status: Enum.COMMON_STATUS.VALID };
 
     const users = await ctx.model.User._find();
@@ -109,17 +109,14 @@ class ComponentService extends Service {
     let matchUserIds = [];
     if (key) {
       queryCond.$or.push({ desc: { $regex: _.escapeRegExp(key) } });
-      if (isLib) {
-        queryCond.$or.push({ name: { $regex: _.escapeRegExp(key) } });
-      } else {
-        const matchUsers = (users || []).filter(user => user.username.includes(key));
-        matchUserIds = matchUsers.map(user => user.id);
-        if (!_.isEmpty(matchUserIds)) queryCond.$or.push({ creator: { $in: matchUserIds } });
 
-        const matchTags = (tagList || []).filter(tag => tag.name.includes(key));
-        const matchTagIds = matchTags.map(tag => tag.id);
-        if (!_.isEmpty(matchTagIds)) queryCond.$or.push({ tags: { $in: matchTagIds } });
-      }
+      const matchUsers = (users || []).filter(user => user.username.includes(key));
+      matchUserIds = matchUsers.map(user => user.id);
+      if (!_.isEmpty(matchUserIds)) queryCond.$or.push({ creator: { $in: matchUserIds } });
+
+      const matchTags = (tagList || []).filter(tag => tag.name.includes(key));
+      const matchTagIds = matchTags.map(tag => tag.id);
+      if (!_.isEmpty(matchTagIds)) queryCond.$or.push({ tags: { $in: matchTagIds } });
     }
 
     if (name) queryCond.name = { $regex: _.escapeRegExp(name) };
@@ -129,10 +126,6 @@ class ComponentService extends Service {
     if (type) queryCond.type = type;
     if (projectId) queryProjects.push(projectId);
     if (!_.isEmpty(tags)) queryCond.tags = { $in: tags };
-    if (_.isBoolean(isLib)) {
-      if (isLib) orderField = 'createTime';
-      queryCond.isLib = isLib;
-    }
     if (!_.isEmpty(trades)) {
       const tradeProjects = (projectList || []).filter(project => {
         let match = true;
@@ -187,7 +180,6 @@ class ComponentService extends Service {
         }),
         version: _.get(component, [ 'versions', (component.versions || []).length - 1, 'no' ], '暂未上线'),
         creator: curUser.username,
-        isLib: component.isLib || false,
         cover: component.cover,
         desc: component.desc,
 
@@ -222,7 +214,6 @@ class ComponentService extends Service {
     const returnInfo = {
       id: componentInfo.id,
       name: componentInfo.name,
-      isLib: componentInfo.isLib,
       projects: (componentInfo.projects || []).map(project => {
         const curProject = (projectsInfo || []).find(projectInfo => projectInfo.id === project) || {};
         return {
@@ -344,7 +335,7 @@ class ComponentService extends Service {
   async updateInfo(id, requestData) {
     const { ctx } = this;
 
-    const { name, status, type, projects, category, subCategory, isLib, desc, dataConfig, tags } = requestData;
+    const { name, status, type, projects, category, subCategory, desc, dataConfig, tags } = requestData;
     const returnData = { msg: 'ok', data: {} };
 
     const updateData = {};
@@ -358,7 +349,6 @@ class ComponentService extends Service {
     }
 
     if (status) updateData.status = status;
-    if (_.isBoolean(isLib)) updateData.isLib = isLib;
     if (projects) updateData.projects = projects;
     if (category) updateData.category = category;
     if (subCategory) updateData.subCategory = subCategory;
@@ -379,24 +369,10 @@ class ComponentService extends Service {
     return returnData;
   }
 
-  async toLib(id, requestData) {
-    const { ctx } = this;
-
-    const { toLib } = requestData;
-    await ctx.model.Component._updateOne({ id }, { isLib: toLib });
-  }
-
   async delete(id) {
     const { ctx } = this;
 
     const returnData = { msg: 'ok', data: {} };
-
-    const existsComponent = await ctx.model.Component._findOne({ id });
-    if (!_.isEmpty(existsComponent.applications)) {
-      returnData.msg = 'Exists Already';
-      returnData.data.error = existsComponent.applications;
-      return returnData;
-    }
 
     const updateData = {
       status: Enum.COMMON_STATUS.INVALID,

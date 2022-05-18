@@ -1,9 +1,9 @@
 /*
- * @Descripttion:
+ * @Descripttion: 
  * @Author: zhangzhiyong
  * @Date: 2021-12-06 10:32:18
  * @LastEditors: zhangzhiyong
- * @LastEditTime: 2022-04-14 10:03:20
+ * @LastEditTime: 2022-04-07 19:38:10
  */
 const path = require('path');
 const modifyVars = require('./themes/dark.js');
@@ -13,17 +13,17 @@ const modifyVars = require('./themes/dark.js');
 module.exports = {
   debugIe: false, // 是否在ie下调试(关闭热更新)
   useMultipleTheme: false, // 是否开启多主题
-  isCombinePortal: false, // 是否开启对接portal的配置
-  publicPath: '/',//对接portal时修改为/lcapWeb/，否则是/
+  isCombinePortal: true, // 是否开启对接portal的配置
+  // publicPath: '/lcapWeb/',//对接portal时修改为/lcapWeb/，否则是/
   prettierFixed: false,
   hot:true,
   isNoticeUpdate: false, // 是否开启升级通知
-  routerType: 'hash', // 路由类型browser|hash  默认 hash
+  routerType: 'hash', // 路由类型browser|hash  默认 hash  
   themes: [
     {
       name: 'light',
       entryPath: path.resolve(__dirname, './themes/light.js')
-    },
+    }, 
     {
       name: 'dark',
       entryPath: path.resolve(__dirname, './themes/dark.js')
@@ -39,7 +39,7 @@ module.exports = {
   },
   htmlPlugin: config => {
     config.excludeAssets = [];
-    config.title = 'FlyFish';
+    config.title = 'LCAP';
     return config;
   },
   copyPlugin:config=>{

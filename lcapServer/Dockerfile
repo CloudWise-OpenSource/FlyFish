@@ -16,7 +16,7 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
   PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
-RUN npm config set registry https://registry.npmmirror.com && npm install && \
+RUN npm config set registry http://registry.npm.taobao.org && npm install && \
 cd $ROOTDIR/changelog && npm install 
 
 COPY . $ROOTDIR

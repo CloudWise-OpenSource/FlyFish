@@ -177,21 +177,23 @@ const Layout = ({
       <span style={{ textAlign: 'center' }} >退出</span>
     </Menu.Item>
   </Menu>);
-
+  console.log('authMenuData===',authMenuData);
   return (
     <BasicLayout
       logo={
-        <div style={{ display: 'flex', alignItems: 'center', letterSpacing: '2px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', letterSpacing: '2px' }}
+        >
           <img src={logo} />
           <span style={{ fontSize: '16px', marginLeft: '8px' }}>智能业务运维</span>
         </div>
       }
-      headerTitle='低代码开发平台FlyFish'
+      headerTitle='低代码开发平台LCAP'
       showHead={!isInPortal} // 集成portal不显示头部
       showTopNavigation={false}
       showBack={showBack}
       backNavigationTitle={backTitle || routeBackName()}
       showBreadcrumb={true}
+      customContent={false}
       breadcrumbOptions={{
         // 格式化面包屑数据
         formatData: (data) => {

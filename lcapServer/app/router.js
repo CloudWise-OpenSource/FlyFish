@@ -24,7 +24,6 @@ module.exports = app => {
   router.get('/users/info', controller.user.getInfo);
   router.post('/users/list', controller.user.getList);
   router.put('/users/info/:id', controller.user.updateUserInfo);
-  router.get('/users/info/:id/api_token', controller.user.getApiToken);
   router.put('/users/application-config/:applicationId', controller.user.updateAppConfig);
   router.get('/users/application-config/:applicationId', controller.user.getAppConfig);
 
@@ -59,8 +58,6 @@ module.exports = app => {
   router.post('/components/up-to-lib/:id', controller.component.toLib);
   router.post('/components/import-source-code/:componentId', controller.component.uploadComponentSource);
   router.get('/components/export-source-code/:componentId', controller.component.exportComponentSource);
-  router.get('/components/git-history/:id', controller.component.getComponentHistory);
-  router.get('/components/git-commit-info/:id', controller.component.getCommitInfo);
   // 注意：放底部
   router.get('/components/:id', controller.component.getInfo);
 
@@ -75,8 +72,6 @@ module.exports = app => {
 
   // application
   router.post('/applications', controller.application.create);
-  router.post('/applications/install', controller.application.install);
-  router.post('/applications/uninstall', controller.application.uninstall);
   router.post('/applications/list', controller.application.getList);
   router.put('/applications/:id/basic', controller.application.editBasicInfo);
   router.put('/applications/:id/design', controller.application.editDesignInfo);
@@ -90,9 +85,6 @@ module.exports = app => {
   router.get('/applications/getModelList', controller.application.getModelList);
   router.post('/applications/getModelData', controller.application.getModelData);
   router.get('/applications/exportAll/:id', controller.application.exportAll);
-
-  // dashboard
-  router.get('/dashboard/overview', controller.dashboard.overview);
 
   // 置于最后，莫动！！
   router.get('/applications/:id', controller.application.getInfo);

@@ -199,8 +199,7 @@ class UserLayout extends React.PureComponent {
                       message: '请输入邮箱！',
                     },
                     {
-                      pattern: /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/,
-                        // pattern: /^[A-Za-zd0-9]+([-_.][A-Za-zd]+)*@([A-Za-zd]+[-.])+[A-Za-zd]{2,5}$/,
+                      pattern: /^[A-Za-zd0-9]+([-_.][A-Za-zd]+)*@([A-Za-zd]+[-.])+[A-Za-zd]{2,5}$/,
                       message: "请输入正确的邮箱格式",
                     },
                   ],

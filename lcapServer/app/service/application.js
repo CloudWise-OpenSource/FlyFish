@@ -9,7 +9,7 @@ const Enum = require('../lib/enum');
 
 class ApplicationService extends Service {
   async create(params) {
-    const { ctx, logger, config: { pathConfig: { defaultApplicationCoverPath }, services: { yapi } } } = this;
+    const { ctx, config: { pathConfig: { defaultApplicationCoverPath } } } = this;
     const userInfo = ctx.userInfo;
 
     const returnData = { msg: 'ok', data: {} };
@@ -31,148 +31,6 @@ class ApplicationService extends Service {
       }
     ));
     returnData.data = result;
-
-    try {
-      const payLoad = { username: userInfo.username };
-      const authorizationToken = jwt.sign(payLoad, yapi.tokenEncryptionKey, { expiresIn: '1h' });
-      // 同步yapi
-      await ctx.http.post(
-        `${yapi.baseURL}/api/app`,
-        {
-          name: params.name,
-          desc: '',
-          origin_id: result.id,
-          from: 'flyfish',
-          authorizationToken,
-        }
-      );
-    } catch (error) {
-      logger.error(`${result.id} create access app error: ${JSON.stringify(error)}`);
-    }
-
-    return returnData;
-  }
-
-  async install(params) {
-    const { ctx, logger, config: { specialId, pathConfig: { initComponentVersion, defaultApplicationCoverPath }, services: { yapi } } } = this;
-    const userInfo = ctx.userInfo;
-
-    const returnData = { msg: 'ok', data: {} };
-
-    const existsApplication = await ctx.model.Application._findOne({ name: params.name, status: Enum.COMMON_STATUS.VALID });
-    if (!_.isEmpty(existsApplication)) {
-      returnData.msg = 'Exists Already';
-      returnData.data = existsApplication;
-      return returnData;
-    }
-
-    const pages = [{
-      id: ctx.helper.createUUID(),
-      options: {
-        name: '数据可视化大屏幕',
-        width: params.width,
-        height: params.height,
-        scaleMode: 'width',
-        css: '.dv-component{\n    overflow:unset;\n}',
-        backgroundColor: '#F4F4F4',
-        backgroundImage: '',
-        backgroundRepeat: false,
-        componentApiDomain: '',
-        ENVGlobalOptions: {},
-        faviconIocImage: '',
-      },
-      components: [],
-      dataSources: [],
-      events: [{
-        action: 'callComponentMethod',
-        name: 'dodb-params-change',
-        options: {
-          args: [ 'dodb-params-change' ],
-          component: [],
-          method: 'trigger',
-        },
-        source: [],
-        type: 'dodb-params-change',
-      }],
-      functions: [],
-    }];
-    const componentIds = _.uniq((params.metrics || []).map(metric => metric.componentId));
-    const components = await ctx.model.Component._find({ id: { $in: componentIds } });
-
-    for (const metric of params.metrics) {
-      const { key, name, unit, componentId, dataSource, location: { x, y, width, height } } = metric;
-      const curComponent = components.find(component => componentId === component.id);
-      if (_.isEmpty(curComponent)) continue;
-
-      const componentUuid = ctx.helper.createUUID();
-      pages[0].components.push({
-        type: componentId,
-        id: componentUuid,
-        config: {
-          name,
-          left: x,
-          top: y,
-          width,
-          height,
-          visible: true,
-          index: (specialId.componentId1 === componentId) ? 100 : 0,
-        },
-        options: {
-          metricKey: key,
-          metricName: name,
-          unit,
-        },
-        connects: {},
-        version: _.get(curComponent, [ 'versions', (curComponent.versions || []).length - 1, 'no' ], initComponentVersion),
-        dataSource,
-      });
-
-      if (specialId.componentId1 === componentId) {
-        pages[0].events[0].source.push(`component::${componentUuid}`);
-      } else {
-        pages[0].events[0].options.component.push(componentUuid);
-      }
-    }
-
-    let internalProjectInfo = await ctx.model.Project._findOne({ isInternal: true, status: Enum.COMMON_STATUS.VALID });
-    if (_.isEmpty(internalProjectInfo)) {
-      const createInfo = await ctx.service.project.create({ isInternal: true, name: '监控中心专用项目', trades: [{ name: '监控中心专用项目' }], desc: '此项目用于存放和渲染监控中心的仪表盘，该项目不可删除' });
-      internalProjectInfo = createInfo.data;
-    }
-
-    const result = await ctx.model.Application._create(Object.assign(
-      params,
-      {
-        projectId: internalProjectInfo.id,
-        isLib: _.isBoolean(params.isLib) ? params.isLib : true,
-        isFromDoma: !!params.isMonitor,
-        isFromDocc: !!params.modelId,
-        cover: defaultApplicationCoverPath,
-        pages,
-        models: params.models,
-        creator: userInfo.userId,
-        updater: userInfo.userId,
-      }
-    ));
-    returnData.data = result;
-
-    try {
-      const payLoad = { username: userInfo.username };
-      const authorizationToken = jwt.sign(payLoad, yapi.tokenEncryptionKey, { expiresIn: '1h' });
-      // 同步yapi
-      await ctx.http.post(
-        `${yapi.baseURL}/api/app`,
-        {
-          name: params.name,
-          desc: '',
-          origin_id: result.id,
-          from: 'flyfish-install-application',
-          authorizationToken,
-        }
-      );
-    } catch (error) {
-      logger.error(`${result.id} create access app error: ${JSON.stringify(error)}`);
-    }
 
     return returnData;
   }
@@ -199,7 +57,7 @@ class ApplicationService extends Service {
   }
 
   async updateBasicInfo(id, requestData) {
-    const { ctx, logger, config: { services: { yapi } } } = this;
+    const { ctx } = this;
 
     const userInfo = ctx.userInfo;
     const { type, name, developStatus, projectId, isLib, isRecommend, status, tags } = requestData;
@@ -237,27 +95,6 @@ class ApplicationService extends Service {
     }
 
     await ctx.model.Application._updateOne({ id }, updateData);
-
-    try {
-      if (name || status) {
-        const payLoad = {
-          username: userInfo.username,
-        };
-        const authorizationToken = jwt.sign(payLoad, yapi.tokenEncryptionKey, { expiresIn: '1h' });
-
-        // 同步yapi
-        const bodyInfo = { authorizationToken };
-        if (name) bodyInfo.name = name;
-        if (status) bodyInfo.status = status;
-
-        await ctx.http.put(
-          `${yapi.baseURL}/api/app/edit?origin_id=${id}`,
-          bodyInfo
-        );
-      }
-    } catch (error) {
-      logger.error(`${id} delete app error: ${JSON.stringify(error)}`);
-    }
 
     return returnData;
   }
@@ -316,8 +153,8 @@ class ApplicationService extends Service {
   }
 
   async copyApplication(id, applicationInfo) {
-    const { ctx, logger, config } = this;
-    const { pathConfig: { staticDir, applicationPath, defaultApplicationCoverPath }, services: { yapi } } = config;
+    const { ctx, config } = this;
+    const { pathConfig: { staticDir, applicationPath, defaultApplicationCoverPath } } = config;
 
 
     const userInfo = ctx.userInfo;
@@ -369,33 +206,11 @@ class ApplicationService extends Service {
       await ctx.model.Application._updateOne({ id: result.id }, { pages: copyApplication.pages });
     }
 
-    try {
-      const payLoad = {
-        username: userInfo.username,
-      };
-      const authorizationToken = jwt.sign(payLoad, yapi.tokenEncryptionKey, { expiresIn: '1h' });
-
-      // 同步yapi
-      await ctx.http.post(
-        `${yapi.baseURL}/api/app`,
-        {
-          name: applicationInfo.name,
-          desc: '',
-          origin_id: result.id,
-          from: 'flyfish',
-          authorizationToken,
-        }
-      );
-    } catch (error) {
-      logger.error(`${result.id} copy access app error: ${JSON.stringify(error)}`);
-    }
-
     return returnData;
   }
 
   async getApplicationInfo(id) {
-    const { ctx, logger, config: { services: { yapi } } } = this;
-    const userInfo = ctx.userInfo;
+    const { ctx } = this;
 
     const applicationInfo = await ctx.model.Application._findOne({ id });
     const usersInfo = await ctx.model.User._find({ id: { $in: [ applicationInfo.creator, applicationInfo.updater ] } });
@@ -409,24 +224,6 @@ class ApplicationService extends Service {
 
     let appKey,
       appSecret;
-    try {
-      const payLoad = {
-        username: userInfo.username,
-      };
-      const authorizationToken = jwt.sign(payLoad, yapi.tokenEncryptionKey, { expiresIn: '1h' });
-
-      // 同步yapi
-      const { data: { app_key, app_secret } } = await ctx.http.get(
-        `${yapi.baseURL}/api/app/detail`,
-        {
-          application_id: id,
-          authorizationToken,
-        }
-      );
-      appKey = app_key; appSecret = app_secret;
-    } catch (error) {
-      logger.error(`${id} get app_key && app_secret error: ${JSON.stringify(error)}`);
-    }
 
     const returnInfo = {
       id: applicationInfo.id,
@@ -468,13 +265,6 @@ class ApplicationService extends Service {
     };
 
     return returnInfo || {};
-  }
-
-  async uninstall(name) {
-    const { ctx } = this;
-
-    const applicationInfo = await ctx.model.Application._findOne({ name, status: Enum.COMMON_STATUS.VALID });
-    return await deleteApplication(applicationInfo, this);
   }
 
   async delete(id, isMonitor) {
@@ -685,9 +475,8 @@ class ApplicationService extends Service {
   }
 }
 
-async function deleteApplication(applicationInfo, instance, isMonitor = false) {
-  const { ctx, logger, config: { docpCookieConfig: { name: docpCookieName }, services: { douc, yapi } } } = instance;
-  const userInfo = ctx.userInfo;
+async function deleteApplication(applicationInfo, instance) {
+  const { ctx } = instance;
 
   const returnData = { msg: 'ok', data: {} };
   if (_.isEmpty(applicationInfo)) {
@@ -696,59 +485,6 @@ async function deleteApplication(applicationInfo, instance, isMonitor = false) {
   }
 
   const id = applicationInfo.id;
-  const isAdmin = await ctx.helper.isAdmin();
-  const dashboardType = applicationInfo.isLib ? Enum.DASHBOARD_TYPE.INTERNAL : Enum.DASHBOARD_TYPE.CUSTOM;
-
-  const curApplicationProjectInfo = await ctx.model.Project._findOne({ id: applicationInfo.projectId });
-  if (curApplicationProjectInfo.isInternal && !isMonitor) {
-    if (isAdmin || (userInfo.userId === applicationInfo.creator)) {
-      try {
-        const docpUserInfo = userInfo.username.split('-');
-        const docpCookieValue = ctx.cookies.get(docpCookieName, { signed: false });
-
-        const headers = {
-          Cookie: `${docpCookieName}=${docpCookieValue}`,
-          accountId: docpUserInfo[1],
-          userId: docpUserInfo[2],
-        };
-        const { error_code, error_msg } = await ctx.http.delete(`${douc.baseURL}/gateway/monitor/api/v1/monitor/${id}`, { type: dashboardType }, { headers });
-
-        if (error_code !== '000000') {
-          logger.error(`${id} delete doma app error: ${error_msg}`);
-          returnData.msg = 'Delete Doma App Error';
-          return returnData;
-        }
-      } catch (error) {
-        logger.error(`${id} delete doma app error: ${JSON.stringify(error)}`);
-        returnData.msg = 'Delete Doma App Error';
-        returnData.data = error;
-        return returnData;
-      }
-    } else {
-      logger.error(`${id} delete doma app error: no Auth`);
-      returnData.msg = 'No Auth';
-      return returnData;
-    }
-  }
-
-  try {
-    const payLoad = {
-      username: userInfo.username,
-    };
-    const authorizationToken = jwt.sign(payLoad, yapi.tokenEncryptionKey, { expiresIn: '1h' });
-
-    // 同步yapi
-    await ctx.http.put(
-      `${yapi.baseURL}/api/app/edit?origin_id=${id}`,
-      {
-        status: Enum.COMMON_STATUS.INVALID,
-        authorizationToken,
-      }
-    );
-  } catch (error) {
-    logger.error(`${id} delete yai app error: ${JSON.stringify(error)}`);
-  }
-
   await ctx.model.Application._updateOne({ id }, { status: Enum.COMMON_STATUS.INVALID });
 
   return returnData;

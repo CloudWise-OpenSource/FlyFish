@@ -36,69 +36,6 @@ class ApplicationController extends BaseController {
     }
   }
 
-  /**
-   * 安装大屏
-   */
-  async install() {
-    const { ctx, app: { Joi }, service } = this;
-
-    const createSchema = Joi.object().keys({
-      name: Joi.string().required(),
-      modelId: Joi.string(),
-      models: Joi.array().items(Joi.object().keys({
-        modelInfo: Joi.object().keys({
-          id: Joi.string(),
-          name: Joi.string(),
-        }),
-        ciInfos: Joi.array().items(Joi.object().keys({
-          id: Joi.string(),
-          name: Joi.string(),
-        })),
-      })),
-      type: Joi.string().valid(...Object.values(Enum.APP_TYPE)).required(),
-      isLib: Joi.boolean(),
-      isMonitor: Joi.boolean(),
-      width: Joi.number().default(1424),
-      height: Joi.number().default(960),
-
-      metrics: Joi.array().items(Joi.object().keys({
-        key: Joi.any(),
-        name: Joi.string().required(),
-        unit: Joi.any(),
-        componentId: Joi.string().required(),
-        location: Joi.object().keys({
-          x: Joi.number().required(),
-          y: Joi.number().required(),
-          width: Joi.number().required(),
-          height: Joi.number().required(),
-        }),
-      }).unknown()),
-    });
-    const body = await createSchema.validateAsync(ctx.request.body);
-    const applicationInfo = await service.application.install(body);
-
-    this.success('安装成功', { id: _.get(applicationInfo, [ 'data', 'id' ]) });
-  }
-
-  /**
-   * 卸载大屏
-   */
-  async uninstall() {
-    const { ctx, app, service } = this;
-
-    const { value: dashboardName } = ctx.validate(app.Joi.string().required(), ctx.request.body.dashboardName);
-    const uninstallResult = await service.application.uninstall(dashboardName);
-    if (uninstallResult.msg === 'Delete Doma App Error') {
-      this.fail('卸载失败： 监控中心删除失败', JSON.stringify(uninstallResult.data || null), CODE.FAIL);
-    } else if (uninstallResult.msg === 'No Auth') {
-      this.fail('卸载失败： 无权限', null, CODE.FAIL);
-    } else if (uninstallResult.msg === 'No Item') {
-      this.fail('卸载失败： 无此应用', null, CODE.FAIL);
-    } else {
-      this.success('卸载成功', { dashboardName });
-    }
-  }
-
   async editBasicInfo() {
     const { ctx, app: { Joi }, service } = this;
 
