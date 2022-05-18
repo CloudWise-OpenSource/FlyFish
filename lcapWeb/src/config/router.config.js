@@ -3,9 +3,9 @@
  * @Author: zhangzhiyong
  * @Date: 2022-05-11 15:22:39
  * @LastEditors: tiger.wang
- * @LastEditTime: 2022-05-18 19:02:55
+ * @LastEditTime: 2022-05-18 19:05:03
  */
-// 2022-05-18 7:04
+// 2022-05-18 7:05
 module.exports = {
   loadingComponent: "@/components/Loading", // 路由按需加载 loading组件
   noAuthShow: "@/components/NoAuth", // 无权限展示效果
