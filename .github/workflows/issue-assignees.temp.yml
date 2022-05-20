@@ -18,12 +18,11 @@ jobs:
           random-to: 1
 
       - name: 通知开发者
-        run: echo ${{ github.event.issue }}
         uses: actions-cool/maintain-one-comment@v2.0.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           body: |
-            👋 @{{ github.event.issue.user.login }，感谢您给 FlyFish 提出了 issue。
+            👋 @${{ github.event.issue.user.login }}，感谢您给 FlyFish 提出了 issue。
             ♥️ 我们会尽快确认问题，确认有效后将下一步计划和可能需要的时间回复给您。
             <!-- AUTO_ASSIGENEES_NOTIFY_HOOK -->
           number: ${{ github.event.issue.number }}
