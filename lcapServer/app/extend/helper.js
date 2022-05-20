@@ -145,7 +145,7 @@ module.exports = {
         Object.assign(cookie, {
           name: cookieName,
           value: cookieValue,
-          url: cookieDomain,
+          domain: cookieDomain,
         });
       }
 
