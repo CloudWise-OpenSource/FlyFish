@@ -617,8 +617,8 @@ class ComponentService extends Service {
     }
 
     try {
-      if (fs.existsSync(`${componentDevPath}/components/cover.jpeg`)) await exec(`cp -rf ${componentDevPath}/components/cover.jpeg ${componentReleasePath}/release/cover.jpeg`);
       await ctx.helper.copyAndReplace(`${componentDevPath}/release`, `${componentReleasePath}/release`, [], { from: initComponentVersion, to: releaseVersion });
+      if (fs.existsSync(`${componentDevPath}/components/cover.jpeg`)) await exec(`cp -rf ${componentDevPath}/components/cover.jpeg ${componentReleasePath}/release/cover.jpeg`);
     } catch (error) {
       returnInfo.msg = 'Init Workplace Fail';
       returnInfo.data.error = error || error.stack;
