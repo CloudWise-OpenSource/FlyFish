@@ -599,26 +599,15 @@ class ComponentService extends Service {
     const componentDevPath = `${componentPath}/${initComponentVersion}`;
     const componentReleasePath = `${componentPath}/${releaseVersion}`;
 
-    const componentDevPackageJsonPath = `${componentDevPath}/package.json`;
-    const componentDevNodeModulesPath = `${componentDevPath}/node_modules`;
-    const packageJson = JSON.parse(fs.readFileSync(componentDevPackageJsonPath).toString());
+    const componentDevPackageJsonPath = `${componentDevPath}/components/main.js`;
 
-    if ((!_.isEmpty(packageJson.dependencies) || !_.isEmpty(packageJson.devDependencies)) && !fs.existsSync(componentDevNodeModulesPath)) {
-      returnInfo.msg = 'No Install Depend';
+    if (!fs.existsSync(componentDevPackageJsonPath)) {
+      returnInfo.msg = 'Please Compile Component';
       return returnInfo;
     }
 
     try {
-      await exec(`cd ${componentDevPath} && npm run build-production`);
-    } catch (error) {
-      returnInfo.msg = 'Compile Fail';
-      returnInfo.data.error = error.message || error.stack;
-      return returnInfo;
-    }
-
-    try {
-      await ctx.helper.copyAndReplace(`${componentDevPath}/release`, `${componentReleasePath}/release`, [], { from: initComponentVersion, to: releaseVersion });
-      if (fs.existsSync(`${componentDevPath}/components/cover.jpeg`)) await exec(`cp -rf ${componentDevPath}/components/cover.jpeg ${componentReleasePath}/release/cover.jpeg`);
+      await ctx.helper.copyAndReplace(`${componentDevPath}/components`, `${componentReleasePath}/release`, [], { from: initComponentVersion, to: releaseVersion });
     } catch (error) {
       returnInfo.msg = 'Init Workplace Fail';
       returnInfo.data.error = error || error.stack;
