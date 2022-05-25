@@ -599,10 +599,25 @@ class ComponentService extends Service {
     const componentDevPath = `${componentPath}/${initComponentVersion}`;
     const componentReleasePath = `${componentPath}/${releaseVersion}`;
 
+    const componentDevPackageJsonPath = `${componentDevPath}/package.json`;
+    const componentDevNodeModulesPath = `${componentDevPath}/node_modules`;
+    const packageJson = JSON.parse(fs.readFileSync(componentDevPackageJsonPath).toString());
+
+    if ((!_.isEmpty(packageJson.dependencies) || !_.isEmpty(packageJson.devDependencies)) && !fs.existsSync(componentDevNodeModulesPath)) {
+      returnInfo.msg = 'No Install Depend';
+      return returnInfo;
+    }
+
     try {
-      const ignoreDirs = [ '.git', 'components', 'release', 'package-lock.json', 'node_modules' ];
-      await exec(`rm -rf ${componentReleasePath}`);
-      await ctx.helper.copyAndReplace(componentDevPath, componentReleasePath, ignoreDirs, { from: initComponentVersion, to: releaseVersion });
+      await exec(`cd ${componentDevPath} && npm run build-production`);
+    } catch (error) {
+      returnInfo.msg = 'Compile Fail';
+      returnInfo.data.error = error.message || error.stack;
+      return returnInfo;
+    }
+
+    try {
+      await ctx.helper.copyAndReplace(`${componentDevPath}/release`, `${componentReleasePath}/release`, [], { from: initComponentVersion, to: releaseVersion });
     } catch (error) {
       returnInfo.msg = 'Init Workplace Fail';
       returnInfo.data.error = error || error.stack;
@@ -610,25 +625,6 @@ class ComponentService extends Service {
       logger.error(`${componentId} Init Workplace Fail: ${JSON.stringify(error || error.stack)}`);
       return returnInfo;
     }
-
-    const savePath = `${componentReleasePath}/release/cover.jpeg`;
-    this.buildRelease(componentId, componentReleasePath, releaseVersion, desc);
-    this.genCoverImage(componentId, savePath);
-
-    return returnInfo;
-  }
-
-  /**
-   * build
-   * @param {*} componentId
-   * @param {*} componentReleasePath
-   * @param {*} releaseVersion
-   * @param {*} desc
-   */
-  async buildRelease(componentId, componentReleasePath, releaseVersion, desc) {
-    const { ctx } = this;
-    await exec(`cd ${componentReleasePath} && NODE_ENV=sit npm install && npm run build-production`);
-    exec(`cd ${componentReleasePath} && rm -rf node_modules`);
 
     await ctx.model.Component._updateOne({ id: componentId }, {
       developStatus: Enum.COMPONENT_DEVELOP_STATUS.ONLINE,
@@ -640,6 +636,11 @@ class ComponentService extends Service {
         },
       },
     });
+
+    const savePath = `${componentReleasePath}/release/cover.jpeg`;
+    this.genCoverImage(componentId, savePath);
+
+    return returnInfo;
   }
 
   // 初始化开发组件空间
