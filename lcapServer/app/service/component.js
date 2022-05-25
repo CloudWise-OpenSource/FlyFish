@@ -617,6 +617,7 @@ class ComponentService extends Service {
     }
 
     try {
+      if (fs.existsSync(`${componentDevPath}/components/cover.jpeg`)) await exec(`cp -rf ${componentDevPath}/components/cover.jpeg ${componentReleasePath}/release/cover.jpeg`);
       await ctx.helper.copyAndReplace(`${componentDevPath}/release`, `${componentReleasePath}/release`, [], { from: initComponentVersion, to: releaseVersion });
     } catch (error) {
       returnInfo.msg = 'Init Workplace Fail';
@@ -636,9 +637,6 @@ class ComponentService extends Service {
         },
       },
     });
-
-    const savePath = `${componentReleasePath}/release/cover.jpeg`;
-    this.genCoverImage(componentId, savePath);
 
     return returnInfo;
   }
