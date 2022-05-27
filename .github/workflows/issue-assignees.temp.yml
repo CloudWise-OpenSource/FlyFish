@@ -14,7 +14,7 @@ jobs:
           actions: "add-assignees"
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.issue.number }}
-          assignees: jincheny,xiaohu12685
+          assignees: jincheny,xiaohu12685,YouYe,maxDwq,RiseHao1029,Markuuuu,laocong
           random-to: 1
 
       - name: 通知开发者
