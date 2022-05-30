@@ -155,6 +155,13 @@ cd /data/app/FlyFish/lcapWww/components
 
 # 安装依赖
 npm install
+
+# 修改大屏应用配置
+vim /data/app/FlyFish/lcapWww/web/screen/config/env.js
+
+# 修改为当前主机IP
+# const apiDomain = 'http://IP:7001';
+# 例如：const apiDomain = 'http://127.0.0.1:7001';
 ```
 
 ### 三、验证

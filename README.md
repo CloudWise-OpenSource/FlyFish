@@ -45,7 +45,7 @@
 
 | 环境    | 说明   |
 | ------- | ------ |
-| node    | 14.9.0 |
+| node    | 14.19.3 |
 | mongodb | 4.0.0  |
 | nginx   | 1.20.1 |
 
@@ -127,8 +127,9 @@ $ git pull
 - 用户管理和权限管控
 
 ## 贡献者名单
-感谢那些为FlyFish做出贡献的开发者，无论是issue问题、文档翻译、代码贡献，FlyFish的发展离不开你的支持
-|  |  |   | 
+
+感谢那些为 FlyFish 做出贡献的开发者，无论是 issue 问题、文档翻译、代码贡献，FlyFish 的发展离不开你的支持
+| | | |
 | :--------| :---------| :-------- |
 | [maxDwq](https://github.com/maxDwq)| [jincheny](https://github.com/jincheny) | [Neeke](https://github.com/Neeke) |
 | [tiger wang](https://github.com/xiaohu12685)| [Jaden.Li](https://github.com/imjaden) | [osramywj](https://github.com/osramywj)|

@@ -49,17 +49,17 @@ function init_system() {
   yum install git -y
   yum install at-spi2-atk libxkbcommon nss -y
 
-  echo "start install node.js"
-  mkdir -p /usr/local/node/
-  cd /usr/local/node/
-  wget -c https://nodejs.org/dist/v14.9.0/node-v14.9.0-linux-x64.tar.xz
-  tar -xvf node-v14.9.0-linux-x64.tar.xz
-  rm -rf node-v14.9.0-linux-x64.tar.xz
-  echo "export NODE_HOME=/usr/local/node/node-v14.9.0-linux-x64" >>/etc/profile
-  echo 'export PATH=$NODE_HOME/bin:$PATH' >>/etc/profile
-  source /etc/profile
-  npm config set registry=https://registry.npmmirror.com
-  echo "node版本：" $(node -v)
+  # echo "start install node.js"
+  # mkdir -p /usr/local/node/
+  # cd /usr/local/node/
+  # wget -c https://nodejs.org/dist/v14.9.0/node-v14.9.0-linux-x64.tar.xz
+  # tar -xvf node-v14.9.0-linux-x64.tar.xz
+  # rm -rf node-v14.9.0-linux-x64.tar.xz
+  # echo "export NODE_HOME=/usr/local/node/node-v14.9.0-linux-x64" >>/etc/profile
+  # echo 'export PATH=$NODE_HOME/bin:$PATH' >>/etc/profile
+  # source /etc/profile
+  # npm config set registry=https://registry.npmmirror.com
+  # echo "node版本：" $(node -v)
 
   echo "start install nvm"
   cd ~
@@ -68,8 +68,8 @@ function init_system() {
   echo "source ~/nvm/nvm.sh" >>~/.bashrc
   source ~/.bashrc
   NVM_NODEJS_ORG_MIRROR=https://npmmirror.com/mirrors/node
-  nvm install v14.9.0
-  nvm alias default v14.9.0
+  nvm install v14.19.3
+  nvm alias default v14.19.3
 
   echo "start install pm2"
   npm install -g pm2@5.1.2
@@ -145,6 +145,10 @@ deploy_flyfish_server() {
   echo "初始化组件开发环境:"
   cd /data/app/FlyFish/lcapWww/components
   npm install
+
+  echo "初始化大屏开发环境:"
+  sed -i "s/IP/$local_ip/g" /data/app/FlyFish/lcapWww/web/screen/config/env.js
+
   echo "部署后端结束。"
 }
 
@@ -220,6 +224,7 @@ remove_system() {
   rm -rf /etc/yum.repos.d/mongodb-org-4.0.repo
 
   echo "start uninstall node.js && nvm"
+  npm uninstall -g pm2
   rm -rf /usr/local/node/
   sed -i '/NODE_HOME/d' /etc/profile
   cd ~

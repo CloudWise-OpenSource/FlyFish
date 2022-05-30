@@ -18,8 +18,7 @@ module.exports = (componentId, componentName) => `{
         "backgroundImage": "",
         "css": ""
     },
-    "events": [
-    ],
+    "events": [],
     "functions": [
         {
             "name": "sayHello",
