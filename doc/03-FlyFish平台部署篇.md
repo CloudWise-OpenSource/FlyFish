@@ -32,6 +32,7 @@ npm run build
 # 修改配置
 vim dist/conf/env-config.js
 
+# hostname 修改为当前主机IP
 # hostname = IP
 # vscodeFolderPrefix 修改为以下路径
 # vscodeFolderPrefix: '/data/app/FlyFish/lcapWww'
@@ -99,7 +100,7 @@ http://ip:8089
 ```bash
 ### 安装主服务依赖
 cd /data/app/FlyFish/lcapServer/
-npm install
+npm install --unsafe-perm=true --allow-root
 
 ### 安装初始化脚本依赖
 cd /data/app/FlyFish/lcapServer/changelog

@@ -1,4 +1,7 @@
-## code-server 
-	online web editor
+## code-server
+
+> online web editor
+
 ## 部署
-- [03-code_server部署篇](../doc/03-code_server部署篇.md)
+
+- [02-code_server 部署篇](../doc/02-code_server部署篇.md)
