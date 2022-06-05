@@ -134,7 +134,7 @@ deploy_flyfish_server() {
   npm install
 
   cd /data/app/FlyFish/lcapServer/
-  npm install --unsafe-perm=true
+  npm install --unsafe-perm=true --allow-root
 
   echo "开始初始化数据库："
   npm run init-development-database
@@ -225,6 +225,7 @@ remove_system() {
 
   echo "start uninstall node.js && nvm"
   npm uninstall -g pm2
+  rm -rf .pm2
   rm -rf /usr/local/node/
   sed -i '/NODE_HOME/d' /etc/profile
   cd ~
