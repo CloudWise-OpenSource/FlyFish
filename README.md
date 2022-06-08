@@ -2,7 +2,7 @@
   <a href="https://github.com/CloudWise-OpenSource/FlyFish"><img src="./doc/images/FlyFish logo.png" alt="flyfish" /></a>
 </div>
 
-**[English]([https://github.com/CloudWise-OpenSource/FlyFish/blob/main/README-%20EN.md](https://github.com/CloudWise-OpenSource/FlyFish/blob/main/README_EN.md))｜简体中文** 
+**[English](https://github.com/CloudWise-OpenSource/FlyFish/blob/main/README_EN.md)｜简体中文** 
 
 # 飞鱼（FlyFish）
 
