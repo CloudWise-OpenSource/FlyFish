@@ -135,4 +135,4 @@ Thanks to the developers who have made contributions to Flyfish. Whatever the is
 
 For more technical information about flyfish, or to join the flyfish developer exchange group, you can scan the QR code below for consultation.
 
-<img src="./doc/images/FlyFish QR code.png" width="550px"/>
+<img src="./doc/images/FlyFish QR code.png" width="400px"/>
