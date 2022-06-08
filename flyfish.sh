@@ -134,7 +134,7 @@ deploy_flyfish_server() {
   npm install
 
   cd /data/app/FlyFish/lcapServer/
-  npm install --unsafe-perm=true --allow-root
+  npm install --production --unsafe-perm=true --allow-root
 
   echo "开始初始化数据库："
   npm run init-development-database
@@ -272,13 +272,18 @@ get_source_code() {
 
 reinstall_flyfish() {
 
+  # Update FlyFish-2.1.2
   systemctl start nginx
+  rm -rf /etc/nginx/conf.d/FlyFish-2.1.0.conf
   deploy_flyfish_web
 
   echo "开始部署FLyFish后端："
   cd /data/app/FlyFish/lcapServer/
-  npm install
+  npm install --production --unsafe-perm=true --allow-root
   npm run development
+  
+  sed -i "s/IP/$local_ip/g" /data/app/FlyFish/lcapWww/web/screen/config/env.js
+
   echo "部署后端结束。"
 
   deploy_flyfish_code_server

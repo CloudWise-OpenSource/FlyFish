@@ -11,7 +11,7 @@
 'use strict';
 
 window.DATAVI_ENV = (function() {
-  const apiDomain = 'IP:7001';
+  const apiDomain = 'http://IP:7001';
 
   return {
     debug: true,
