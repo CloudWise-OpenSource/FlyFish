@@ -7,6 +7,7 @@
  */
 const path = require('path');
 const modifyVars = require('./themes/dark.js');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 
 // 详细扩展配置参考  https://www.npmjs.com/package/@chaoswise/scaffold
 
@@ -55,6 +56,19 @@ module.exports = {
       from:path.resolve(__dirname,'../lcapWeb.yaml'),
       to:'.'
     });
+    return config;
+  },
+  build: config => {
+    // css 压缩
+    config.optimization = {
+      minimizer: [
+        ...config.optimization.minimizer,
+        new CssMinimizerPlugin({
+          test: /\.css$/g,
+          parallel: true,
+        }),
+      ]
+    };
     return config;
   },
   devServer: config => {
