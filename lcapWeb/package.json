@@ -35,5 +35,8 @@
     ">0.2%",
     "not dead",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {
+    "css-minimizer-webpack-plugin": "1.1.5"
+  }
 }
