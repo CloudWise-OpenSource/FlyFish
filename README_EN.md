@@ -135,4 +135,8 @@ Thanks to the developers who have made contributions to Flyfish. Whatever the is
 
 For more technical information about flyfish, or to join the flyfish developer exchange group, you can scan the QR code below for consultation.
 
+**Email：** open.source@cloudwise.com
+
+**WeChat：**
+
 <img src="./doc/images/FlyFish QR code.png" width="400px"/>
