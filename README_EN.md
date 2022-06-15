@@ -120,6 +120,9 @@ $ git pull
 
 - User management and authority control
 
+## Components
+[FlyFishComponents](https://github.com/CloudWise-OpenSource/FlyFishComponents)
+
 ## Contributor list
 
 Thanks to the developers who have made contributions to Flyfish. Whatever the issue, document translation or code contribution, Flyfish cannot develop without your support.
