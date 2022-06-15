@@ -128,6 +128,9 @@ $ git pull
 
 - 用户管理和权限管控
 
+## 组件库
+[FlyFish组件库](https://github.com/CloudWise-OpenSource/FlyFishComponents)
+
 ## 贡献者名单
 
 感谢那些为 FlyFish 做出贡献的开发者，无论是 issue 问题、文档翻译、代码贡献，FlyFish 的发展离不开你的支持
