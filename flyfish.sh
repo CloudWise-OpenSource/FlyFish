@@ -70,6 +70,7 @@ function init_system() {
   NVM_NODEJS_ORG_MIRROR=https://npmmirror.com/mirrors/node
   nvm install v14.19.3
   nvm alias default v14.19.3
+  npm config set registry=https://registry.npmmirror.com
 
   echo "start install pm2"
   npm install -g pm2@5.1.2
