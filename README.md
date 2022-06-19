@@ -2,7 +2,7 @@
   <a href="https://github.com/CloudWise-OpenSource/FlyFish"><img src="./doc/images/FlyFish logo.png" alt="flyfish" /></a>
 </div>
 
-**[English](https://github.com/CloudWise-OpenSource/FlyFish/blob/main/README_EN.md)｜简体中文** 
+**[English](https://github.com/CloudWise-OpenSource/FlyFish/blob/main/README_EN.md)｜简体中文**
 
 # 飞鱼（FlyFish）
 
@@ -30,7 +30,7 @@
 ### 相关培训
 
 - [官方文档](http://docs.aiops.cloudwise.com/zh/flyfish)
-- [架构及目录](http://docs.aiops.cloudwise.com/zh/flyfish/design.html)
+- [架构及目录](http://docs.aiops.cloudwise.com/zh/flyfish/design/design2_1.html)
 - [用户快速上手](http://docs.aiops.cloudwise.com/zh/flyfish/getting-started/)
 - [开发快速上手](http://docs.aiops.cloudwise.com/zh/flyfish/component/basic.html)
 - [AIOps 社区](https://www.cloudwise.ai/#/datalaker/dashboard)
