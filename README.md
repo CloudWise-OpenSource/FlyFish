@@ -142,6 +142,11 @@ $ git pull
 | [aiwhj](https://github.com/aiwhj) | [zengqiu](https://github.com/zengqiu) | [Rise.Hao（郝玉鹏)](https://github.com/RiseHao1029) |
 | [Markuuuu](https://github.com/Markuuuu) | [郝少聪](https://github.com/laocong) | |
 
+
+## 如何参与贡献
+[FlyFish体验官招募计划](https://github.com/CloudWise-OpenSource/FlyFish/issues/131)
+[FlyFish组件激励计划](https://github.com/CloudWise-OpenSource/FlyFishComponents/issues/7)
+
 ## 欢迎加入
 
 _获取更多关于 FlyFish 的技术资料，或加入 FlyFish 开发者交流群，可扫描下方二维码咨询。_
