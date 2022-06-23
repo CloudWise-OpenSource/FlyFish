@@ -145,6 +145,7 @@ $ git pull
 
 ## 如何参与贡献
 [FlyFish体验官招募计划](https://github.com/CloudWise-OpenSource/FlyFish/issues/131)
+
 [FlyFish组件激励计划](https://github.com/CloudWise-OpenSource/FlyFishComponents/issues/7)
 
 ## 欢迎加入
