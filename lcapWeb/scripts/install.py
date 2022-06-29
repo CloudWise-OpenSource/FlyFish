@@ -44,19 +44,14 @@ class InstallDoccWeb(Core):
         config_path = os.path.join(base_dir_path, 'conf/env-config.js')
 
         cw_lcap_tengine_service_port = self.pub_para_port('service_port', 'tengine')
-        cw_lcap_api_service_port = self.get_other_para('lcapApiServer', 'service_port')
-        cw_lcap_code_service_port = self.get_other_para('lcapCodeServer', 'service_port')
 
         # set start script
         place_holder_config_script = {
             "CW_LOCAL_IP": self.local_ip,
+            "CW_LOCAL_PORT": cw_lcap_tengine_service_port,
             
             "CW_INSTALL_APP_DIR": os.path.dirname(base_dir_path),
-            "CW_LOCAL_PORT": cw_lcap_tengine_service_port,
-            "CW_YAPI_SERVER_PORT": cw_lcap_api_service_port,
-            "CW_CODE_SERVER_PORT": cw_lcap_code_service_port,
         }
-
 
         self.replace(config_path, place_holder_config_script)
 

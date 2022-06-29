@@ -1,63 +1,72 @@
 /*
- * @Descripttion: 
+ * @Descripttion:
  * @Author: zhangzhiyong
  * @Date: 2021-12-06 10:32:18
  * @LastEditors: zhangzhiyong
- * @LastEditTime: 2022-04-07 19:38:10
+ * @LastEditTime: 2022-06-28 11:51:23
  */
 const path = require('path');
 const modifyVars = require('./themes/dark.js');
 
+const fs = require('fs');
+
 // 详细扩展配置参考  https://www.npmjs.com/package/@chaoswise/scaffold
 
-module.exports = {
+const args = process.argv;
+
+const isApi = args[3] === 'api';
+
+const config = {
   debugIe: false, // 是否在ie下调试(关闭热更新)
   useMultipleTheme: false, // 是否开启多主题
   isCombinePortal: true, // 是否开启对接portal的配置
-  // publicPath: '/lcapWeb/',//对接portal时修改为/lcapWeb/，否则是/
+  publicPath: '/lcapWeb/', //对接portal时修改为/lcapWeb/，否则是/
   prettierFixed: false,
-  hot:true,
+  disableESLintPlugin: true,
+  hot: true,
   isNoticeUpdate: false, // 是否开启升级通知
-  routerType: 'hash', // 路由类型browser|hash  默认 hash  
+  routerType: 'hash', // 路由类型browser|hash  默认 hash
   themes: [
     {
       name: 'light',
-      entryPath: path.resolve(__dirname, './themes/light.js')
-    }, 
+      entryPath: path.resolve(__dirname, './themes/light.js'),
+    },
     {
       name: 'dark',
-      entryPath: path.resolve(__dirname, './themes/dark.js')
-    }
+      entryPath: path.resolve(__dirname, './themes/dark.js'),
+    },
   ],
   modifyVars, // 非多主题下样式变量
 
-  htmlTagsPlugin: config => {
-    config.tags = [
-      'conf/env-config.js',
-    ];
+  htmlTagsPlugin: (config) => {
+    config.tags = ['conf/env-config.js'];
     return config;
   },
-  htmlPlugin: config => {
+  htmlPlugin: (config) => {
     config.excludeAssets = [];
     config.title = 'LCAP';
     return config;
   },
-  copyPlugin:config=>{
+  copyPlugin: (config) => {
     config.patterns.push({
-      from:path.resolve(__dirname,'../src/assets/diff'),
-      to:'diff'
+      from: path.resolve(__dirname, '../src/assets/diff'),
+      to: 'diff',
     });
     config.patterns.push({
-      from:path.resolve(__dirname,'../scripts'),
-      to:'./scripts'
+      from: path.resolve(__dirname, '../scripts'),
+      to: './scripts',
     });
     config.patterns.push({
-      from:path.resolve(__dirname,'../lcapWeb.yaml'),
-      to:'.'
+      from: path.resolve(__dirname, '../lcapWeb.yaml'),
+      to: '.',
+    });
+    config.patterns.push({
+      from: path.resolve(__dirname, '../www'),
+      to: './www',
     });
     return config;
   },
-  devServer: config => {
+  devServer: (config) => {
     config.port = 8000;
     config.proxy = {
       "/api": {
@@ -75,5 +84,7 @@ module.exports = {
       },
     };
     return config;
-  }
+  },
 };
+
+module.exports = config;

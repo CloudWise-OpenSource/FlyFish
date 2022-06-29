@@ -68,6 +68,10 @@ export default Form.create({ name: "FORM_IN_USER_MODAL" })(
                       id: "common.pleaseInput",
                       defaultValue: "请输入",
                     }) + "用户名",
+                },
+                {
+                  pattern: /^[^\s]*$/,
+                  message: "请输入正确的用户名！"
                 }
               ],
             })(

@@ -113,6 +113,9 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
                       id: "common.pleaseInput",
                       defaultValue: "请输入",
                     }) + "应用名称",
+                }, {
+                  pattern: /^[^\s]*$/,
+                  message: "请输入正确的应用名称！"
                 }
               ],
             })(
@@ -141,6 +144,7 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
               ],
             })(
               <Select
+                style={{ width: '510px' }}
                 showSearch
                 filterOption={(input, option) =>
                   option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}

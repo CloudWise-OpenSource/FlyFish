@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Icon, Input, Button, Row, Col, message } from 'antd';
+import { Form, Icon, Input, Button, Row, Col, message } from '@chaoswise/ui';
 import style from './UserLayout.less';
 import _ from 'lodash';
 import store from './model/index';
@@ -87,11 +87,11 @@ class UserLayout extends React.PureComponent {
         if (!this.state.loginType) {
           login(values, (res) => {
             if (res.code == 0) {
-              globalStore.getUserInfo((res) => {
+              globalStore.getUserInfo((userInfo) => {
                 message.success('登录成功');
-                localStorage.setItem('id', res.id);
-                let item = this.findIndex(toJS(res.menus));
-                this.props.history.push(item.url);
+                localStorage.setItem('id', userInfo.iuser.id);
+                // let item = this.findIndex(toJS(userInfo.menus));
+                this.props.history.push('/');
               }); //成功后获取个人信息
             } else {
               message.error(res.msg || '注册失败');

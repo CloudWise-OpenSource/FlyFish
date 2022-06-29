@@ -3,7 +3,7 @@
  * @Author: zhangzhiyong
  * @Date: 2021-11-10 19:08:41
  * @LastEditors: zhangzhiyong
- * @LastEditTime: 2022-01-13 15:11:14
+ * @LastEditTime: 2022-06-02 14:27:01
  */
 import { fetchGet, fetchPost,fetchPut,fetchDelete } from "@/utils/request";
 import API from "@/services/api/component";
@@ -29,7 +29,6 @@ export const addComponentService = (param)=>{
   return fetchPost(API.ADD_COMPONENT,{ body: param });
 };
 export const getUserInfoService = (param)=>{
-  // return fetchGet(API.GET_USERINFO+'/'+param.id);
   return fetchGet(API.GET_USERINFO);
 };
 export const getDetailDataService = (param)=>{
@@ -38,8 +37,8 @@ export const getDetailDataService = (param)=>{
 export const editComponentService = (id,param)=>{
   return fetchPut(API.EDIT_COMPONENT+'/'+id,{ body:param });
 };
-export const copyComponentService = (id,name)=>{
-  return fetchPost(API.COPY_COMPONENT+'/'+id,{ body:{name} });
+export const copyComponentService = (id,options)=>{
+  return fetchPost(API.COPY_COMPONENT + "/" + id, { body: options });
 };
 export const deleteComponentService = (id)=>{
   return fetchDelete(API.DELETE_COMPONENT+'/'+id);
@@ -73,6 +72,11 @@ export const getDiffRecordService = (id,hash)=>{
 };
 export const addTagService = (param)=>{
   return fetchPost(API.ADD_TAG,{body:param});
+};
+export const importsource = (id,file)=>{
+  return fetchPost(API.UPLOAD_COMPONENT+`/${id}`,
+  {body:file,headers:{"Content-Type": 'multipart/form-data'},
+});
 };
 
 

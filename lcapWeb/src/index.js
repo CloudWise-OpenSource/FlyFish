@@ -1,9 +1,9 @@
 /*
- * @Descripttion: 
+ * @Descripttion:
  * @Author: zhangzhiyong
  * @Date: 2022-05-10 15:55:28
  * @LastEditors: zhangzhiyong
- * @LastEditTime: 2022-05-11 15:44:11
+ * @LastEditTime: 2022-06-02 10:51:32
  */
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -13,19 +13,17 @@ import './assets/css/index.less';
 // 引入 singleSpaReact
 import singleSpaReact from 'single-spa-react';
 
-const isInPortal = !!document.querySelector('#singlespa-container');
-// const rootEle = isInPortal?document.getElementById("lcap-root"):document.getElementById("root"); // 根据产品名称进行修改 xxx-root
-const rootEle = document.getElementById("lcap-root");
-if(rootEle) {
-  ReactDOM.render(
-    <Root />,
-    rootEle
-  );  
+window.isInPortal = !!document.querySelector('#singlespa-container');
+
+const rootEle = document.getElementById('lcap-root');
+
+if (rootEle) {
+  ReactDOM.render(<Root />, rootEle);
 }
 
 /**
  * 加入以下微服务挂载所需要的的生命周期钩子（非微服务集成，以下代码不会执行）
-*/
+ */
 
 // 集成到portal后挂载节点，此id为portal承载子应用约定好的节点
 function domElementGetter() {
@@ -39,20 +37,21 @@ const reactLifecycles = singleSpaReact({
   rootComponent: (singlespa) => {
     return <Root {...singlespa} />;
   },
-  domElementGetter
+  domElementGetter,
 });
 
 // 应用启动的钩子
-export const bootstrap = [
-  reactLifecycles.bootstrap,
-];
+export const bootstrap = [reactLifecycles.bootstrap];
 
 // 应用启动后的钩子
-export const mount = [
-  reactLifecycles.mount,
-];
+export const mount = [reactLifecycles.mount];
 
 // 应用卸载的钩子
 export const unmount = [
   reactLifecycles.unmount,
+  // FIXED: ace子应用之间互相影响
+  () => {
+    window.ace = null;
+    return Promise.resolve();
+  },
 ];

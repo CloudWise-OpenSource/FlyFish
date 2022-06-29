@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import styles from './style.less';
-import { Button,message,Modal,Popover,Spin } from 'antd';
+import { Button,message,Modal,Popover,Spin } from '@chaoswise/ui';
 import store from "../../model/index";
 import { observer } from "@chaoswise/cw-mobx";
 import { installPackagesService,compileComponentService } from '../../services';
@@ -92,7 +92,7 @@ const CodeDevelop = observer((props)=>{
         {developingData.name} */}
       </div>
       <div className={styles.btnwrap}>
-        <Button type="primary" style={{marginRight:20}}
+        <Button type="primary" style={{marginRight:8}}
           disabled={installing}
           onClick={()=>{
             installPackages();
@@ -104,7 +104,7 @@ const CodeDevelop = observer((props)=>{
         <Button
           type='primary'
           onClick={()=>{setReleaseModalVisible(true);}}
-          style={{marginRight:20}}
+          style={{marginRight:8}}
         >更新上线</Button>
         <Button
           type="primary"
@@ -117,7 +117,7 @@ const CodeDevelop = observer((props)=>{
           <Popover content='切换布局'>
             <div 
               title="切换布局"
-              style={{cursor:'pointer',margin:'0 20px',padding:'4px 0'}}
+              style={{cursor:'pointer',margin:'0 8px',padding:'4px 0 0'}}
               onClick={()=>{setLayout(layout=='row'?'col':'row');}}
             >
               {

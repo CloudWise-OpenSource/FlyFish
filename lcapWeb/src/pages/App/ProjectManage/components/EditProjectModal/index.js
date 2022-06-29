@@ -81,7 +81,10 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
                       id: "common.pleaseInput",
                       defaultValue: "请输入",
                     }) + "项目名称",
-                },
+                },{
+                  pattern: /^[^\s]*$/,
+                  message: "请输入正确的项目名称！"
+                }
               ],
             })(
               <Input
@@ -109,7 +112,6 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
               ],
             })(
               <Select
-                showSearch={true}
                 mode='tags'
                 placeholder={
                   intl.formatMessage({
@@ -164,7 +166,7 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
               initialValue: project.desc,
             })(
               <Input.TextArea
-                row={3}
+              autoSize={{ minRows: 3 }}
                 placeholder={
                   intl.formatMessage({
                     id: "common.pleaseInput",

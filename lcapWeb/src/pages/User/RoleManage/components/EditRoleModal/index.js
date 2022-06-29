@@ -61,7 +61,10 @@ export default Form.create({ name: "FORM_IN_USER_MODAL" })(
                       id: "common.pleaseInput",
                       defaultValue: "请输入",
                     }) + "角色名",
-                },
+                },{
+                  pattern: /^[^\s]*$/,
+                  message: "请输入正确的角色名！"
+                }
               ],
             })(
               <Input
@@ -88,7 +91,7 @@ export default Form.create({ name: "FORM_IN_USER_MODAL" })(
               ],
             })(
               <Input.TextArea
-              row={3}
+              autoSize={{ minRows: 3 }}
               />
             )}
           </Form.Item>

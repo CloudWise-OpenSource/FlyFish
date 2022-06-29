@@ -17,8 +17,8 @@ const moment = require('moment');
     const { all: totalLogs } = await git.log();
 
     const hash = totalLogs[0].hash;
-    const projectDir = 'lcapWeb';
-    const tarLib = `lcapWeb-1.2.0-${moment().format('YYYYMMDDHHmmss')}-${hash.slice(0, 7)}.tar.gz`;
+    const projectDir = "lcapWeb";
+    const tarLib = `lcapWeb-1.3.0-${moment().format('YYYYMMDDHHmmss')}-${hash.slice(0, 7)}.tar.gz`;
 
     await exec(`cd ./lcapWeb && rm -rf target && mkdir target && cd ../ && tar -zcvf ${tarLib} ${projectDir} && mv ${tarLib} ${projectDir}/target`, { maxBuffer: 1024 * 1024 * 1024 });
   } catch (error) {

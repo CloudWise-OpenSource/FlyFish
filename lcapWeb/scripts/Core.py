@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import os
 import re
+import sys
 import json
 import argparse
 import datetime
@@ -71,17 +72,26 @@ class Core:
         """
         print(msg.format(Core.now_f_time()))
 
-    def sys_cmd(self, cmd):
+    def sys_cmd(self, cmd, ignore_exception=True):
         """
         shell脚本输出
         :param cmd: linux命令
+        :param ignore_exception: 默认不抛出异常
         :return:
         """
-        shell = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
-        cmd_stdout = bytes.decode(shell.stdout.read())
+        shell = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        stdout, stderr = shell.communicate()
+        stdout, stderr = bytes.decode(stdout), bytes.decode(stderr)
         if self.switch:
-            self.logger.info("执行cmd命令:{0},结果退出码:{1},执行详情:{2}".format(cmd, shell.poll(), cmd_stdout))
-        return cmd_stdout
+            self.logger.info("执行cmd命令:{0},结果退出码:{1},执行详情:{2}".format(cmd, shell.poll(), stdout))
+        # 新增非0异常抛出 by 2022-03-13
+        if not ignore_exception:
+            if shell.poll() != 0:
+                print("执行cmd命令失败，执行cmd命令:{0},结果退出码:{1},执行详情:{2}".format(cmd, shell.poll(), stderr))
+                sys.exit(shell.poll())
+            else:
+                print(stdout)
+        return stdout
 
     def replace(self, file_name, data_dict):
         """

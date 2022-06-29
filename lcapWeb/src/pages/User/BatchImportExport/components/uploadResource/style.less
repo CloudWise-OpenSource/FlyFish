@@ -1,0 +1,47 @@
+.UploadingResourcePosition{
+  width: 500px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  display: flex;
+  flex-direction: column;
+  height: 230;
+
+  &>span{
+    width: 500px;
+  }
+}
+.uploadText{
+  color: #ccc;
+}
+.uploadIcon{
+  font-size: 50px;
+  color: #3A91FE;
+}
+.uploadResultWrap{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+.uploadFileIcon{
+  width: 10px;
+  height: 18px;
+  background: url(../../../../App/ComponentDevelop/assets/file.png);
+  margin-right: 10px;
+}
+.progressWrap{
+  display: flex;
+  justify-content: center;
+  &>div{
+    width: 60%;
+  }
+}
+.confirmStyle{
+  :global{
+    .ant-modal-body {
+      padding: 24px !important;
+    }
+  }
+}

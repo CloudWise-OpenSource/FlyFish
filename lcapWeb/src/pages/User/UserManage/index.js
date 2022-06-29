@@ -1,13 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from "react";
-import { CWTable, Input, Button, message, Select, Icon } from "@chaoswise/ui";
+import { CWTable, Input, Button, message, Select, Icon, Popconfirm } from "@chaoswise/ui";
 const { Option } = Select;
 import { observer, loadingStore, toJS } from "@chaoswise/cw-mobx";
 import store from "./model/index";
 import EditProjectModal from "./components/EditUsertModal";
 import { successCode } from "@/config/global";
 import styles from "./assets/style.less";
-import { Popconfirm } from 'antd';
 import { formatDate } from '@/config/global';
 
 import { FormattedMessage, useIntl } from "react-intl";

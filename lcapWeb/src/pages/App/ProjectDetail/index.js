@@ -1,12 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from "react";
-import { CWTable, Input, Button, message } from "@chaoswise/ui";
-import { observer, loadingStore, toJS } from "@chaoswise/cw-mobx";
+import { Menu } from "@chaoswise/ui";
+import QS from 'querystring';
+import { observer } from "@chaoswise/cw-mobx";
 import store from "./model/index";
 import AssemblyList from "./components/ComponentDevelop";
 import ApplyList from './components/ApplyList';
 import { FormattedMessage, useIntl } from "react-intl";
-import { Menu } from 'antd';
 import styles from "./assets/style.less";
 const ProjectDetail = observer((props) => {
   const intl = useIntl();
@@ -18,9 +18,10 @@ const ProjectDetail = observer((props) => {
     applicationLength, isAddModalVisible, pageSize, curPage, isisLibModallVisible } =
     store;
   const nowProgressId = props.match.params.id;
+  const projectName=QS.parse(props.location.search.slice(1)).name;
   return (
     <React.Fragment>
-      <Menu onClick={setCheckPageFLag} mode="horizontal" selectedKeys={[checkPageFLag]} >
+      <Menu onClick={setCheckPageFLag} mode="horizontal" selectedKeys={[checkPageFLag]} className={styles.menuStyle}>
         <Menu.Item key="applyList" >
           项目应用列表
         </Menu.Item>
@@ -36,6 +37,7 @@ const ProjectDetail = observer((props) => {
             hasMore={hasMore} total={total}
             activeProject={activeProject}
             pageSize={pageSize}
+            projectName={projectName}
             curPage={curPage}
             templateapplicationPageSize={templateapplicationPageSize}
             templateapplicationCurPage={templateapplicationCurPage}
@@ -48,7 +50,7 @@ const ProjectDetail = observer((props) => {
             type={type} />
           :
           <AssemblyList
-
+          projectName={projectName}
             ProgressId={nowProgressId} />
       }
     </React.Fragment>

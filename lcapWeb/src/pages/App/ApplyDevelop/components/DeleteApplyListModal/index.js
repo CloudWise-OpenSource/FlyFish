@@ -1,10 +1,9 @@
 import React from "react";
-import { Modal, Form, Button, Input } from "@chaoswise/ui";
+import { Modal, Form, Button, Input, Table } from "@chaoswise/ui";
 import { useIntl } from "react-intl";
 import { formatDate } from '@/config/global';
 
 import { toJS } from '@chaoswise/cw-mobx';
-import { Table } from 'antd';
 export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
   function EditProjectModal({ total, curPage, form, deleteApplyList = [], onChange, getDeleteApplyList, onCancel }) {
     // let basicTableListData = toJS(deleteApplyList);

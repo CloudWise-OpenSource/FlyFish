@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Input, Form, Button, SearchBar, Tooltip, Collapse, message, Progress, Popconfirm, Pagination } from "@chaoswise/ui";
+import { Input, Form, Button, SearchBar, Tooltip, Collapse, message, Progress, Popconfirm, Pagination, Icon, Select } from "@chaoswise/ui";
 import { useIntl } from "react-intl";
 import styles from "./index.less";
 import store from "../../model";
 import reqStore from '@/pages/App/ApplyDevelop/model';
 import Card from '@/components/TestCard';
-import { Icon, Select } from 'antd';
 const { Option } = Select;
 const { Panel } = Collapse;
 import { successCode } from "@/config/global";
@@ -13,16 +12,13 @@ import axios from 'axios';
 import ApplyModal from '@/components/AddProjectModal';
 import ApplyModalLib from '@/components/AddProjectModal';
 
-import globalStore from '@/stores/globalStore';
 
 export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
     function EditProjectModal({
         templateapplicationTotal, templateapplicationCurPage, templateapplicationPageSize,
-        templateapplicationList, industryList, curPage, pageSize, ProgressId, total, applicationList, activeProject, type, isAddModalVisible, isisLibModallVisible }) {
+        templateapplicationList, industryList, curPage, pageSize, projectName, ProgressId, total, applicationList, activeProject, type, isAddModalVisible, isisLibModallVisible }) {
 
-        const { userInfo } = globalStore;
         let [checkFlag, setCheckFlag] = useState(null);
-        let [projectName, setProjectName] = useState('');
         const [downLoadArr, setDownLoadArr] = useState([]);
         const {
             setProjectId, setSearchParams, openIsLibModal, closeIsLibModal, setTemplateActiveProject, activeTemplate, getIndustrysList, getApplicationList, getTemplateApplicationList, setActiveProject, setType, openAddProjectModal, closeAppProjectModal
@@ -162,7 +158,6 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
             getIndustrysList();
             getApplicationList();
             getTemplateApplicationList();
-            setProjectName(JSON.parse(sessionStorage.getItem('activeProject')).name);
 
         }, []);
         return (
@@ -188,11 +183,15 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
                 </div>
                 <Collapse defaultActiveKey={['1', '2']} ghost={true} bordered={false} >
                     <Panel header={
-                        <>
-                            <span>{projectName}</span>
-                            <span className={styles.title}>共</span>
-                            <span>{total}个应用</span>
-                        </>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <Tooltip title={projectName || ''} placement="topLeft">
+                                <span className="TableTopTitle" style={{ maxWidth: '400px' }}>{projectName || ''}</span>
+                            </Tooltip>
+                            < div className={styles.titleContainer}>
+                                <span >共</span>
+                                <span>{total || 0}个应用</span>
+                            </div>
+                        </div>
                     } key="1"
                         extra={<Button onClick={(e) => {
                             e.stopPropagation();
@@ -252,12 +251,12 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
                                             <a
                                                 title="开发应用"
                                                 target="_blank"
-                                                href={`${window.LCAP_CONFIG.screenEditAddress}?id=${item.id}&token=${userInfo.yapiAuthorization}`}
+                                                href={`${window.LCAP_CONFIG.screenEditAddress}?id=${item.id}`}
                                                 rel="noreferrer"
                                             >
                                                 <Button value="small" type="primary">
                                                     开发
-                        </Button>
+                                                </Button>
                                             </a>
                                             <a
                                                 title="预览应用"
@@ -267,7 +266,7 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
                                             >
                                                 <Button value="small" >
                                                     预览
-                        </Button>
+                                                </Button>
                                             </a>
                                         </>
                                     );
@@ -290,10 +289,11 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
 
 
                     </Panel>
-                    <Panel header='从应用模板库中选择' key="2">
+                    <Panel header='从应用模板库中选择' key="2" className={styles.projectDetailStyle}>
                         <SearchBar
                             onSearch={handleApplicationChange}
                             searchContent={searchContent} showSearchCount={6}
+                            className='123'
                         />
                         <Card
                             value={templateapplicationList}
@@ -313,7 +313,7 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
                                                 onClick={() => { openIsLibModal(); }}
                                             >
                                                 使用模板创建应用
-                      </Button>
+                                            </Button>
                                         </a>
                                         <a
                                             title="预览应用"
@@ -323,7 +323,7 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
                                         >
                                             <Button value="small" >
                                                 预览模板应用
-                      </Button>
+                                            </Button>
                                         </a>
                                     </>
                                 );
