@@ -35,6 +35,15 @@ https://gitee.com/CloudWise/fly-fish
 - [Get started quickly](http://docs.aiops.cloudwise.com/zh/flyfish/component/basic.html)
 - [AIOps community](https://www.cloudwise.ai/#/datalaker/dashboard)
 
+## Product Features
+![产品功能示例1](./doc/images/产品功能示例1.gif)|![产品功能示例2](./doc/images/产品功能示例2.gif)
+---|---
+
+## Data Visualization Case
+![IT监控设施概览](./doc/images/IT监控设施概览.gif)|![基础监控](./doc/images/基础监控.gif)
+---|---
+
+
 ## Installation Instructions
 
 ### Branch Instructions
