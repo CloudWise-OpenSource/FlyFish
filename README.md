@@ -35,6 +35,15 @@
 - [开发快速上手](http://docs.aiops.cloudwise.com/zh/flyfish/component/basic.html)
 - [AIOps 社区](https://www.cloudwise.ai/#/datalaker/dashboard)
 
+## 功能示例
+![产品功能示例1](./doc/images/产品功能示例1.gif)|![产品功能示例2](./doc/images/产品功能示例2.gif)
+---|---
+
+## 大屏案例
+![IT监控设施概览](./doc/images/IT监控设施概览.gif)|![基础监控](./doc/images/基础监控.gif)
+---|---
+
+
 ## 安装说明
 
 ### 分支说明
