@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { AbreastLayout, SearchBar, Icon, Pagination } from "@chaoswise/ui";
-import { Select, Input, Button, Modal, message, Collapse } from 'antd';
+import { AbreastLayout, SearchBar, Icon, Pagination, Select, Tooltip,Input, Button, message, Collapse } from "@chaoswise/ui";
 import { observer, toJS } from "@chaoswise/cw-mobx";
 const { Panel } = Collapse;
 import store from "./model/index";
@@ -12,27 +11,25 @@ import AddComponent from "./components/addComponent";
 import Detail from "./components/detail";
 import _ from "lodash";
 import Card from '@/components/TestCard';
-import Drawer from '@/components/Drawer';
+import Drawer from '@/components/Drawer/index.jsx';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 const { Option } = Select;
 
-const ComponentDevelop = observer(({ ProgressId }) => {
+const ComponentDevelop = observer(({ ProgressId, projectName }) => {
   const intl = useIntl();
   const {
-    getLibraryListData,setLibraryOptions,
-    addModalvisible,
-    setAddModalvisible,
+    getLibraryListData, setLibraryOptions,
     getIndustrysList,
-    getTagsList,setCurPage,
-    deleteAssembly,setLibraryLisCurPage,
+    getTagsList, setCurPage,
+    setLibraryLisCurPage,
     getTreeDataFirst, addLibraryLisCurPage,
     changeOneAssemly,
     getListData, setDrawerVisible,
-    getAssemlyDetail,
-    setSelectedData, setProjectId
+    setCardId,
+    setProjectId
   } = store;
-  const { total, curPage, pageSize, tagsList, hasMore, libraryListLength, industryList, isDrawerVisible, assemlyDetail, libraryListData, listData, selectedData } = store;
+  const { total, viewId, curPage, pageSize, tagsList, hasMore, libraryListLength, industryList, isDrawerVisible, libraryListData, listData, selectedData } = store;
   const [changeFlga, setchangeFlga] = useState(false); //编辑完成
   // 公共组件下滑
   const changePage = () => {
@@ -41,7 +38,6 @@ const ComponentDevelop = observer(({ ProgressId }) => {
   };
   // 表格列表数据
   let basicTableListData = toJS(listData);
-  const [activeProject, setActiveProject] = useState(''); //编辑完成
   const searchContent = [
     {
       components: (
@@ -96,7 +92,7 @@ const ComponentDevelop = observer(({ ProgressId }) => {
           }
         >
           {
-           tagsList&& tagsList.map(item => <Option key={item.id} value={item.id}>{item.name}</Option>)
+            tagsList && tagsList.map(item => <Option key={item.id} value={item.id}>{item.name}</Option>)
           }
         </Select>
       ),
@@ -119,17 +115,17 @@ const ComponentDevelop = observer(({ ProgressId }) => {
     getTreeDataFirst();
     getIndustrysList(); //行业
     getTagsList();
-    setActiveProject(JSON.parse(sessionStorage.getItem('activeProject')).name);
   }, []);
   useEffect(() => {
-    Number(selectedData.category) ?getListData():null;
-    Number(selectedData.category) ?getLibraryListData({}, true):null;
+    Number(selectedData.category) ? getListData() : null;
+    Number(selectedData.category) ? getLibraryListData({}, true) : null;
   }, [selectedData]);
   return < >
     <AbreastLayout
       type='leftOperationArea'
       showCollapsedBtn
       SiderWidth={300}
+      className={styles.abreastLayoutStyle}
       Siderbar={(
         <div className={styles.leftWrap}>
           <div className={styles.treeWrap}>
@@ -139,13 +135,17 @@ const ComponentDevelop = observer(({ ProgressId }) => {
       )}
     >
       <div className={styles.container}>
-        <Collapse defaultActiveKey={['1', '2']} ghost={true} bordered={false} > 
+        <Collapse defaultActiveKey={['1', '2']} ghost={true} bordered={false} >
           <Panel header={
-            <>
-              <span>{activeProject}</span>
-              <span className={styles.title}>共</span>
-              <span>{listData && listData.total}个组件</span>
-            </>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <Tooltip title={projectName || ''} placement="topLeft">
+                <span className="TableTopTitle" style={{ maxWidth: '400px' }}>{projectName || ''}</span>
+              </Tooltip>
+              < div className={styles.titleContainer}>
+                <span >共</span>
+                <span>{total || 0}个组件</span>
+              </div>
+            </div>
           } key="1"
             extra={<Button onClick={(e) => {
               e.stopPropagation();
@@ -157,7 +157,7 @@ const ComponentDevelop = observer(({ ProgressId }) => {
                 number={6}
                 checkCard={(id) => {
                   setDrawerVisible(true);
-                  getAssemlyDetail(id);
+                  setCardId(id);
                 }}
                 onDelete={(params) => {
                   let filterArr = params.projects.filter(item => {
@@ -195,7 +195,7 @@ const ComponentDevelop = observer(({ ProgressId }) => {
               <Pagination
                 hideOnSinglePage={true}
                 total={total}
-                current={curPage }
+                current={curPage}
                 pageSize={pageSize}
                 onChange={(page) => {
                   setCurPage(page);
@@ -223,7 +223,7 @@ const ComponentDevelop = observer(({ ProgressId }) => {
                   projectID={ProgressId}
                   checkCard={(id) => {
                     setDrawerVisible(true);
-                    getAssemlyDetail(id);
+                    setCardId(id);
                   }}
                   value={libraryListData}
                   state={1}
@@ -260,7 +260,7 @@ const ComponentDevelop = observer(({ ProgressId }) => {
       {/* <Detail /> */}
     </AbreastLayout>
     {
-      isDrawerVisible ? <Drawer assemly={assemlyDetail} setDrawerVisible={setDrawerVisible} /> : null
+      isDrawerVisible ? <Drawer viewId={viewId} setDrawerVisible={setDrawerVisible} /> : null
     }
   </>;
 });

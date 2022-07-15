@@ -1,5 +1,20 @@
-.container{
-    .mybtn{
+.container {
+    position: relative;
+
+    .headerSearch {
+        :global{
+            .ant-row-flex{
+                margin: 0 8px 0 0;
+            }
+            .cw-searchbar-form{
+                .cw-search-form-wrap{
+                    border-top: none;
+                }
+            }
+        }
+    }
+
+    .mybtn {
         width: 65px !important;
         color: white !important;
         text-align: center;
@@ -8,10 +23,24 @@
         white-space: nowrap;
         height: 35px;
         line-height: 35px !important;
-        background-color:#1890ff;
+        background-color: #1890ff;
     }
-    .search{
+
+    .contentSearch {
+        padding-bottom: 16px;
         border-bottom: none;
+        :global{
+            .cw-search-form-wrap{
+                padding-top: 16px !important;
+            }
+            .cw-search-show{
+                padding-right: 16px;
+                margin: 0 !important;
+            }
+        }
+    }
+    &>div:nth-last-child(2){
+        padding-right: 4px;
     }
 .searchCotainer1{
     padding:10px 32px 10px;
@@ -22,12 +51,46 @@
     cursor: default;
     color: rgba(0, 0, 0, 0.85);
 }
+
 :global {
-    .cw-searchbar-form{
-        padding-bottom:0px !important
-    }
     .ant-input-affix-wrapper .ant-input-prefix, .ant-input-affix-wrapper .ant-input-suffix{
         color: rgba(0, 0, 0, 0.3);
     }
+    
+    .cw-searchbar-form{
+        // padding:0 20px 0 0 !important;
+        .cw-search-form-wrap{
+            border-top: 1px solid #e9e9e9;
+            .cw-search-wrapper{
+                padding: 0 68px 0 1px !important;
+            }
+        }
+    }
+}}
+
+.addComponentStyle {
+    &::before {
+        padding: 0 !important;
+    }
+
+    &>ul {
+        padding: 0;
+
+        &>li {
+            padding: 0;
+        }
+    }
 }
+
+.addComponentBtnStyle {
+    border-radius: 0px;
+    border: 0;
+    padding: 0 27px;
+}
+
+.batchOperBtn {
+    padding: 4px;
+    display: inline-block;
+    position: absolute;
+    transform: translate(0,-50%);
 }

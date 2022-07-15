@@ -23,7 +23,7 @@
   margin: 0 10px;
 }
 .firstTitle{
-  font-weight: 800;
+  font-weight: 500;
   max-width: 110px;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -61,12 +61,12 @@
   background-color: #e6f7ff;
 }
 .leftBigTitle{
-  position: absolute;
+  position: relative;
   color: #fff;
-  bottom: 10px;
+  margin: 16px 0;
   background-color: #1890ff;
-  width: 80%;
-  left: 10%;
+  width: 100%;
+  // left: 10%;
   height: 30px;
   display: flex;
   align-items: center;
@@ -74,7 +74,8 @@
   cursor: pointer;
 }
 .searchWrap{
-  padding: 10px 20px;
+  padding: 16px 0;
+  width: 100%;
 }
 .treeTitle{
   padding: 10px 20px 0px;
@@ -85,4 +86,28 @@
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+}
+.treeWrap{
+  height: calc(~"100% - 126px");
+  width: 100%;
+}
+
+.modalWrap{
+  position: relative;
+  width: 100%;
+  &>div{
+    display: flex;
+    position: relative;
+    width: 100%;
+    margin-bottom: 24px;
+  }
+}
+.formItemLabelWrap{
+  width: 76px;
+  display: flex;
+  align-items: center;
+  padding-right: 8px;
+}
+.formItemFieldWrap{
+  width: calc(~'100% - 76px');
 }

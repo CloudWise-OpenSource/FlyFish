@@ -32,11 +32,18 @@ const AppProjectManage = observer((props) => {
       dataIndex: "name",
       key: "name",
       render(text, record) {
-        return (<div title={text} style={{height:24, cursor: 'pointer',overflow:'hidden',textOverflow:"ellipsis",whiteSpace:'nowrap' }} onClick={() => {
-          goRoute(record);
-          openProjectPage(record);
-        }}>{text}</div>
-
+        return (
+          <>
+            <Tooltip title={text} placement="topLeft">
+              <a
+                className="TableTopTitle"
+                style={{ cursor: 'pointer' }}
+                onClick={() => {
+                  goRoute(record);
+                  openProjectPage(record);
+                }}>{text}</a>
+            </Tooltip>
+          </>
         );
 
       },
@@ -47,29 +54,36 @@ const AppProjectManage = observer((props) => {
       key: "trades",
       render(trades) {
         const str = trades.map(item=>item.name).join(',');
-        return <div title={str} style={{ height:24,whiteSpace:'nowrap',overflow:'hidden',textOverflow:"ellipsis" }}>{str}</div>;
+        return str?<div title={str} style={{ height:24,whiteSpace:'nowrap',overflow:'hidden',textOverflow:"ellipsis" }}>{str}</div>
+        :<div title={str} style={{ height:24,whiteSpace:'nowrap',overflow:'hidden',textOverflow:"ellipsis" }}>-</div>;
       },
     },
     {
       title: "描述",
       dataIndex: "desc",
       key: "desc",
-      render(desc){
-        return <div title={desc} style={{ height:24,whiteSpace:'nowrap',overflow:'hidden',textOverflow:"ellipsis" }}>{desc}</div>;
+      render(text){
+        return(
+          <>
+            <Tooltip title={text} placement="topLeft">
+              <div className="TableTopTitle">{text}</div>
+            </Tooltip>
+          </>
+        );
       }
     },
     {
       title: "最新更新时间",
       dataIndex: "updateTime",
       key: "updateTime",
-      width: 200,
+      width: 170,
       render(updateTime) {
         return formatDate(updateTime);
       },
     },
     {
       title: "创建时间",
-      width: 200,
+      width: 170,
       dataIndex: "createTime",
       key: "createTime",
       render(createTime) {
@@ -80,6 +94,7 @@ const AppProjectManage = observer((props) => {
       title: "创建人",
       dataIndex: "creatorName",
       key: "creatorName",
+      width: 100,
     },
     {
       title: intl.formatMessage({
@@ -88,7 +103,7 @@ const AppProjectManage = observer((props) => {
       }),
       dataIndex: "actions",
       key: "actions",
-      width: 200,
+      width: 170,
       render(text, record, index) {
         return (
           <span className={styles.projectActionList}>
@@ -105,6 +120,7 @@ const AppProjectManage = observer((props) => {
             </Link>
             <a
               className={styles.projectAction}
+              disabled={record?.from=='lcap-init'}
               onClick={() => {
                 setCheckFlag(false);
                 record.trades = record.trades.map(item => item.name);
@@ -134,7 +150,7 @@ const AppProjectManage = observer((props) => {
                 }
               });
             }}>
-              <a className={styles.projectAction}>
+              <a className={styles.projectAction} disabled={record?.from=='lcap-init'}>
                 <FormattedMessage id="common.delete" defaultValue="删除" />
               </a>
             </Popconfirm>
@@ -169,7 +185,7 @@ const AppProjectManage = observer((props) => {
     getIndustrysList();
   }, []);
   const goRoute = (item) => {
-    props.history.push({pathname:`/app/${item.id}/project-detail`,state:{name:item.name}});
+    props.history.push({pathname:`/app/${item.id}/project-detail`,search:`?name=${item.name}`});
   };
   // 分页、排序、筛选变化时触发
   const onPageChange = (curPage, pageSize) => {
@@ -188,6 +204,7 @@ const AppProjectManage = observer((props) => {
         dataSource={basicTableListData}
         rowKey={(record) => record.id}
         loading={loading}
+        tableWapperClassName={styles.tableWapperStyle}
         pagination={{
           showTotal: true,
           total: total,

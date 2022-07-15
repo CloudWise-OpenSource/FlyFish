@@ -1,0 +1,422 @@
+// @import 'bootstrap.min.css';
+.httpContainer {
+ 
+  .leftWrap {
+    padding: 5px 10px;
+    height: 100%;
+  }
+
+  .treeWrap {
+    height: calc(~'100vh - 230px');
+    // overflow-y:auto;
+    background-color: #fff;
+    box-shadow: 5px 5px 5px lightgray;
+    background-color: WhiteSmoke;
+    border-radius: 15px;
+    padding-top: 10px;
+  }
+
+  .title {
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .buttonColor {
+    background-color: AliceBlue;
+    color: CornflowerBlue;
+  }
+
+
+
+  :global {
+    .cw-abreast-layout .cw-abreast-layout-left-navigation {
+      border: none !important;
+    }
+
+
+    .noBorderInput .ant-input {
+      border: none;
+      background-color: WhiteSmoke !important;
+      font-size: 16px;
+    }
+
+    .noBorderInput .ant-input:focus {
+      box-shadow: none;
+    }
+  }
+
+  .addIcon {
+    position: relative;
+  }
+
+  .positionModal {
+    position: absolute;
+    width: 250px;
+    right: 0;
+    top: 0;
+    border: 1px solid lightgray;
+    box-shadow: lightgrey 0 0 15px;
+    z-index: 20;
+    background-color: white;
+    padding: 20px 20px 40px;
+  }
+
+  :global {
+    .showEdit .form-control>.je-form-input-label {
+      display: none;
+    }
+  }
+
+  .bluebtn {
+    border: 1px solid #1890ff;
+    color: #1890ff;
+    margin-bottom: 20px;
+  }
+
+  .btnContainer {
+    width: 50px;
+    margin-top: 10px;
+    color: #1890ff;
+    cursor: pointer;
+  }
+
+  :global {
+    .card-title>:last-child {
+      font-size: 12px !important;
+    }
+
+    .je-modal {
+      left: -250px !important;
+    }
+    .je-edit-json--textarea{
+      height: 130px !important;
+    }
+    .card-title {
+      font-size: 12px;
+      width: 100%;
+      padding: 15px 0 5px 15px;
+      background-color: rgba(0, 0, 0, 0.02);
+    }
+
+    .je-object__title {
+      width: 25%;
+      background-color: rgba(0, 0, 0, 0);
+      margin: 0 0 5px 0;
+    }
+
+    .json-editor-btn-collapse {
+      position: relative;
+      font-size: 0;
+      width: 16px;
+      height: 16px;
+      background-color: rgba(0, 0, 0, 0.02);
+      border: none;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.02);
+        box-shadow: none
+      }
+
+      &:focus {
+        background-color: rgba(0, 0, 0, 0.02);
+        box-shadow: none
+      }
+
+      &:active {
+        background-color: rgba(0, 0, 0, 0.02) !important;
+        border: none !important;
+      }
+
+      &:after {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: -2px;
+        background: url(./icon/sort-down.svg);
+        transform: rotate(90deg);
+        background-size: cover;
+        width: 12px;
+        height: 12px;
+      }
+    }
+
+    .bg-light {
+      background-color: white !important;
+      border: none !important;
+    }
+
+    .je-object__container {
+      background-color: rgba(0, 0, 0, 0.02);
+    }
+    .jsontPanel .form-group {
+      display: flex;
+      align-items: center;
+     }
+   .jsontPanel .form-group>.form-control {
+     width: 70%;
+      height: 26px !important;
+      font-size: 12px !important;
+      padding: 0 0.75rem !important;
+    }
+    .textPanel  .form-group>.form-control {
+      min-height: 200px !important;
+    }
+    .mb-3,
+    .my-3 {
+      margin-bottom: 0 !important;
+    }
+
+    .col-md-12 {
+      padding: 0 !important;
+    }
+
+    .je-object__controls {
+      float: right !important;
+      margin-top: 13px;
+
+      .json-editor-btn-edit {
+        font-size: 0;
+        position: relative;
+        margin-right: 10px;
+        width: 16px;
+        height: 16px;
+        margin-top: 3px;
+        background-color: rgba(0, 0, 0, 0.02);
+        border: none;
+
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.02);
+          box-shadow: none
+        }
+
+        &:focus {
+          background-color: rgba(0, 0, 0, 0.02);
+          box-shadow: none
+        }
+
+        &:active {
+          background-color: rgba(0, 0, 0, 0.02) !important;
+          border: none !important;
+        }
+
+        &:after {
+          content: "";
+          position: absolute;
+          left: 1px;
+          top: 0px;
+          background: url(./icon/edit.svg);
+          background-size: cover;
+          width: 12px;
+          height: 12px;
+        }
+      }
+
+      .json-editor-btn-edit_properties {
+        font-size: 0;
+        position: relative;
+        margin-right: 10px;
+        width: 16px;
+        height: 16px;
+        margin-top: 3px;
+        background-color: rgba(0, 0, 0, 0.02);
+        border: none;
+
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.02);
+          box-shadow: none
+        }
+
+        &:focus {
+          background-color: rgba(0, 0, 0, 0.02);
+          box-shadow: none
+        }
+
+        &:active {
+          background-color: rgba(0, 0, 0, 0.02) !important;
+          border: none !important;
+        }
+
+        &:after {
+          content: "";
+          position: absolute;
+          left: 1px;
+          top: 0px;
+          background: url(./icon/setting.svg);
+          background-size: cover;
+          width: 12px;
+          height: 12px;
+        }
+      }
+    }
+
+    .json-editor-btn-subtract {
+      display: none;
+    }
+
+    .json-editor-btn-add,
+    .json-editor-btntype-deleteall,
+    .json-editor-btn-movedown,
+    .json-editor-btn-moveup {
+      font-size: 0;
+      position: relative;
+      margin-right: 10px;
+      width: 16px;
+      height: 16px;
+      background-color: white;
+      border: none;
+      margin-top: 7px;
+
+      &:hover {
+        background-color: white;
+        box-shadow: none
+      }
+
+      &:focus {
+        background-color: white;
+        box-shadow: none
+      }
+
+      &:active {
+        background-color: white !important;
+        border: none !important;
+      }
+
+      &:after {
+        content: "";
+        position: absolute;
+        left: 1px;
+        top: 0px;
+        background: url(./icon/add.svg);
+        background-size: cover;
+        width: 12px;
+        height: 12px;
+      }
+    }
+
+    .json-editor-btn-moveup {
+      &:after {
+        content: "";
+        position: absolute;
+        left: 1px;
+        top: 0px;
+        background: url(./icon/up.svg);
+        background-size: cover;
+        width: 12px;
+        height: 12px;
+      }
+    }
+
+    .json-editor-btn-movedown {
+      &:after {
+        content: "";
+        position: absolute;
+        left: 1px;
+        top: 0px;
+        background: url(./icon/down.svg) ;
+        background-size: cover;
+        width: 12px;
+        height: 12px;
+      }
+    }
+
+    .json-editor-btntype-deleteall {
+      &:after {
+        content: "";
+        position: absolute;
+        left: 1px;
+        top: 0px;
+        background: url(./icon/delete.svg);
+        background-size: cover;
+        width: 12px;
+        height: 12px;
+      }
+    }
+
+    .json-editor-btntype-delete {
+      font-size: 0;
+      position: relative;
+      margin-right: 10px;
+      width: 16px;
+      height: 16px;
+      margin-top: 7px;
+      background-color: rgba(0, 0, 0, 0.02);
+      border: none;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.02);
+        box-shadow: none
+      }
+
+      &:focus {
+        background-color: rgba(0, 0, 0, 0.02);
+        box-shadow: none
+      }
+
+      &:active {
+        background-color: rgba(0, 0, 0, 0.02) !important;
+        border: none !important;
+      }
+
+      &:after {
+        content: "";
+        position: absolute;
+        left: 1px;
+        top: 0px;
+        background: url(./icon/delete.svg);
+        background-size: cover;
+        width: 12px;
+        height: 12px;
+      }
+    }
+
+    .ant-collapse-content>.ant-collapse-content-box {
+      padding-bottom: 0;
+    }
+
+    .showEdit .form-group label {
+      display: none;
+    }
+    .json-editor-btn-copy{
+      margin-right: 10px;
+    }
+    .json-editor-btn-save{
+      margin-right: 10px;
+    }
+    .col-md-12>.form-group {
+      display: flex;
+      align-items: center;
+
+      .required {
+        position: relative;
+        margin-right: 5%;
+        margin-left: 5px;
+        width: 20%;
+
+        &:after {
+          content: "*";
+          position: absolute;
+          left: -10px;
+          top: 0;
+          transform: translateY(2px);
+          color: red;
+          width: 16px;
+          height: 16px;
+        }
+      }
+
+      >label {
+        margin-right: 10%;
+        width: 15%;
+      }
+
+      .form-control {
+        width: 50%;
+        margin-right: 10%;
+      }
+
+      .form-text {
+        display: none;
+      }
+    }
+  }
+}

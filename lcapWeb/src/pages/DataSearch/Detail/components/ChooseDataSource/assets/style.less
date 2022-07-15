@@ -1,0 +1,61 @@
+.chooseDataSource {
+
+    .header {
+        padding: 10px 0 0;
+
+        .headerSearchBox {
+            width: 300px;
+        }
+    }
+
+    .content {
+        padding-top: 15px;
+
+        .contentTitle {
+            font-size: 16px;
+        }
+
+        .dataSourceList {
+            display: flex;
+            flex-wrap: wrap;
+
+            .noDataSourceList {
+                width: 100%;
+                text-align: center;
+            }
+
+            .dataSourceItem {
+                position: relative;
+                padding: 0 15px;
+                margin-right: 15px;
+                margin-bottom: 15px;
+                width: 210px;
+                height: 60px;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                line-height: 60px;
+                text-align: center;
+                border: 1px solid #CCC;
+                border-radius: 6px;
+                cursor: pointer;
+
+                &.dataSourceItemActive {
+                    color: #1890FF;
+                    background-color: #E6F7FF;
+                    border-color: #1890FF;
+
+                    &:after {
+                        content: "";
+                        position: absolute;
+                        right: 0;
+                        bottom: 0;
+                        width: 16px;
+                        height: 16px;
+                        background: url(./imgs/check.svg);
+                    }
+                }
+            }
+        }
+    }
+}

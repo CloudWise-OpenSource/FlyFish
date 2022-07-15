@@ -1,0 +1,177 @@
+@componentCardSearchHeight: 42px;
+
+.componentCardWrap {
+    padding: 5px;
+    margin-right: 10px;
+    height: 100%;
+    border: 1px solid #e9e9e9;
+
+    .componentCardSearch {
+        padding-bottom: 10px;
+        height: @componentCardSearchHeight;
+    }
+
+    .componentCardContent {
+        height:~"calc(100% - @{componentCardSearchHeight})";
+        overflow-y: auto;
+
+        &::-webkit-scrollbar {
+            width: 6px;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        &::-webkit-scrollbar-track {
+            border-radius: 3px;
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        &::-webkit-scrollbar-thumb {
+            border-radius: 3px;
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .componentSubCategories {
+            padding-left: 10px;
+        }
+
+        :global {
+            .ant-collapse {
+                border: none;
+                background-color: rgba(0, 0, 0, 0);
+                border-radius: 0;
+
+                .ant-collapse-item {
+                    border: none;
+                    border-radius: 0;
+
+                    .ant-collapse-header {
+                        padding: 0 6px 0 20px;
+                        height: 32px;
+                        background-color: rgba(233, 247, 254, 1) !important;
+
+                        .collapse-header-content {
+                            display: flex;
+
+                            .collapse-header-name {
+                                line-height: 32px;
+                                font-size: 14px;
+                                white-space: nowrap;
+                                text-overflow: ellipsis;
+                                overflow: hidden;
+                            }
+
+                        }
+
+                        .ant-collapse-arrow {
+                            left: 6px;
+
+                            &:before {
+                                display: none !important;
+                            }
+
+                            svg {
+                                display: block !important;
+                            }
+                        }
+                    }
+
+                    .ant-collapse-content {
+                        background-color: rgba(0, 0, 0, 0);
+                        border: none;
+                        border-radius: 0;
+
+                        .ant-collapse-content-box {
+                            padding: 4px 0;
+
+                            .screen-component-item {
+                                padding: 4px 0 4px 30px;
+                                height: 32px;
+                                line-height: 24px;
+                                color: #FFF;
+                                cursor: pointer;
+
+                                &:hover,
+                                &.screen-component-item-active {
+                                    background-color: #1890FF;
+                                }
+                            }
+                        }
+
+                        .ant-collapse {
+                            .ant-collapse-item {
+                                .ant-collapse-header {
+                                    padding: 0 6px 0 20px;
+                                    height: 32px;
+                                    background-color: transparent !important;
+
+                                    .collapse-header-content {
+                                        display: flex;
+
+                                        .collapse-header-name {
+                                            line-height: 32px;
+                                            font-size: 14px;
+                                            white-space: nowrap;
+                                            text-overflow: ellipsis;
+                                            overflow: hidden;
+                                        }
+
+                                    }
+                                }
+
+                                .single-component-card-list {
+                                    display: flex;
+                                    padding-left: 10px;
+                                    flex-wrap: wrap;
+                                    justify-content: space-between;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+.singleComponentCard {
+    position: relative;
+    padding: 5px;
+    border: 1px solid transparent;
+    width: 98px;
+    margin-bottom: 5px;
+    cursor: pointer;
+
+    &:hover,
+    &.singleComponentCardActive {
+        border-color: #1890FF;
+        background-color: #E6F7FF;
+        color: #1890FF;
+    }
+
+    &.singleComponentCardActive {
+        &:after {
+            content: "";
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            width: 16px;
+            height: 16px;
+            background: url(../../../assets/imgs/check.svg);
+        }
+    }
+
+    .singleComponentCardImg {
+        margin-bottom: 4px;
+        width: 100%;
+        height: 54px;
+    }
+
+    .singleComponentCardName {
+        display: block;
+        font-size: 14px;
+        text-align: center;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+}

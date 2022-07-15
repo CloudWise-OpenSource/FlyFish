@@ -3,12 +3,13 @@
  * @Author: zhangzhiyong
  * @Date: 2021-11-10 19:08:53
  * @LastEditors: zhangzhiyong
- * @LastEditTime: 2022-02-08 11:23:05
+ * @LastEditTime: 2022-06-30 18:50:22
  */
 /*
  * 应用
  */
 const baseUrl = window.LCAP_CONFIG.apiDomain;
+const javaApiDomain = window.LCAP_CONFIG.javaApiDomain;
 export default {
   LOGIN: `${baseUrl}/users/login`,
   LOGINOUT: `${baseUrl}/users/logout`,
@@ -27,4 +28,8 @@ export default {
   INDUSTRY_LIST: `${baseUrl}/trades`,
   //编辑组件 
   CHANGE_ASSEMBLY: `${baseUrl}/components/`,
+  //获取nodeServer版本
+  GET_VERSION_NODE: `${baseUrl}/common/version-info`,
+  //获取dataServer版本
+  GET_VERSION_JAVA: `${javaApiDomain}/api/dataplateform/system/getVersion`,
 };

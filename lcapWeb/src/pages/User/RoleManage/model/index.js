@@ -3,7 +3,7 @@ import { getUserListService, getMenuService, getSelectRoleData,changeRole, saveR
 import { getUsertManageListService } from "../../UserManage/services";
 
 import _ from "lodash";
-import { message } from 'antd';
+import { message } from '@chaoswise/ui';
 
 const model = {
   // 唯一命名空间

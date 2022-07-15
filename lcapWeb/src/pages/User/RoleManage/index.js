@@ -1,13 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
-import { CWTable, Input, Button, message, Icon, Select } from "@chaoswise/ui";
+import { CWTable, Input, Button, message, Icon, Select, Popconfirm } from "@chaoswise/ui";
 import { observer, loadingStore, toJS } from "@chaoswise/cw-mobx";
 import store from "./model/index";
 import EditRoleModal from "./components/EditRoleModal";
 import ChangeRoleModal from "./components/changeRoleMoal";
 import { successCode } from "@/config/global";
 import styles from "./assets/style.less";
-import { Popconfirm } from 'antd';
 import ChangeRoleJurisdiction from './components/changeRoleJurisdiction';
 import { formatDate } from '@/config/global';
 

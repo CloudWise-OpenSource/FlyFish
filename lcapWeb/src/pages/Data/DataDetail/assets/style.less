@@ -1,0 +1,70 @@
+.dataDetailContainer {
+  .noData{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+  }
+      .treeWrap{
+        height:calc(~'100vh - 130px');
+        padding-top: 20px;
+      }
+      .contentContainer{
+        height: calc(100vh - 135px);
+        width: 90%;
+        .title{
+              font-size: 18px;
+              font-weight: 700;
+        }
+      }
+      .buttonColor{
+        background-color: AliceBlue	;
+        color: CornflowerBlue;
+      }
+      .buttonColorTr{
+        border-radius: 8px;
+        color: CornflowerBlue;
+      }
+      :global{
+         .cw-abreast-layout .cw-abreast-layout-left-navigation{
+          border: none !important; 
+        }
+   
+       .noBorderInput .ant-input{
+          border: none;
+          background-color: WhiteSmoke !important;
+          font-size: 16px;
+      }
+      .noBorderInput .ant-input:focus{
+          box-shadow:none;
+        }
+      }
+      .addIcon{
+        position: relative;
+      }
+      .positionModal{
+        position: absolute;
+        width: 250px;
+        right: 0;
+        top:0;
+        border: 1px solid lightgray;
+        box-shadow:lightgrey 0 0 15px;
+        z-index: 20;
+        background-color: white;
+        padding:20px 20px 40px;
+      }
+      :global{
+        .cw-abreast-layout .cw-abreast-layout-left-navigation{
+          padding-left: 0;
+        }
+        .showEdit .form-control> .je-form-input-label{
+           display: none;
+        }
+        .cw-abreast-layout-content{
+          overflow-x: auto;
+        }
+        .ant-collapse-header{
+          font-weight: 700;
+        }
+    }
+}

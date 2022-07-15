@@ -1,0 +1,115 @@
+.inputContainer {
+  width: 100%;
+  padding: 0 20px
+}
+
+.treeContainer {
+  // padding: 20px;
+  position: relative;
+  height: calc(100vh - 200px);
+
+  .topContainer {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px 10px;
+    justify-content: space-between;
+  }
+
+  .totalNum {
+    display: inline-block;
+    color: rgba(0, 0, 0, 0.25);
+  }
+
+  .activeItem {
+    background-color: white;
+    color: aqua;
+    width: 120%;
+  }
+
+  .treeInside {
+    height: calc(100vh - 240px);
+    overflow-y: auto;
+  }
+
+  .btnContainer {
+    width: 100%;
+    padding: 0 20px;
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+
+    .AddBtn {
+      border: 1px solid #1890ff;
+      color: #1890ff;
+    }
+  }
+
+  .tableItemName {
+    width: 70%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    height: 50px;
+  }
+
+  .item {
+    height: 50px;
+    line-height: 50px;
+    cursor: pointer;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    padding-right: 15px;
+    justify-content: space-between;
+
+    .iconContainer {
+      display: none;
+
+      .editIcon {
+        color: rgba(0, 0, 0, 0.85) !important;
+        margin-right: 5px;
+      }
+
+      .addingInput {
+        margin-left: 35px;
+        width: calc(~'100% - 77px');
+      }
+    }
+
+    &:hover {
+      .iconContainer {
+        display: block;
+      }
+    }
+
+  }
+
+  .selected {
+    background-color: #e6f7ff;
+    // border-radius: 20px;
+  }
+
+  .flex {
+    position: absolute;
+    cursor: pointer;
+    transition: top 0.2s;
+    top: 0;
+    left: -27px;
+    width: 123%;
+    height: 50px;
+    line-height: 50px;
+    background-color: white;
+    border: 1px solid lightgrey;
+    box-shadow: 2px 2px 5px #d9d9d9;
+    border-radius: 7px;
+    padding-left: 25px;
+    color: CornflowerBlue;
+    z-index: 2;
+  }
+
+  :global {
+    a {
+      color: rgba(0, 0, 0, 0.85) !important;
+    }
+  }
+}

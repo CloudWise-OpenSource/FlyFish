@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import styles from './style.less';
-import { Table,Button } from 'antd';
+import { CWTable,Button } from '@chaoswise/ui';
 import { useState } from 'react';
 import store from "../../model/index";
 import { observer } from "@chaoswise/cw-mobx";
@@ -58,9 +58,10 @@ const ComponentRecord = observer((props)=>{
   const addIframe = (resp) =>{
     const iframeWindow = window.frames['iframeResult'].document;
     if(iframeWindow.head){
-        const highlightCss = createLink('/diff/highlight.css');
-        const diff2htmlCss = createLink('/diff/diff2html.css');
-        const diff2htmlScripts = createScripts('/diff/diff2html-ui.min.js');
+        const prefix = window.isInPortal?'/lcapWeb':'';
+        const highlightCss = createLink(`${prefix}/diff/highlight.css`);
+        const diff2htmlCss = createLink(`${prefix}/diff/diff2html.css`);
+        const diff2htmlScripts = createScripts(`${prefix}/diff/diff2html-ui.min.js`);
         iframeWindow.head.appendChild(highlightCss); 
         iframeWindow.head.appendChild(diff2htmlCss); 
         iframeWindow.head.appendChild(diff2htmlScripts);
@@ -129,7 +130,7 @@ const createScripts = (src = '')=>{
             }}
           >返回</Button>
         </div>
-        <Table
+        <CWTable
         columns={columns}
         dataSource={data}
         pagination={{

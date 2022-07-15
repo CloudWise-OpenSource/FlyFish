@@ -1,12 +1,13 @@
 import React from 'react';
-import { Icon,Input,message,Popconfirm,Popover } from 'antd';
+import { Icon,Input,message,Popconfirm,Popover,CWTree,Modal } from '@chaoswise/ui';
 import { useState,useEffect,useRef } from 'react';
 import styles from './style.less';
 import { observer,toJS } from "@chaoswise/cw-mobx";
 import store from "../../model/index";
 import _ from "lodash";
 import { updateTreeDataService } from '../../services';
-
+import globalStore from '@/stores/globalStore';
+import { add } from '@chaoswise/utils';
 const HandleMenu = observer((props)=>{
   const { defaultExpandAll=true } = props;
   const { 
@@ -14,249 +15,242 @@ const HandleMenu = observer((props)=>{
     getTreeData,
     setSelectedData,
     selectedData,
-    userInfo,
     setCurPage,
     setPageSize
   } = store;
+  const { userInfo={} } = globalStore;
+  const { iuser={} } = userInfo;
   const [data, setData] = useState([]);
-  const addinput = useRef();
-  const editInput = useRef();
-  const addCateRef = useRef();
   const [searchValue, setSearchValue] = useState('');
+  const [selectedKeys, setSelectedKeys] = useState([]);
+  const [expandedKeys, setExpandedKeys] = useState([]);
 
-  const [addCateName, setAddCateName] = useState('');
-  const [editName, setEditName] = useState('');
-  const [addingCate, setAddingCate] = useState(false);
+  const [addCateModalVisible,setAddCateModalVisible] = useState(false);
+  const [addingCateName,setAddingCateName] = useState('');
+
+  const [addSubCateModalVisible,setAddSubCateModalVisible] = useState(false);
+  const [addingSubCateName,setAddingSubCateName] = useState('');
+  const [addingSubCateParentId,setAddingSubCateParentId] = useState('');
+
+  const [editCateModalVisible,setEditCateModalVisible] = useState(false);
+  const [editingCateName,setEditingCateName] = useState('');
+  const [editingCateId,setEditingCateId] = useState('');
+
+  const [editSubCateModalVisible,setEditSubCateModalVisible] = useState(false);
+  const [editingSubCateName,setEditingSubCateName] = useState('');
+  const [editingSubCateId,setEditingSubCateId] = useState('');
+
   useEffect(() => {
     if (treeData) {
-      const data = _.cloneDeep(toJS(treeData));
-      let rs = data.map(item=>{
-        item.showBtn = false;
-        item.expand = defaultExpandAll;
-        item.focus = false;
-        item.adding = false;
-        item.editing = false;
-        item.display = true;
-        item.children?item.children.map(item=>{
-          item.showBtn = false;
-          item.editing = false;
-          item.display = true;
-          return item;
-        }):null;
-        return item;
-      })
-      setData(rs)
+      setData(_.cloneDeep(toJS(treeData)));
+      setSelectedKeys([treeData[0]&&treeData[0].id])
     }
   }, [treeData]);
   useEffect(() => {
+    const data = _.cloneDeep(toJS(treeData));
     if (searchValue) {
-      setData((state)=>{
-        return state.map(item=>{
-          item.display = item.name.includes(searchValue);
-          if (item.children && item.children.length) {
-            let has = false;
-            item.children = item.children.map(item2=>{
-              if (item2.name.includes(searchValue)) {
-                has = true;
-              }
-              item2.display = item2.name.includes(searchValue);
-              return item2;
-            })
-            if (has) {
-              //有二级被搜到时，让一级也展示
-              item.display = true;
-            }
+      const filterData = data.filter(item=>{
+        if (item.name.includes(searchValue)) {
+          return true
+        }
+        if (item.children) {
+          const findChilren = item.children.filter(item1=>{
+            return item1.name.includes(searchValue)
+          }) || [];
+          if (findChilren.length) {
+            item.children = findChilren;
+            return true
           }
-          return item;
-        })
+        }
+        return false;
       })
+      setData(filterData);
+      setExpandedKeys(filterData.map(item=>item.id))
     }else{
-      setData((state)=>{
-        return state.map(item=>{
-          item.display=true;
-          if (item.children&& item.children.length) {
-            item.children = item.children.map(item2=>{
-              item2.display = true;
-              return item2;
-            })
-          }
-          return item;
-        })
-      })
+      setData(data);
+      setExpandedKeys([]);
     }
   }, [searchValue]);
+  const onSelectTree = (keys,e)=>{
+    setCurPage(0);
+    setSelectedKeys(keys);
+    const key = keys[0];
+    let parent = treeData.find(item=>item.id==key);
+    if (parent) {
+      setSelectedData({
+        category:key,
+        subCategory:''
+      })
+    }else{
+      for (const item of treeData) {
+        if (item.children) {
+          const child = item.children.find(item1=>item1.id==key);
+          if (child) {
+            parent = item;
+          }
+        }
+      }
+      setSelectedData({
+        category:parent.id,
+        subCategory:key
+      })
+    }
+  }
+  const addCateSave = async ()=>{
+    if (!addingCateName) {
+      message.error('分类名称不能为空！')
+      return 
+    }
+    const datas = _.cloneDeep(toJS(treeData));
+    let has = false;
+    datas.map(item=>{
+      if (item.name===addingCateName) {
+        has = true;
+      }
+      return item;
+    });
+    if (has) {
+      message.error('组件分类名称已存在！');
+    }else{
+      datas.push({name:addingCateName,children:[]});
+      const res = await updateTreeDataService({categories:datas});
+      if (res && res.code==0) {
+        setAddCateModalVisible(false);
+        getTreeData();
+        setAddingCateName('');
+        message.success('添加成功!')
+      }else{
+        message.error(res.msg)
+      }
+    }
+  }
+  const eidtCateSave = async ()=>{
+    if (!editingCateName) {
+      message.error('分类名称不能为空！')
+      return 
+    }
+    const datas = _.cloneDeep(toJS(treeData));
+    datas.map(item=>{
+      if (item.id===editingCateId) {
+        item.name=editingCateName
+      }
+      return item;
+    })
+    const res = await updateTreeDataService({categories:datas});
+    if (res && res.code==0) {
+      setEditCateModalVisible(false);
+      getTreeData();
+      message.success('修改成功！')
+    }else{
+      message.error(res.msg)
+    }
+  }
+  const addSubCateSave = async ()=>{
+    if (!addingSubCateName) {
+      message.error('子分类名称不能为空！')
+      return 
+    }
+    const datas = _.cloneDeep(toJS(treeData));
+    let has = !!datas.find(item=>item.id==addingSubCateParentId).children.find(item=>item.name===addingSubCateName)
+    if (has) {
+      message.error('子分类名称已存在！');
+    }else{
+      datas.map(item=>{
+        if (item.id===addingSubCateParentId) {
+          item.children.push({name:addingSubCateName})
+        }
+        return item;
+      })
+      const res = await updateTreeDataService({categories:datas});
+      if (res && res.code==0) {
+        setAddSubCateModalVisible(false);
+        getTreeData();
+        setAddingSubCateName('');
+        message.success('添加成功!')
+      }else{
+        message.error(res.msg)
+      }
+    }
+  }
+  const editSubCateSave = async ()=>{
+    if (!editingSubCateName) {
+      message.error('子分类名称不能为空！')
+      return 
+    }
+    const datas = _.cloneDeep(toJS(treeData));
+    datas.map(item=>{
+      item.children.map(item1=>{
+        if (item1.id==editingSubCateId) {
+          item1.name = editingSubCateName;
+        }
+        return item1;
+      })
+      return item;
+    })
+    const res = await updateTreeDataService({categories:datas});
+    if (res && res.code==0) {
+      setEditSubCateModalVisible(false);
+      getTreeData();
+      message.success('修改成功！')
+    }else{
+      message.error(res.msg)
+    }
+  }
   return <>
-  <div className={styles.treeTitle}>
-    组件列表
-  </div>
-  <div className={styles.searchWrap}>
-    <Input placeholder='请输入搜索关键字' value={searchValue} suffix={<Icon type="search" />}
-      onChange={(e)=>{
-        setSearchValue(e.target.value);
-      }}
-    ></Input>
-  </div>
-  <div style={{position:'relative',height:'calc(100% - 105px)',overflowX:'hidden',overflowY:'auto'}}>
-    {
-      data.map((v,k)=>{
-        return <div key={k+''}>
-          <div 
-            style={{display:v.display?'flex':'none'}}
-            className={styles.firstLine+ ((selectedData.category===v.id && selectedData.subCategory==='')?(' '+styles.selected):'')}
-            onMouseOver={()=>{
-              setData(olddata=>{
-                return olddata.map((v1,k1)=>{
-                  v1.showBtn=(k1===k);
-                  return v1;
-                })
-              })
-            }}
-            onMouseOut={()=>{
-              setData(olddata=>{
-                return olddata.map((v1,k1)=>{
-                  v1.showBtn=false;
-                  return v1;
-                })
-              })
-            }}
-            onClick={()=>{
-              setCurPage(0);
-              setSelectedData({
-                category:v.id,
-                subCategory:''
-              })
-            }}
-          >
-            <div style={{display:'flex',alignItems:'center'}}>
-              <Icon 
-                className={styles.expandBtn}
-                type={v.expand?'caret-down':'caret-right'} 
-                onClick={(e)=>{
-                  e.stopPropagation()
-                  setData(olddata=>{
-                    return olddata.map((v1,k1)=>{
-                      if (k1===k) {
-                        v1.expand=!v1.expand;
-                      }
-                      return v1;
-                    })
-                  })
-                }}
-              />
-              {
-                v.editing?
-                <Input
-                  style={{height:28,marginLeft:0,width:120}}
-                  ref={editInput}
-                  className={styles.addingInput}
-                  value={editName}
-                  onChange={(e)=>{setEditName(e.target.value)}}
-                  onBlur={(e)=>{
-                    setData(olddata=>{
-                      return olddata.map((v1,k1)=>{
-                        if (k1===k) {
-                          v1.editing=false;
-                        }
-                        return v1;
-                      })
-                    })
-                  }}
-                  onPressEnter={async (e)=>{
-                    if (!editName) {
-                      message.error('分类名称不能为空！')
-                      return 
-                    }
-                    const datas = _.cloneDeep(toJS(treeData));
-                    datas.map((v4,k4)=>{
-                      if (k4===k) {
-                        v4.name=editName
-                      }
-                      return v4;
-                    })
-                    const res = await updateTreeDataService({categories:datas});
-                    if (res && res.code==0) {
-                      setData(olddata=>{
-                        return olddata.map((v1,k1)=>{
-                          if (k1===k) {
-                            v1.adding=false;
-                          }
-                          return v1;
-                        })
-                      })
-                      getTreeData();
-                      setEditName('');
-                      message.success('修改成功！')
-                    }else{
-                      message.error(res.msg)
-                    }
-                    
-                  }}
-                >
-                </Input>
-                :<Popover content={v.name}>
-                  <span className={styles.firstTitle}>{v.name}</span>
-                </Popover>
-              }
-            </div>
-            <div className={styles.firstBtnWrap} style={{display:v.editing?'none':'flex'}}>
-              <Icon 
-                type="plus-circle" 
-                className={styles.addBtn}
-                onClick={(e)=>{
-                  e.stopPropagation()
-                  setData(olddata=>{
-                    return olddata.map((v1,k1)=>{
-                      if (k1===k) {
-                        v1.adding=true;
-                      }
-                      return v1;
-                    })
-                  })
-                  setAddCateName('')
-                  setTimeout(() => {
-                    addinput.current.input.focus();
-                  }, 0);
-                }}
-              />
-              <Icon type="edit" style={{display:v.showBtn?'inline':'none'}}
-                onClick={(e)=>{
-                  e.stopPropagation()
-                  setEditName(v.name)
-                  setData(olddata=>{
-                    return olddata.map((v1,k1)=>{
-                      if (k1===k) {
-                        v1.editing=true;
-                      }
-                      return v1;
-                    })
-                  })
-                  setTimeout(() => {
-                    editInput.current.input.focus();
-                  }, 0);
-                }}
-              />
-              <Popconfirm title='确定删除吗?'
-                onClick={(e)=>{
-                  e.stopPropagation()
-                }}
-                onCancel={(e)=>e.stopPropagation()}
-                onConfirm={async (e)=>{
-                  e.stopPropagation();
-                  let has = false;
-                  data.map((v3,k3)=>{
-                    if (k3===k) {
-                      const {children=[]}=v3;
-                      if (children && children.length>0) {
-                        has=true;
-                      }
-                    }
-                    return v3;
-                  })
-                  if (has) {
+    <div className={styles.searchWrap}>
+      <Input placeholder='请输入搜索关键字' value={searchValue} suffix={<Icon type="search" />}
+        onChange={(e)=>{
+          setSearchValue(e.target.value);
+        }}
+      ></Input>
+    </div>
+    <div className={styles.treeWrap}>
+      <CWTree
+        treeData={data.map((v, k) => ({
+          key: v.id,
+          title: v.name,
+          range:1,
+          children:!!v.children?v.children.map((v1,k1)=>{
+            return {
+              key: v1.id,
+              title: v1.name,
+              range:2
+            }
+          }):[]
+        }))}
+        menuData={(title, key, data) => {
+          let menu =  [
+            {
+              key: "edit",
+              title: <Icon type="edit" onClick={() => {
+                if (data.range==1) {
+                  setEditingCateName(title);
+                  setEditingCateId(key);
+                  setEditCateModalVisible(true);
+                }
+                if (data.range==2) {
+                  setEditingSubCateName(title);
+                  setEditingSubCateId(key);
+                  setEditSubCateModalVisible(true);
+                }
+              }} />,
+            },
+            {
+              key: "delete",
+              title: <Popconfirm title='确定删除吗?'
+              onClick={(e)=>{
+                e.stopPropagation()
+              }}
+              onCancel={(e)=>e.stopPropagation()}
+              onConfirm={async (e)=>{
+                e.stopPropagation();
+                if (data.range==1) {
+                  const findItem = treeData.find(item=>item.id==key);
+                  if (findItem.children && findItem.children.length) {
                     message.warning('无法删除，该组件分类存在二级分类，请删除全部二级分类！')
                   }else{
-                    const datas = treeData.filter((v3,k3)=>{
-                      return k!==k3
+                    const datas = treeData.filter(item=>{
+                      return item.id!==key
                     })
                     const res = await updateTreeDataService({categories:datas});
                     if (res && res.code==0) {
@@ -266,278 +260,164 @@ const HandleMenu = observer((props)=>{
                       message.error(res.msg)
                     }
                   }
-                }}>
-                <Icon type="delete"
-                  style={{display:userInfo.isAdmin?(v.showBtn?'inline':'none'):'none'}}
-                />
-              </Popconfirm>
-            </div>
-          </div>
-          {v.children?v.children.map((v2,k2)=>{
-            return <div
-              key={k+'-'+k2}
-              className={styles.secondLine + ((selectedData.category===v.id && selectedData.subCategory===v2.id)?(' '+styles.selected):'')}
-              style={{display:(v.expand&&v2.display)?'flex':'none'}}
-              onMouseOver={()=>{
-                setData(olddata=>{
-                  return olddata.map((v1,k1)=>{
-                    if (k1===k) {
-                      v1.children.map((v3,k3)=>{
-                        v3.showBtn=(k3===k2);
-                        return v3;
-                      })
-                    }
-                    return v1;
-                  })
-                })
-              }}
-              onMouseOut={()=>{
-                setData(olddata=>{
-                  return olddata.map((v1,k1)=>{
-                    if (k1===k) {
-                      v1.children.map((v3,k3)=>{
-                        v3.showBtn=false;
-                        return v3;
-                      })
-                    }
-                    return v1;
-                  })
-                })
-              }}
-              onClick={()=>{
-                setCurPage(0);
-                setSelectedData({
-                  category:v.id,
-                  subCategory:v2.id
-                })
-              }}
-            >
-              <div style={{display:'flex'}}>
-              {
-                v2.editing?
-                <Input
-                  style={{height:28,marginLeft:0,width:120}}
-                  ref={editInput}
-                  className={styles.addingInput}
-                  value={editName}
-                  onChange={(e)=>{setEditName(e.target.value)}}
-                  onBlur={(e)=>{
-                    setData(olddata=>{
-                      return olddata.map((v1,k1)=>{
-                        if (k1===k) {
-                          v1.children.map((v3,k3)=>{
-                            if (k2===k3) {
-                              v3.editing=false;
-                            }
-                          })
-                        }
-                        return v1;
-                      })
-                    })
-                  }}
-                  onPressEnter={async (e)=>{
-                    if (!editName) {
-                      message.error('分类名称不能为空！')
-                      return 
-                    }
-                    const datas = _.cloneDeep(toJS(treeData));
-                    datas.map((v4,k4)=>{
-                      if (k4===k) {
-                        v4.children.map((v5,k5)=>{
-                          if (k5===k2) {
-                            v5.name=editName
-                          }
-                        })
-                      }
-                      return v4;
-                    })
-                    const res = await updateTreeDataService({categories:datas});
-                    if (res && res.code==0) {
-                      setData(olddata=>{
-                        return olddata.map((v1,k1)=>{
-                          if (k1===k) {
-                            v1.children.map((v3,k3)=>{
-                              if (k2===k3) {
-                                v3.editing=false;
-                              }
-                            })
-                          }
-                          return v1;
-                        })
-                      })
-                      getTreeData();
-                      setEditName('');
-                      message.success('修改成功！')
-                    }else{
-                      message.error(res.msg)
-                    }
-                    
-                  }}
-                >
-                </Input>
-                :<Popover content={v2.name}>
-                  <span className={styles.secondTitle}>{v2.name}</span>
-                </Popover>
-              }
-              </div>
-              <div className={styles.secondBtnWrap} style={{display:v2.editing?'none':'block'}}>
-                <Icon type="form" style={{display:v2.showBtn?'inline':'none'}}
-                  onClick={(e)=>{
-                    e.stopPropagation()
-                    setEditName(v2.name)
-                    setData(olddata=>{
-                      return olddata.map((v1,k1)=>{
-                        if (k1===k) {
-                          v1.children.map((v3,k3)=>{
-                            if (k2===k3) {
-                              v3.editing = true;
-                            }
-                          })
-                        }
-                        return v1;
-                      })
-                    })
-                    setTimeout(() => {
-                      editInput.current.input.focus();
-                    }, 0);
-                  }}
-                />
-                <Popconfirm
-                  title='确定要删除吗?'
-                  onCancel={e=>e.stopPropagation()}
-                  onConfirm={
-                    async (e)=>{
-                      e.stopPropagation()
-                      const _treeData = _.cloneDeep(toJS(treeData));
-                      const datas = _treeData.map((v3,k3)=>{
-                        if (k3===k) {
-                          v3.children = v3.children.filter((v4,k4)=>{
-                            return k2!==k4;
-                          })
-                        }
-                        return v3;
-                      })
-                      const res = await updateTreeDataService({categories:datas});
-                      if (res && res.code==0) {
-                        getTreeData();
-                        message.success('删除成功!')
-                      }else{
-                        message.error(res.msg)
-                      }
-                    }
-                  }
-                >
-                  <Icon type="delete" style={{display:userInfo.isAdmin?(v2.showBtn?'inline':'none'):'none'}}
-                    onClick={(e)=>{
-                      e.stopPropagation()
-                    }}
-                  />
-                </Popconfirm>
-              </div>
-            </div>
-          }):null}
-          {
-            v.adding?<Input 
-              ref={addinput}
-              className={styles.addingInput}
-              value={addCateName}
-              onChange={(e)=>{setAddCateName(e.target.value)}}
-              onBlur={(e)=>{
-                setData(olddata=>{
-                  return olddata.map((v1,k1)=>{
-                    if (k1===k) {
-                      v1.adding=false;
-                    }
-                    return v1;
-                  })
-                })
-              }}
-              onPressEnter={async (e)=>{
-                if (!addCateName) {
-                  message.error('分类名称不能为空！')
-                  return 
                 }
-                const datas = _.cloneDeep(toJS(treeData));
-                datas.map((v4,k4)=>{
-                  if (k4===k) {
-                    v4.children.push({name:addCateName})
-                  }
-                  return v4;
-                })
-                const res = await updateTreeDataService({categories:datas});
-                if (res && res.code==0) {
-                  setData(olddata=>{
-                    return olddata.map((v1,k1)=>{
-                      if (k1===k) {
-                        v1.adding=false;
-                      }
-                      return v1;
-                    })
+                if (data.range==2) {
+                  const datas = _.cloneDeep(toJS(treeData));
+                  datas.map(item=>{
+                    if (item.children) {
+                      item.children = item.children.filter(item1=>item1.id!==key)
+                    }
+                    return item;
                   })
-                  getTreeData();
-                  setAddCateName('');
-                  message.success('添加成功！')
-                }else{
-                  message.error(res.msg)
+                  const res = await updateTreeDataService({categories:datas});
+                  if (res && res.code==0) {
+                    getTreeData();
+                    message.success('删除成功！')
+                  }else{
+                    message.error(res.msg)
+                  }
                 }
-                
-              }}
-            />:null
+              }}>
+              <Icon type="delete" />
+            </Popconfirm>,
+            }
+          ];
+          if (data.range==1) {
+            menu.unshift({
+              key: "add",
+              title: <Icon type="plus" onClick={() => {
+                setAddingSubCateParentId(key);
+                setAddSubCateModalVisible(true);
+              }} />,
+            })
           }
-        </div>
-      })
-    }
-    <Input 
-      ref={addCateRef}
-      style={{display:addingCate?'block':'none'}}
-      value={addCateName}
-      onChange={(e)=>{
-        setAddCateName(e.target.value);
-      }}
-      onBlur={()=>{
-        setAddingCate(false);
-      }}
-      onPressEnter={async ()=>{
-        if (!addCateName) {
-          message.error('分类名称不能为空！')
-          return 
-        }
-        const datas = _.cloneDeep(toJS(treeData));
-        let has = false;
-        datas.map(item=>{
-          if (item.name===addCateName) {
-            has = true;
-          }
-          return item;
-        });
-        if (has) {
-          message.error('组件分类名称已存在，请修改！');
-        }else{
-          datas.push({name:addCateName,children:[]});
-          const res = await updateTreeDataService({categories:datas});
-          if (res && res.code==0) {
-            setAddingCate(false);
-            getTreeData();
-            setAddCateName('');
-            message.success('添加成功!')
-          }else{
-            message.error(res.msg)
-          }
-        }
-        
-      }}
-    ></Input>
-  </div>
+          return menu;
+        }}
+        selectedKeys={selectedKeys}
+        onSelect={onSelectTree}
+        expandedKeys={expandedKeys}
+        onExpand={(keys)=>{
+          setExpandedKeys(keys)
+        }}
+      />
+    </div>
+    
     <div className={styles.leftBigTitle}
       onClick={()=>{
-        setAddingCate(true);
-        setTimeout(() => {
-          addCateRef.current.input.focus();
-        }, 0);
+        setAddingCateName('');
+        setAddCateModalVisible(true);
       }}
     >
       <span style={{marginLeft:10}}>新增分类</span>
     </div>
+    <Modal
+      title='添加分类'
+      visible={addCateModalVisible}
+      onOk={addCateSave}
+      onCancel={() => {
+        setAddCateModalVisible(false);
+        setAddingCateName('');
+      }}
+      size='small'
+      mask={true}
+    >
+      <div className={styles.modalWrap}>
+        <div>
+          <div className={styles.formItemLabelWrap}>
+            {/* <div style={{ color: '#ff561b', fontSize: '16px',marginRight:8,paddingTop:3 }}>*</div> */}
+            <span>分类名称:</span>
+          </div>
+          <div className={styles.formItemFieldWrap}>
+            <Input
+              placeholder='分类名称'
+              value={addingCateName}
+              onChange={(e) => { setAddingCateName(e.target.value); }}
+            ></Input>
+          </div>
+        </div>
+      </div>
+    </Modal>
+    <Modal
+      title='编辑分类'
+      visible={editCateModalVisible}
+      onOk={eidtCateSave}
+      onCancel={() => {
+        setEditCateModalVisible(false);
+        setEditingCateName('');
+      }}
+      size='small'
+      mask={true}
+    >
+      <div className={styles.modalWrap}>
+        <div>
+          <div className={styles.formItemLabelWrap}>
+            {/* <div style={{ color: '#ff561b', fontSize: '16px',marginRight:8,paddingTop:3 }}>*</div> */}
+            <span>分类名称:</span>
+          </div>
+          <div className={styles.formItemFieldWrap}>
+            <Input
+              placeholder='分类名称'
+              value={editingCateName}
+              onChange={(e) => { setEditingCateName(e.target.value); }}
+            ></Input>
+          </div>
+        </div>
+      </div>
+    </Modal>
+    <Modal
+      title='新增子分类'
+      visible={addSubCateModalVisible}
+      onOk={addSubCateSave}
+      onCancel={() => {
+        setAddSubCateModalVisible(false);
+        setAddingSubCateName('');
+      }}
+      size='small'
+      mask={true}
+    >
+      <div className={styles.modalWrap}>
+        <div>
+          <div className={styles.formItemLabelWrap}>
+            {/* <div style={{ color: '#ff561b', fontSize: '16px',marginRight:8,paddingTop:3 }}>*</div> */}
+            <span>子分类名称:</span>
+          </div>
+          <div className={styles.formItemFieldWrap}>
+            <Input
+              placeholder='子分类名称'
+              value={addingSubCateName}
+              onChange={(e) => { setAddingSubCateName(e.target.value); }}
+            ></Input>
+          </div>
+        </div>
+      </div>
+    </Modal>
+    <Modal
+      title='编辑子分类'
+      visible={editSubCateModalVisible}
+      onOk={editSubCateSave}
+      onCancel={() => {
+        setEditSubCateModalVisible(false);
+        setEditingSubCateName('');
+      }}
+      size='small'
+      mask={true}
+    >
+      <div className={styles.modalWrap}>
+        <div>
+          <div className={styles.formItemLabelWrap}>
+            {/* <div style={{ color: '#ff561b', fontSize: '16px',marginRight:8,paddingTop:3 }}>*</div> */}
+            <span>子分类名称:</span>
+          </div>
+          <div className={styles.formItemFieldWrap}>
+            <Input
+              placeholder='子分类名称'
+              value={editingSubCateName}
+              onChange={(e) => { setEditingSubCateName(e.target.value); }}
+            ></Input>
+          </div>
+        </div>
+      </div>
+    </Modal>
   </>
 })
 

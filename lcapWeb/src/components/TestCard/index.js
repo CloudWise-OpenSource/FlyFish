@@ -1,19 +1,19 @@
 import React from 'react';
-import { Form, Popconfirm } from "@chaoswise/ui";
-import { Card, Tag, Col, Row, Icon, Avatar, Empty, message, Tooltip, Progress, Spin, Button } from 'antd';
+import { Card, Tag, Col, Row, Icon, Avatar, Empty, message, Tooltip, Progress, Spin, Button, Form, Popconfirm } from '@chaoswise/ui';
 const { Meta } = Card;
 import styles from './index.less';
 import back from '../../public/img/dashboard/back1.png';
-// import logo from '../../assets/images/logo.svg';
+import my from "../../public/img/dashboard/my.png";
 import doing from '../../public/img/dashboard/doing.png';
 import test from '../../public/img/dashboard/test.png';
 import over from '../../public/img/dashboard/over.png';
 import demo from '../../public/img/dashboard/demo.png';
 import recommend from '../../public/img/dashboard/good.png';
 
+const fromLcap = 'lcap-init';
 
 export default Form.create({ name: "BASIC_CARD" })(
-    function BasicCard({ number, downLoadArr = [], dashboardAdd, isLib, projectID, isDashboard, onDelete, setActiveCard, addOwn, checkCard, value, state, showStateTag, actions, canDelete, canAdd }) {
+    function BasicCard({ number, downLoadArr = [], dashboardAdd, isLib, projectID, isDashboard, onDelete, setActiveCard, addOwn, checkCard, value, state, showStateTag, actions, canDelete, canAdd, allowCopyComponent, copyComponent }) {
         let [loadFlag, setLoadFlag] = React.useState([]);
         const tradesArr = (trades, flag) => {
             if (flag) {
@@ -66,9 +66,8 @@ export default Form.create({ name: "BASIC_CARD" })(
 
         };
         let [checkid, setCheckId] = React.useState('');
-
         return (
-            <Row justify="space-around" gutter={['16', '16']} style={{ margin: '10px' }}
+            <Row justify="space-around" gutter={['16', '16']} style={{ margin: '6px 0 0' }}
                 className={[styles['cardList'], isLib ? 'longCard' : null].join(' ')}
             >
                 {
@@ -90,7 +89,7 @@ export default Form.create({ name: "BASIC_CARD" })(
                     </Col>
                 }
                 {
-                    value && value.list && value.list.length > 0 ? value.list.map((item, index) => <Col span={number || 8} key={item.id}>
+                    value && value.list && value.list.length > 0 ? value.list.map((item, index) => <Col className={styles.cardItemWrap} span={number || 8} key={item.id} style={{padding: "0px 8px 8px 0"}}>
 
                         <Card
                             onClick={() => {
@@ -100,7 +99,7 @@ export default Form.create({ name: "BASIC_CARD" })(
                                     setActiveCard && setActiveCard(item);
                                 }
                             }}
-                            style={{ boxShadow: checkid == item.id ? '3px 3px 3px 3px #dedede' : null, position: 'relative' }}
+                            style={{ boxShadow: checkid == item.id ? '0 6px 16px -8px #dedede inset' : null, position: 'relative' }}
                             cover={
                                 <>
                                     {
@@ -146,9 +145,10 @@ export default Form.create({ name: "BASIC_CARD" })(
 
                                             }}
                                             onError={
-                                                () => {
+                                                (e) => {
                                                     let a = [...loadFlag, item.id];
                                                     setLoadFlag(a);
+                                                    e.target.src = my;
                                                 }
                                             }
                                             alt="暂无照片"
@@ -171,7 +171,7 @@ export default Form.create({ name: "BASIC_CARD" })(
                                     setCheckId(item.id);
                                 }}
                                 title={(() => {
-                                    return <Tooltip title={item.name}>
+                                    return <Tooltip title={item.name} placement="topLeft">
                                         <span>{`${item.name || '暂无'}`}</span>
                                     </Tooltip>;
 
@@ -180,7 +180,7 @@ export default Form.create({ name: "BASIC_CARD" })(
                                     const apply = [
                                         <div key='apply'>
                                             <Row>
-                                                <Col span={12}>
+                                                <Col span={10}>
                                                     <div className='titleOverflowContainer'>
                                                         <p>当前开发人：</p>
                                                         <Tooltip title={item.updater}>
@@ -188,7 +188,7 @@ export default Form.create({ name: "BASIC_CARD" })(
                                                         </Tooltip>
                                                     </div>
                                                 </Col>
-                                                <Col span={12}>
+                                                <Col span={10}>
                                                     <div className='titleOverflowContainer'>
                                                         <p>创建人：</p>
                                                         <Tooltip title={item.creator}>
@@ -197,7 +197,7 @@ export default Form.create({ name: "BASIC_CARD" })(
                                                     </div>
                                                 </Col>
                                             </Row>
-                                            <Tooltip title={tradesArr(item.tags)}>
+                                            <Tooltip title={tradesArr(item.tags)} placement='topLeft'>
                                                 <div className='titleOverflow'>{item.tags && tradesArr(item.tags, true)}</div>
                                             </Tooltip>
 
@@ -231,6 +231,14 @@ export default Form.create({ name: "BASIC_CARD" })(
                             />
 
                         </Card>
+                        {allowCopyComponent &&fromLcap != item.from&&!window.LCAP_CONFIG.isSplitComponentModule&& <div className={styles.cardItemCloneBtnWrap} onClick={() => { 
+                            copyComponent && copyComponent(item);
+                        }}>
+                            <Tooltip
+                                title="复制">
+                                <Icon className={styles.cardItemCloneBtnIcon} type="copy" />
+                            </Tooltip>
+                        </div>}
                         {/* 进度条 */}
                         {
                             downLoadArr.filter(ele => ele.id === item.id).map(option => (

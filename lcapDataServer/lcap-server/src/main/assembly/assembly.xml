@@ -1,0 +1,116 @@
+<assembly
+	xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.3 http://maven.apache.org/xsd/assembly-1.1.3.xsd">
+	<id>deploy</id>
+	<formats>
+		<format>tar.gz</format>
+	</formats>
+	<baseDirectory>lcapDataServer</baseDirectory>
+	<includeBaseDirectory>true</includeBaseDirectory>
+
+	<fileSets>
+		<fileSet>
+			<directory>${project.basedir}</directory>
+			<outputDirectory>./</outputDirectory><!--指定包依赖目录，该目录是相对于根目录-->
+			<includes><!--包含文件-->
+				<include>README*</include>
+				<include>LICENSE*</include>
+				<include>NOTICE*</include>
+			</includes>
+		</fileSet>
+
+		<fileSet>
+			<directory>${project.basedir}/src/main/resources</directory>
+			<includes>
+				<include>*.yml</include>
+				<include>*.xml</include>
+				<include>*.properties</include>
+			</includes>
+			<outputDirectory>conf/</outputDirectory>
+		</fileSet>
+
+		<fileSet>
+			<directory>${project.basedir}/conf</directory>
+			<includes>
+				<include>/nacos/gateway/*</include>
+				<include>/nacos/lcap/*</include>
+			</includes>
+			<outputDirectory>conf/</outputDirectory>
+		</fileSet>
+
+		<fileSet>
+			<directory>${project.basedir}/scripts</directory>
+			<includes>
+				<include>*</include>
+				<include>*/*</include>
+			</includes>
+			<outputDirectory>scripts/</outputDirectory>
+		</fileSet>
+
+		<fileSet>
+			<directory>${project.basedir}/utils</directory>
+			<includes>
+				<include>*</include>
+			</includes>
+			<outputDirectory>utils/</outputDirectory>
+		</fileSet>
+
+		<fileSet>
+			<directory>${project.basedir}/src/main/resources</directory>
+			<includes>
+				<include>*.sh</include>
+			</includes>
+			<outputDirectory>bin/</outputDirectory>
+			<fileMode>777</fileMode>
+		</fileSet>
+
+		<fileSet>
+			<directory>${project.basedir}/bin</directory>
+			<includes>
+				<include>*</include>
+			</includes>
+			<outputDirectory>bin/</outputDirectory>
+			<fileMode>777</fileMode>
+		</fileSet>
+
+		<fileSet>
+			<directory>${project.basedir}</directory>
+			<includes>
+				<include>lcapDataServer.yaml</include>
+				<include>Dockerfile</include>
+			</includes>
+			<outputDirectory>/</outputDirectory>
+		</fileSet>
+
+<!--		<fileSet>-->
+<!--			<directory>logs</directory>-->
+<!--			<outputDirectory>logs</outputDirectory>-->
+<!--			<excludes>-->
+<!--				<exclude>*</exclude>-->
+<!--			</excludes>-->
+<!--		</fileSet>-->
+
+		<fileSet>
+			<directory>statics</directory>
+			<outputDirectory>statics</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>docs</directory>
+			<outputDirectory>docs</outputDirectory>
+		</fileSet>
+		<fileSet>
+			<directory>config</directory>
+			<outputDirectory>config</outputDirectory>
+		</fileSet>
+	</fileSets>
+
+	<dependencySets>
+		<dependencySet>
+			<useProjectArtifact>true</useProjectArtifact>
+			<outputDirectory>lib</outputDirectory>
+			<!-- 将scope为runtime的依赖包打包到lib目录下。 -->
+			<scope>runtime</scope>
+		</dependencySet>
+	</dependencySets>
+</assembly>

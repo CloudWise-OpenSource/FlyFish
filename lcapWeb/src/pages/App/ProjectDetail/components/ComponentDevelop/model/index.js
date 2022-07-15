@@ -3,7 +3,7 @@
  * @Author: zhangzhiyong
  * @Date: 2021-11-10 19:08:41
  * @LastEditors: zhangzhiyong
- * @LastEditTime: 2021-11-12 16:31:23
+ * @LastEditTime: 2022-06-02 14:29:43
  */
 import { toMobx, toJS } from '@chaoswise/cw-mobx';
 import {
@@ -11,12 +11,10 @@ import {
   industryList,
   assemblyDetail,
   changeAssembly,
-  getUserInfoService,
   getListDataService,
   getTagsService,
   deleteOneAssembly
 } from '../services';
-import { message } from 'antd';
 import { successCode } from "@/config/global";
 
 const model = {
@@ -28,7 +26,6 @@ const model = {
     addModalvisible: false,
     treeData: null,
     listData: {},
-    userInfo: {},
     libraryListData: {},
     selectedData: {
       category: '',
@@ -49,15 +46,10 @@ const model = {
     assemlyDetail: [],//组件详情
     isDrawerVisible: false,
     listLength: 0,
-    libraryListLength: 0
+    libraryListLength: 0,
+    viewId:null
   },
   effects: {
-    *getUserInfo() {
-      const res = yield getUserInfoService();
-      if (res && res.data) {
-        this.setUserInfo(res.data);
-      }
-    },
     *getTreeDataFirst() {
       const res = yield getTreeDataService();
       if (res && res.data) {
@@ -135,6 +127,9 @@ const model = {
     },
   },
   reducers: {
+    setCardId(viewId){
+      this.viewId=viewId;
+    },
     setTagsList(res) {
       this.tagsList = res.data;
     },
@@ -143,9 +138,6 @@ const model = {
     },
     setLibraryOptions(res){
       this.libraryOptions=res;
-    },
-    setUserInfo(res) {
-      this.userInfo = res;
     },
     setDrawerVisible(res) {
       this.isDrawerVisible = res;
