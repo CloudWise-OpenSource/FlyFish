@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './style.less';
 import { observer } from "@chaoswise/cw-mobx";
 import store from "../../model/index";
-import { Form,Input,Select,Button,Row,Col,Icon,Popover,TreeSelect,message } from 'antd';
+import { Form,Input,Select,Button,Row,Col,Icon,Popover,TreeSelect,message,Spin } from '@chaoswise/ui';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { getProjectsService,getTagsService,addComponentService } from '../../services';

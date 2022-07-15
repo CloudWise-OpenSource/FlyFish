@@ -1,44 +1,56 @@
-.drawerContainer{
-   .title{
-    font-size: 16px;
-    line-height: 30px;
-    display: block;
-    margin-bottom:16px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+.shadow{
+   position: fixed;
+   left: 0;
+   // top: 0;
+   width: 50%;
+   // height: 100%;
+   background-color: rgba(0,0,0,0.5);
+ }
+ .wrap{
+   position: fixed;
+   right: 0;
+   // top: 0;
+   width: 50%;
+   // height: 100%;
+   background-color: #fff;
+   z-index: 2;
+ }
+ .titleWrap{
+   height: 50px;
+   padding: 0 20px;
+   border-bottom: 1px solid #ccc;
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+ }
+ .baseInfo{
+   &>div{
+     height: 40px;
+     display: flex;
+     align-items: center;
+     padding: 0 20px;
    }
-   .firstTitle{
-      line-height: 30px;
-      font-weight: 700;
-      >span{
-         font-weight: 400;
-         margin-left: 10px;
-      }
+ }
+ .imgWrap{
+   padding: 20px;
+ }
+ .dataWrap{
+   padding: 0 20px;
+   border: 1px solid #eee;
+ }
+ .main{
+   height: calc(~'100% - 60px');
+   overflow-y: auto;
+ }
+ .reocrdWrap{
+   padding: 0 20px;
+ }
+ .descWrap{
+   display: block !important;
+   height: auto !important;
+   justify-content: flex-start;
+   flex-direction: column;
+   &>div{
+     padding: 5px 0 0 0;
    }
-   .effectTitle{
-      margin: 15px 0 5px;
-      .identification{
-         color: lightgrey;
-      }
-   }
-   .screen{
-      height: 300px;
-      background-color: lightgray;
-   }
-   .table{
-      margin: 8px 0;
-   }
-   .datatable{
-      min-height: 150px;
-      padding: 8px;
-      border: 1px solid lightgray;
-      .littleTitle{
-         color: lightgrey;
-         font-size: 12px;
-      }
-   }
-   :global {
-      .ant-collapse-content > .ant-collapse-content-box{
-         padding: 10px;
-      }
-  }
-}
+ }

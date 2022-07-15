@@ -1,42 +1,44 @@
 {
-  "name": "lcap",
-  "packageName": "lcapWeb",
-  "version": "2.0.0",
-  "private": true,
-  "dependencies": {
-    "@chaoswise/cw-mobx": "^0.0.13",
-    "@chaoswise/request": "^0.0.23",
-    "@chaoswise/scaffold": "0.0.63",
-    "@chaoswise/ui": "^0.0.119",
-    "@chaoswise/utils": "^0.0.26",
-    "ace-builds": "^1.4.13",
-    "moment": "^2.29.1",
-    "react": "^16.14.0",
-    "react-ace": "^9.5.0",
-    "react-dom": "^16.14.0",
-    "react-infinite-scroll-component": "^6.1.0",
-    "react-markdown": "^7.1.0",
-    "react-router": "^5.1.2",
-    "react-router-dom": "^5.1.2",
-    "simple-git": "^3.2.6",
-    "single-spa-react": "^4.1.1",
-    "styled-components": "^5.3.3"
-  },
-  "scripts": {
-    "start": "chaoswise-scripts dev",
-    "build": "chaoswise-scripts build",
-    "analyze": "chaoswise-scripts analyze",
-    "test": "node scripts/test.js",
-    "cicd": "outputPath=lcapWeb chaoswise-cicd",
-    "build-omp": "node build-omp.js"
-  },
-  "browserslist": [
-    "ie > 9",
-    ">0.2%",
-    "not dead",
-    "not op_mini all"
-  ],
-  "devDependencies": {
-    "css-minimizer-webpack-plugin": "1.1.5"
-  }
+	"name": "lcap",
+	"packageName": "lcapWeb",
+	"version": "2.0.0",
+	"private": true,
+	"dependencies": {
+		"@byte-power/json-press": "^1.0.22",
+		"@chaoswise/cw-mobx": "^0.0.13",
+		"@chaoswise/request": "^0.0.23",
+		"@chaoswise/scaffold": "0.0.68",
+		"@chaoswise/ui": "0.0.144",
+		"@chaoswise/utils": "^0.0.26",
+		"@json-editor/json-editor": "^2.6.1",
+		"jsoneditor": "^9.7.4",
+		"JSONPath": "^0.11.2",
+		"moment": "^2.29.1",
+		"react": "^16.14.0",
+		"react-copy-to-clipboard": "^5.1.0",
+		"react-dom": "^16.14.0",
+		"react-infinite-scroll-component": "^6.1.0",
+		"react-markdown": "^7.1.0",
+		"react-router": "^5.1.2",
+		"react-router-dom": "^5.1.2",
+		"simple-git": "^3.2.6",
+		"single-spa-react": "^4.1.1",
+		"styled-components": "^5.3.3"
+	},
+	"scripts": {
+		"start": "chaoswise-scripts dev",
+		"startApi": "chaoswise-scripts dev api",
+		"build": "chaoswise-scripts build",
+		"buildApi": "chaoswise-scripts build api",
+		"analyze": "chaoswise-scripts analyze",
+		"test": "node scripts/test.js",
+		"cicd": "outputPath=lcapWeb chaoswise-cicd",
+		"build-omp": "node build-omp.js"
+	},
+	"browserslist": [
+		"ie > 9",
+		">0.2%",
+		"not dead",
+		"not op_mini all"
+	]
 }

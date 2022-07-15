@@ -1,4 +1,4 @@
-.firstLine{
+.firstLine {
   display: flex;
   height: 30px;
   align-items: center;
@@ -8,51 +8,69 @@
   //   background-color: rgba(68, 156, 242,0.5);
   // }
 }
-.firstBtnWrap{
+
+.firstBtnWrap {
   display: flex;
-  &>i{
+
+  &>i {
     cursor: pointer;
     margin-left: 5px;
-    &:hover{
+
+    &:hover {
       color: #e6f7ff
     }
   }
 }
-.expandBtn{
+
+.expandBtn {
   margin: 0 10px;
 }
-.firstTitle{
-  font-weight: 800;
+
+.firstTitle {
+  font-weight: 500;
 }
-.addBtn{
+
+.addBtn {
   margin-right: 20px;
 }
-.secondLine{
+
+.secondLine {
   height: 30px;
   padding-left: 35px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
-  &:hover{
+  &:hover {
     background-color: #e6f7ff
   }
+  .secondText {
+    width: 90%;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
 }
-.secondBtnWrap{
+
+.secondBtnWrap {
   margin-right: 20px;
-  &>i{
+
+  &>i {
     margin-left: 5px;
     cursor: pointer;
-    &:hover{
+
+    &:hover {
       color: rgb(68, 156, 242);
     }
   }
 }
-.addingInput{
+
+.addingInput {
   margin-left: 35px;
   width: calc(~'100% - 77px');
 }
 
-.selected{
+.selected {
   background-color: #e6f7ff;
 }

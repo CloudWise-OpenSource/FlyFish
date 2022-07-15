@@ -1,0 +1,41 @@
+@ComponentSettingContentHeight: 40px;
+@ComponentSettingHeaderHeight: 32px;
+
+.ComponentSetting {
+    position: relative;
+    margin-right: 10px;
+    height: 100%;
+    border: 1px solid #e9e9e9;
+
+    .header {
+        padding-left: 10px;
+        height: @ComponentSettingHeaderHeight;
+        line-height: @ComponentSettingHeaderHeight;
+        cursor: pointer;
+        width: 100%;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+
+    .content {
+        padding: 10px;
+        height:~"calc(100% - @{ComponentSettingContentHeight} - @{ComponentSettingHeaderHeight})";
+        width: 100%;
+        border: none;
+    }
+
+    .loading {
+        position: absolute;
+        padding: 0 15px;
+        height:~"calc(100% - @{ComponentSettingHeaderHeight})";
+        width: 100%;
+        top: @ComponentSettingHeaderHeight;
+        left: 0;
+    }
+
+    .actionList {
+        height: @ComponentSettingContentHeight;
+        text-align: center;
+    }
+}

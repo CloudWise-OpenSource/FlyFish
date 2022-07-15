@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styles from './style.less';
 import store from "../../../model/index";
 import { observer } from "@chaoswise/cw-mobx";
-import { Form,Radio,Input,Icon,Popover,Button,message,Spin } from 'antd';
+import { Form,Radio,Input,Icon,Popover,Button,message,Spin } from '@chaoswise/ui';
 import * as CONSTANT from '../../../constant';
 import { publishComponentService } from '../../../services';
 const { TextArea } = Input;
@@ -37,12 +37,9 @@ const ReleaseComponent = observer((props)=>{
     })
   }
 
-  return <Form 
-    labelCol={{span:6}} 
-    wrapperCol={{span:16}}
-    style={{padding:20}}
+  return <Form
     onSubmit={submitClick}
-    className={styles.wrap}
+    className={styles.componentDevelopLabel}
     >
     {
       developingData.developStatus===CONSTANT.DEVELOPSTATUS_DOING?
@@ -62,7 +59,6 @@ const ReleaseComponent = observer((props)=>{
       </Form.Item>:
       <>
         <Form.Item
-          className={styles.compatibleItemWrap}
          label={
           <>
             <Popover placement='left' content={
@@ -77,7 +73,7 @@ const ReleaseComponent = observer((props)=>{
             }>
               <Icon type="question-circle" />
             </Popover>
-            <span>　兼容旧版本</span>
+            兼容旧版本
           </>
         }>
           {
@@ -91,7 +87,6 @@ const ReleaseComponent = observer((props)=>{
               ]
             })(
               <Radio.Group 
-                style={{display: 'flex',height: 40,alignItems: 'center'}}
                 onChange={(e)=>{
                   setisCompatible(e.target.value)
                 }}
@@ -128,20 +123,19 @@ const ReleaseComponent = observer((props)=>{
                 }
               ]
             })(
-              <TextArea placeholder='请输入描述' cols={4}/>
+              <TextArea placeholder='请输入描述'/>
             )
           }
         </Form.Item>
       </>
     }
-    <div style={{overflow:'hidden'}}>
+    <div className={styles.btnWrap}>
       <Button htmlType='submit' type='primary' 
-        disabled={updating}
-        style={{marginLeft:20,float:'right'}}>
+        disabled={updating}>
         <Spin spinning={updating} size='small' style={{marginRight:10}}/>
         确定
       </Button>
-      <Button style={{float:'right'}} onClick={()=>{setReleaseModalVisible(false)}}>取消</Button>
+      <Button onClick={()=>{setReleaseModalVisible(false)}}>取消</Button>
     </div>
   </Form>
 })

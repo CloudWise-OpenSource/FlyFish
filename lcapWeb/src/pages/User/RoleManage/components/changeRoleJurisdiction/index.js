@@ -1,7 +1,6 @@
 import React from "react";
-import { Modal, Form, message } from "@chaoswise/ui";
+import { Modal, Form, message,Tree } from "@chaoswise/ui";
 import { useIntl } from "react-intl";
-import { Tree } from 'antd';
 import {
     toJS
 } from "@chaoswise/cw-mobx";

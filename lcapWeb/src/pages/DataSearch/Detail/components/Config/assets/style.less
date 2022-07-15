@@ -1,0 +1,122 @@
+@ConfigHeaderHeight: 46px;
+@ConfigContentCodeMirrorHeight: 180px;
+@ConfigContentActionsHeight: 40px;
+
+.Config {
+    height: 100%;
+
+    .header {
+        display: flex;
+        height: @ConfigHeaderHeight;
+
+        .headerBreadcrumb {
+            margin-top: 5px;
+            flex: 1;
+
+            .headerBreadcrumbItem {
+                display: inline-block;
+                cursor: pointer;
+                max-width: 160px;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
+                vertical-align: middle;
+            }
+
+            :global {
+                .ant-breadcrumb {
+                    .ant-breadcrumb-link {
+                        padding: 0;
+                    }
+                }
+            }
+        }
+
+        .headerActions {
+            padding-top: 8px;
+            width: 100px;
+            text-align: right;
+        }
+    }
+
+    .content {
+        position: relative;
+        height:~"calc(100% - @{ConfigHeaderHeight} - 10px)";
+
+        .contentLeft {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 244px;
+            height: 100%;
+        }
+
+        .contentRight {
+            height: 100%;
+            padding-left: 244px;
+
+            &.contentFullRight {
+                padding-left: 0;
+            }
+
+            .codeEditor {
+                position: relative;
+                padding: 10px 60px 10px 10px;
+                border: 1px solid rgb(233, 233, 233);
+                height: @ConfigContentCodeMirrorHeight;
+
+                :global {
+                    .ace_editor {
+                        height: 160px;
+
+                        .CodeMirror-placeholder {
+                            color: #CCC;
+                        }
+                    }
+                }
+
+                .sqlActionBar {
+                    position: absolute;
+                    right: 15px;
+                    top: 15px;
+
+                    .sqlAction {}
+                }
+            }
+
+            .contentActions {
+                height: @ConfigContentActionsHeight;
+                padding-top: 15px;
+
+                &>button {
+                    margin-right: 15px;
+                }
+
+                .contentActionInfo {
+                    display: inline-block;
+                    margin-bottom: 0;
+                    color: #666;
+                }
+            }
+
+            .componentPreview {
+                height:~"calc(100% - @{ConfigContentCodeMirrorHeight} - @{ConfigContentActionsHeight})";
+                overflow: hidden;
+
+                .tablePreview {
+                    padding-top: 10px;
+                    height: 100%;
+                    width: 100%;
+                    overflow-y: auto;
+
+                    :global {
+                        .cw-pagination-wrapper {
+                            height: 56px;
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+}

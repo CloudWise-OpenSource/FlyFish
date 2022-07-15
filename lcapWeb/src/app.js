@@ -61,7 +61,11 @@ const App = ({
         ...darkTheme,
       }}
     >
-      <ConfigProvider locales={locales} defaultLocale={defaultLocale}>
+      <ConfigProvider
+        locales={locales}
+        autoInsertSpaceInButton={false}
+        defaultLocale={defaultLocale}
+      >
         <Router basename={window.LCAP_CONFIG.basename} getAuth={getAuth} />
       </ConfigProvider>
     </ThemeProvider>

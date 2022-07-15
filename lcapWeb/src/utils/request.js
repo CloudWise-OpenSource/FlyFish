@@ -1,5 +1,5 @@
 import * as request from '@chaoswise/request';
-
+import { message } from "@chaoswise/ui";
 const {
   initRequest,
   fetchGet,
@@ -43,7 +43,6 @@ initRequest({
     // 请求错误码回调
     statusCallback: {
       '1001': (res) => {
-        console.log('符合u好',res);
       },
       '403': () => {
 
@@ -59,7 +58,8 @@ initRequest({
       if (error) {
         if (error.response) {
           console.log('error.response====',error.response);
-          window.location.href = error.response.headers.location;
+          // window.location.href = error.response.headers.location;
+          message.error('接口请求失败,请重试!');
         }
       } else {
         // 响应处理

@@ -3,75 +3,70 @@
  * @Author: zhangzhiyong
  * @Date: 2021-12-06 10:32:18
  * @LastEditors: zhangzhiyong
- * @LastEditTime: 2022-04-14 10:03:20
+ * @LastEditTime: 2022-07-11 18:04:45
  */
 const path = require('path');
 const modifyVars = require('./themes/dark.js');
-const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+
+const fs = require('fs');
 
 // 详细扩展配置参考  https://www.npmjs.com/package/@chaoswise/scaffold
 
-module.exports = {
+const args = process.argv;
+
+const isApi = args[3] === 'api';
+
+const config = {
   debugIe: false, // 是否在ie下调试(关闭热更新)
   useMultipleTheme: false, // 是否开启多主题
-  isCombinePortal: false, // 是否开启对接portal的配置
-  publicPath: '/',//对接portal时修改为/lcapWeb/，否则是/
+  isCombinePortal: true, // 是否开启对接portal的配置
+  publicPath: '/lcapWeb/', //对接portal时修改为/lcapWeb/，否则是/
   prettierFixed: false,
-  hot:true,
+  disableESLintPlugin: true,
+  hot: true,
   isNoticeUpdate: false, // 是否开启升级通知
   routerType: 'hash', // 路由类型browser|hash  默认 hash
   themes: [
     {
       name: 'light',
-      entryPath: path.resolve(__dirname, './themes/light.js')
+      entryPath: path.resolve(__dirname, './themes/light.js'),
     },
     {
       name: 'dark',
-      entryPath: path.resolve(__dirname, './themes/dark.js')
-    }
+      entryPath: path.resolve(__dirname, './themes/dark.js'),
+    },
   ],
   modifyVars, // 非多主题下样式变量
 
-  htmlTagsPlugin: config => {
-    config.tags = [
-      'conf/env-config.js',
-    ];
+  htmlTagsPlugin: (config) => {
+    config.tags = ['conf/env-config.js'];
     return config;
   },
-  htmlPlugin: config => {
+  htmlPlugin: (config) => {
     config.excludeAssets = [];
-    config.title = 'FlyFish';
+    config.title = 'LCAP';
     return config;
   },
-  copyPlugin:config=>{
+  copyPlugin: (config) => {
     config.patterns.push({
-      from:path.resolve(__dirname,'../src/assets/diff'),
-      to:'diff'
+      from: path.resolve(__dirname, '../src/assets/diff'),
+      to: 'diff',
     });
     config.patterns.push({
-      from:path.resolve(__dirname,'../scripts'),
-      to:'./scripts'
+      from: path.resolve(__dirname, '../scripts'),
+      to: './scripts',
     });
     config.patterns.push({
-      from:path.resolve(__dirname,'../lcapWeb.yaml'),
-      to:'.'
+      from: path.resolve(__dirname, '../lcapWeb.yaml'),
+      to: '.',
+    });
+    config.patterns.push({
+      from: path.resolve(__dirname, '../www'),
+      to: './www',
     });
     return config;
   },
-  build: config => {
-    // css 压缩
-    config.optimization = {
-      minimizer: [
-        ...config.optimization.minimizer,
-        new CssMinimizerPlugin({
-          test: /\.css$/g,
-          parallel: true,
-        }),
-      ]
-    };
-    return config;
-  },
-  devServer: config => {
+  devServer: (config) => {
     config.port = 8000;
     config.proxy = {
       "/api": {
@@ -87,7 +82,22 @@ module.exports = {
           );
         },
       },
+      "/lcap-data-server": {
+        target: "http://10.2.3.56:7002",
+        changeOrigin:true,
+        pathRewrite: {
+          "^/lcap-data-server": "",
+        },
+        onProxyReq(proxyReq, req, res) {
+          proxyReq.setHeader(
+              'cookie',
+              'locale=en-us; FLY_FISH_V2.0=CM0gjxPflfzqKGborcqydz1b7/3SJIfWUYx2nUSauPcGgiRI5zEX1uC4qOAqFyysvESpjN/mu92jsHT5K21vy4dgfi5TbvNsG+xhkMQRu0lgCvuGmS50WOku/ROZmiRmK1YigwUG0U6kHoZVhbW9vrouG5rOVY/iabCdw9LSaXfq4udNhZ3qyFOqex0K/CRT',
+          );
+        },
+      },
     };
     return config;
-  }
+  },
 };
+
+module.exports = config;

@@ -1,59 +1,52 @@
 /*
- * @Descripttion: 
+ * @Descripttion:
  * @Author: zhangzhiyong
  * @Date: 2021-11-10 19:08:41
  * @LastEditors: zhangzhiyong
- * @LastEditTime: 2021-12-24 16:15:32
+ * @LastEditTime: 2022-06-02 14:26:27
  */
-import { toMobx,toJS } from '@chaoswise/cw-mobx';
-import { 
+import { toMobx, toJS } from '@chaoswise/cw-mobx';
+import {
   getTreeDataService,
   getListDataService,
-  getUserInfoService,
   getProjectsService,
-  getTagsService
+  getTagsService,
 } from '../services';
 
 const model = {
   // 唯一命名空间
-  namespace: "ComponentDevelop",
+  namespace: 'ComponentDevelop',
   // 状态
   state: {
-    userInfo:{},
-    detailShow:false,
-    showRecord:false,
-    addModalvisible:false,
-    editModalvisible:false,
-    importModalvisible:false,
-    releaseModalVisible:false,
-    treeData:[],
-    listData:{},
-    selectedData:{
-      category:'',
-      subCategory:''
+    detailShow: false,
+    showRecord: false,
+    addModalvisible: false,
+    editModalvisible: false,
+    importModalvisible: false,
+    releaseModalVisible: false,
+    addFromSourcevisible: false,
+    treeData: [],
+    listData: {},
+    selectedData: {
+      category: '',
+      subCategory: '',
     },
-    searchName:'',
-    searchKey:'',
-    searchStatus:'all',
-    searchProject:undefined,
-    searchType:'all',
-    viewId:'',
-    editData:{},
-    projectsData:[],
-    tagsData:[],
-    developing:false,
-    developingData:{},
-    total:0,
-    curPage:1,
-    pageSize:10
+    searchName: '',
+    searchKey: '',
+    searchStatus: 'all',
+    searchProject: undefined,
+    searchType: 'all',
+    viewId: '',
+    editData: {},
+    projectsData: [],
+    tagsData: [],
+    developing: false,
+    developingData: {},
+    total: 0,
+    curPage: 0,
+    pageSize: 10,
   },
   effects: {
-    *getUserInfo() {
-      const res = yield getUserInfoService();
-      if (res && res.data) {
-        this.setUserInfo(res.data);
-      }
-    },
     *getTreeDataFirst() {
       // 请求数据
       const res = yield getTreeDataService();
@@ -63,8 +56,8 @@ const model = {
         const first = toJS(data)[0];
         if (first) {
           this.setSelectedData({
-            category:first.id,
-            subCategory:''
+            category: first.id,
+            subCategory: '',
           });
         }
       }
@@ -81,109 +74,109 @@ const model = {
       }
     },
     *getTagsData() {
-      const res = yield getTagsService({type:'component'});
+      const res = yield getTagsService({ type: 'component' });
       if (res && res.data) {
         this.setTagsData(res.data);
       }
     },
-    *getListData(){
+    *getListData() {
       const curPage = this.curPage;
       const pageSize = this.pageSize;
-      const { category,subCategory } = toJS(this.selectedData);
+      const { category, subCategory } = toJS(this.selectedData);
       const searchName = this.searchName;
       const searchKey = this.searchKey;
       const searchStatus = this.searchStatus;
       const searchProject = this.searchProject;
       const searchType = this.searchType;
       const params = {
-        name:searchName?searchName:undefined,
-        key:searchKey?searchKey:undefined,
-        developStatus:searchStatus!=='all'?searchStatus:undefined,
-        type:searchType==='all'?undefined:searchType,
-        projectId:searchProject,
-        category:category,
-        subCategory:subCategory===''?undefined:subCategory,
-        curPage:curPage,
-        pageSize
+        name: searchName ? searchName : undefined,
+        key: searchKey ? searchKey : undefined,
+        developStatus: searchStatus !== 'all' ? searchStatus : undefined,
+        type: searchType === 'all' ? undefined : searchType,
+        projectId: searchProject,
+        category: category,
+        subCategory: subCategory === '' ? undefined : subCategory,
+        curPage: curPage,
+        pageSize,
       };
       const res = yield getListDataService(params);
       this.setListData(res.data);
-    }
+    },
   },
   reducers: {
-    setUserInfo(res){
-      this.userInfo = res;
-    },
-    setDetailShow(res){
+    setDetailShow(res) {
       this.detailShow = res;
     },
-    setAddModalvisible(res){
+    setAddModalvisible(res) {
       this.addModalvisible = res;
     },
-    setEditModalvisible(res){
+    setEditModalvisible(res) {
       this.editModalvisible = res;
     },
-    setImportModalvisible(res){
+    setImportModalvisible(res) {
       this.importModalvisible = res;
     },
-    setTreeData(res){
+    setTreeData(res) {
       this.treeData = res;
     },
-    setListData(res){
+    setListData(res) {
       this.listData = res;
     },
-    setSelectedData(res){
+    setSelectedData(res) {
       this.selectedData = res;
     },
-    setSearchName(res){
+    setSearchName(res) {
       this.searchName = res;
     },
-    setSearchKey(res){
+    setSearchKey(res) {
       this.searchKey = res;
     },
-    setSearchStatus(res){
+    setSearchStatus(res) {
       this.searchStatus = res;
     },
-    setSearchProject(res){
+    setSearchProject(res) {
       this.searchProject = res;
     },
-    setSearchType(res){
+    setSearchType(res) {
       this.searchType = res;
     },
-    setViewId(res){
+    setViewId(res) {
       this.viewId = res;
     },
-    setEditData(res){
+    setEditData(res) {
       this.editData = res;
     },
-    setProjectsData(res){
+    setProjectsData(res) {
       this.projectsData = res;
     },
-    setTagsData(res){
+    setTagsData(res) {
       this.tagsData = res;
     },
-    setDeveloping(res){
+    setDeveloping(res) {
       this.developing = res;
     },
-    setDevelopingData(res){
+    setDevelopingData(res) {
       this.developingData = res;
     },
-    setTotal(res){
+    setTotal(res) {
       this.total = res;
     },
-    setPageSize(res){
+    setPageSize(res) {
       this.pageSize = res;
     },
-    setCurPage(res){
+    setCurPage(res) {
       this.curPage = res;
     },
-    setReleaseModalVisible(res){
+    setReleaseModalVisible(res) {
       this.releaseModalVisible = res;
     },
-    setShowRecord(res){
+    setShowRecord(res) {
       this.showRecord = res;
-    }
-  }
+    },
+    setAddFromSourcevisible(res) {
+      this.addFromSourcevisible = res;
+    },
+  },
 };
 
 export default toMobx(model);

@@ -1,7 +1,6 @@
 import React from "react";
-import { Modal, Form } from "@chaoswise/ui";
+import { Modal, Form, Transfer, Row, Col } from "@chaoswise/ui";
 import { useIntl } from "react-intl";
-import { Transfer, Row, Col } from 'antd';
 import { observer, loadingStore, toJS } from '@chaoswise/cw-mobx';
 
 import store from "../../model/index";

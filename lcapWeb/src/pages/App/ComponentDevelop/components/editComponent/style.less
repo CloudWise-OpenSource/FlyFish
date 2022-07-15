@@ -1,8 +1,65 @@
-.btnWrap{
-  height:60px !important;
-  border-top:1px solid #eee !important;
+
+.uploadComponentImg {
+  :global {
+    .ant-upload-list {
+      .ant-upload-list-item {
+        width: 185px;
+
+        .ant-upload-list-item-image {
+          object-fit: fill;
+        }
+
+        .ant-upload-list-item-actions {
+          &>a {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+}
+
+.uploadImgInfo {
+  margin-bottom: 0;
+  color: #999;
+  line-height: 24px;
+}
+
+.uploadImgWrap {
+
+  .uploadImgButton {
+
+    .uploadImgButtonIcon {
+      margin-top: 30px;
+      margin-bottom: 15px;
+      font-size: 28px;
+    }
+
+    .uploadImgButtonText {
+      color: #999;
+    }
+  }
+}
+// .componentDevelopLabel{
+//   margin-left: 7px;
+  // :global{
+  //     .ant-form-item-label{
+  //       flex-direction: row-reverse;
+  //       margin-left: 15px;
+  //     }
+  // }
+// }
+.btnWrap {
+  height: 52px !important;
+  border-top: 1px solid #eee;
   display: flex !important;
-  align-items: center !important ;
-  width: calc(~'100% + 40px') !important;
-  margin-left: -20px !important;
+  align-items: center;
+  width: calc(100% + 48px);
+  margin-left: -24px !important;
+  flex-direction: row-reverse;
+  padding-right: 24px;
+  button{
+    width: 72px;
+    margin-left: 8px;
+  }
 }

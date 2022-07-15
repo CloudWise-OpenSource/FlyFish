@@ -3,39 +3,39 @@
  * @Author: zhangzhiyong
  * @Date: 2022-02-10 16:35:07
  * @LastEditors: zhangzhiyong
- * @LastEditTime: 2022-02-10 16:50:19
+ * @LastEditTime: 2022-07-15 10:58:24
  */
 import React from 'react';
 import useAuth from '@/hooks/useAuth';
 import Loading from '@/components/Loading';
 import { createHashHistory } from 'history';
- 
+
 const history = createHashHistory();
 const authWrapper = (WrappedComponent) => {
 
   const Component = props => {
     const { getAuth, status } = useAuth();
-    if(status === 'loading') {
+    if (status === 'loading') {
       return (
         <Loading />
       );
     }
-    if(status === 'error') {
+    if (status === 'error') {
       return '权限获取失败，请检查网络';
     }
     // 没有cookies跳转回首页
     if(status == 'noCookies') {
-      const isInPortal = !!document.querySelector('#singlespa-container');
-      if (!isInPortal) {
+      if (!window.isInPortal) {
         history.replace('/login');
       }
     }
+
 
     return <WrappedComponent getAuth={getAuth} {...props} />;
   };
 
   return Component;
-  
+
 };
 
 export default authWrapper;

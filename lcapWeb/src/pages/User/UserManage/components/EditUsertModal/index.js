@@ -68,6 +68,10 @@ export default Form.create({ name: "FORM_IN_USER_MODAL" })(
                       id: "common.pleaseInput",
                       defaultValue: "请输入",
                     }) + "用户名",
+                },
+                {
+                  pattern: /^[^\s]*$/,
+                  message: "请输入正确的用户名！"
                 }
               ],
             })(
@@ -95,7 +99,7 @@ export default Form.create({ name: "FORM_IN_USER_MODAL" })(
                     }) + "用户邮箱",
                 },
                 {
-                  pattern: /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/,
+                  pattern: /^[A-Za-zd0-9]+([-_.][A-Za-zd]+)*@([A-Za-zd]+[-.])+[A-Za-zd]{2,5}$/,
                   message: "请输入正确的邮箱格式",
                 },
               ],

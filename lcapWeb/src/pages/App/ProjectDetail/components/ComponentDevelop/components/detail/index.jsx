@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './style.less';
-import { Button,Input,Table } from 'antd';
+import { Button,Input,Table } from '@chaoswise/ui';
 import { useState } from 'react';
 import store from "../../model/index";
 import { observer } from "@chaoswise/cw-mobx";

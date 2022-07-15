@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Icon, Input, Button, Row, Col, message } from 'antd';
+import { Form, Icon, Input, Button, Row, Col, message } from '@chaoswise/ui';
 import style from './UserLayout.less';
 import _ from 'lodash';
 import store from './model/index';
@@ -87,12 +87,15 @@ class UserLayout extends React.PureComponent {
         if (!this.state.loginType) {
           login(values, (res) => {
             if (res.code == 0) {
-              globalStore.getUserInfo((res) => {
-                message.success('登录成功');
-                localStorage.setItem('id', res.id);
-                let item = this.findIndex(toJS(res.menus));
-                this.props.history.push(item.url);
-              }); //成功后获取个人信息
+              localStorage.setItem('id', res.data.id);
+              message.success('登录成功');
+              this.props.history.push('/');
+              // globalStore.getUserInfo((userInfo) => {
+                // message.success('登录成功');
+                // localStorage.setItem('id', userInfo.iuser.id);
+                // let item = this.findIndex(toJS(userInfo.menus));
+                // this.props.history.push('/');
+              // }); //成功后获取个人信息
             } else {
               message.error(res.msg || '注册失败');
             }
@@ -199,8 +202,7 @@ class UserLayout extends React.PureComponent {
                       message: '请输入邮箱！',
                     },
                     {
-                      pattern: /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/,
-                        // pattern: /^[A-Za-zd0-9]+([-_.][A-Za-zd]+)*@([A-Za-zd]+[-.])+[A-Za-zd]{2,5}$/,
+                      pattern: /^[A-Za-zd0-9]+([-_.][A-Za-zd]+)*@([A-Za-zd]+[-.])+[A-Za-zd]{2,5}$/,
                       message: "请输入正确的邮箱格式",
                     },
                   ],
