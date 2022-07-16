@@ -19,10 +19,10 @@ module.exports = appInfo => {
   const serverIp = '127.0.0.1';
   const serverPort = 7001;
 
-  const mongodbIp = '10.2.3.56';
-  const mongodbPort = 18017;
-  const mongodbUsername = 'admin';
-  const mongodbPassword = encodeURIComponent('Yzh@redis_123');
+  const mongodbIp = '127.0.0.1';
+  const mongodbPort = 27017;
+  // const mongodbUsername = 'admin';
+  // const mongodbPassword = encodeURIComponent('123456');
 
   // chrome 端口，用于自动生成组件、应用缩略图服务，默认9222
   const chromePort = 9222;
@@ -47,8 +47,8 @@ module.exports = appInfo => {
   config.mongoose = {
     clients: {
       flyfish: {
-        // url: `mongodb://${mongodbIp}:${mongodbPort}/flyfish`,
-        url: `mongodb://${mongodbUsername}:${mongodbPassword}@${mongodbIp}:${mongodbPort}/flyfish?authSource=test`,
+        url: `mongodb://${mongodbIp}:${mongodbPort}/flyfish`,
+        // url: `mongodb://${mongodbUsername}:${mongodbPassword}@${mongodbIp}:${mongodbPort}/flyfish?authSource=test`,
         options: {
           useUnifiedTopology: true,
         },
