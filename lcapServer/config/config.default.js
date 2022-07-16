@@ -8,13 +8,13 @@ const path = require('path');
  */
 module.exports = appInfo => {
   // 静态目录 eg:  /data/app/lcapWeb
-  const staticDir = '${CW_INSTALL_STATIC_DIR}';
+  const staticDir = path.join(__dirname, '../../lcapWeb');
   // 组件开发目录, 默认www, 配置staticDir使用，eg: /data/app/lcapWeb/www
   const commonDirPath = 'www';
   // 数据目录 eg:  /data/appData
-  const dataBaseDir = '${CW_DATA_BASE_DIR}';
+  const dataBaseDir = path.join(__dirname, '../../../appData');
   // 日志目录 eg:  /data/logs
-  const logsBaseDir = '${CW_LOGS_BASE_DIR}';
+  const logsBaseDir = path.join(__dirname, '../../logs');
   
   const serverIp = '127.0.0.1';
   const serverPort = 7001;
@@ -117,12 +117,6 @@ module.exports = appInfo => {
   };
 
   config.services = {
-    core: {
-      baseURL: `http://${lcapDataServerIp}:${lcapDataServerPort}`,
-    },
-    docp: {
-      baseURL: `http://${docpServerIp}:${docpServerPort}`,
-    },
     chrome: {
       host: '127.0.0.1',
       port: chromePort,

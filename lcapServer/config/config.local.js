@@ -1,27 +1,28 @@
 /* eslint valid-jsdoc: "off" */
 
 'use strict';
+const path = require('path');
 
 /**
  * @param {Egg.EggAppInfo} appInfo app info
  */
 module.exports = appInfo => {
   // 静态目录 eg:  /data/app/lcapWeb
-  const staticDir = '${CW_INSTALL_STATIC_DIR}';
+  const staticDir = path.join(__dirname, '../../lcapWeb');
   // 组件开发目录, 默认www, 配置staticDir使用，eg: /data/app/lcapWeb/www
   const commonDirPath = 'www';
   // 数据目录 eg:  /data/appData
-  const dataBaseDir = '${CW_DATA_BASE_DIR}';
+  const dataBaseDir = path.join(__dirname, '../../../appData');
   // 日志目录 eg:  /data/logs
-  const logsBaseDir = '${CW_LOGS_BASE_DIR}';
+  const logsBaseDir = path.join(__dirname, '../../logs');
   
   const serverIp = '127.0.0.1';
   const serverPort = 7001;
 
-  const mongodbIp = '127.0.0.1';
-  const mongodbPort = 27017;
-  // const mongodbUsername = '${CW_MONGODB_USERNAME}';
-  // const mongodbPassword = encodeURIComponent('${CW_MONGODB_PASSWORD}');
+  const mongodbIp = '10.2.3.56';
+  const mongodbPort = 18017;
+  const mongodbUsername = 'admin';
+  const mongodbPassword = encodeURIComponent('Yzh@redis_123');
 
   // chrome 端口，用于自动生成组件、应用缩略图服务，默认9222
   const chromePort = 9222;
@@ -46,8 +47,8 @@ module.exports = appInfo => {
   config.mongoose = {
     clients: {
       flyfish: {
-        url: `mongodb://${mongodbIp}:${mongodbPort}/flyfish`,
-        // url: `mongodb://${mongodbUsername}:${mongodbPassword}@${mongodbIp}:${mongodbPort}/flyfish?authSource=test`,
+        // url: `mongodb://${mongodbIp}:${mongodbPort}/flyfish`,
+        url: `mongodb://${mongodbUsername}:${mongodbPassword}@${mongodbIp}:${mongodbPort}/flyfish?authSource=test`,
         options: {
           useUnifiedTopology: true,
         },
