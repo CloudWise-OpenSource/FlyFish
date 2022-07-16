@@ -49,10 +49,12 @@ module.exports = app => {
     cover: String,
     creator: String,
     updater: String,
+    account_id: String,
     status: {
       type: String,
       default: Enum.COMMON_STATUS.VALID,
     },
+    from: String,
     pages: [ Object ],
   });
 

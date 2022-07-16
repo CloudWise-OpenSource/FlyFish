@@ -65,7 +65,9 @@ class ProjectController extends BaseController {
 
     const errInfo = editResult.data.error || null;
     if (editResult.msg === 'Exists Already') {
-      this.fail('编辑失败, 组件名称已存在', errInfo, CODE.FAIL);
+      this.fail('编辑失败, 项目名称已存在', errInfo, CODE.FAIL);
+    } else if (editResult.msg === 'No Auth') {
+      this.fail('删除失败, 无权限', null, CODE.FAIL);
     } else {
       this.success('编辑成功', { id: projectId });
     }

@@ -6,7 +6,6 @@ const Enum = require('../lib/enum');
 class ProjectService extends Service {
   async create(params) {
     const { ctx } = this;
-
     const returnData = { msg: 'ok', data: {} };
     const existProject = await ctx.model.Project._findOne({ name: params.name, status: Enum.COMMON_STATUS.VALID });
     if (!_.isEmpty(existProject)) {
@@ -28,9 +27,13 @@ class ProjectService extends Service {
 
   async assembleProjectData(params) {
     const { ctx } = this;
-
     const newTradeNames = params.trades.filter(item => !item.id);
-    const existTrades = await ctx.model.Trade._find({ name: { $in: newTradeNames.map(item => item.name) }, status: Enum.COMMON_STATUS.VALID });
+
+    const filter = {
+      status: Enum.COMMON_STATUS.VALID,
+      name: { $in: newTradeNames.map(item => item.name) },
+    };
+    const existTrades = await ctx.model.Trade._find(filter);
     const insertTrades = newTradeNames.filter(item => !existTrades.some(trade => trade.name === item.name));
 
     let insertedTrades = [];
@@ -53,7 +56,7 @@ class ProjectService extends Service {
     const returnData = { msg: 'ok', data: {} };
 
     const curProjectInfo = await ctx.model.Project._findOne({ id });
-    if (curProjectInfo.isInternal) {
+    if (curProjectInfo.isInternal || (Object.values(Enum.DATA_FROM).includes(curProjectInfo.from))) {
       returnData.msg = 'No Auth';
       return returnData;
     }
@@ -74,6 +77,12 @@ class ProjectService extends Service {
     const { ctx } = this;
 
     const returnData = { msg: 'ok', data: {} };
+    const checkAuthProject = await ctx.model.Project._findOne({ id });
+    if (Object.values(Enum.DATA_FROM).includes(checkAuthProject.from)) {
+      returnData.msg = 'No Auth';
+      return returnData;
+    }
+
     if (params.name) {
       const existProject = await ctx.model.Project._findOne({ id: { $ne: id }, name: params.name, status: Enum.COMMON_STATUS.VALID });
       if (!_.isEmpty(existProject)) {
@@ -88,14 +97,10 @@ class ProjectService extends Service {
   }
 
   async getList(query, options) {
-    const { ctx, config: { projectWhiteList: { roleIds, authProjectId } } } = this;
-
-    const filter = {};
-
-    // 临时feature：对成员角色用户，屏蔽某些大屏应用
-    const userInfo = ctx.userInfo;
-    if (!roleIds.includes(userInfo.role)) filter.id = { $ne: authProjectId };
-
+    const { ctx } = this;
+    const filter = {
+      status: Enum.COMMON_STATUS.VALID,
+    };
     if (!_.isEmpty(query.key)) {
       const keyFilter = {
         $or: [
@@ -122,7 +127,7 @@ class ProjectService extends Service {
         });
       }
 
-      Object.assign(filter, keyFilter);
+      if (!_.isEmpty(keyFilter.$or)) filter.$or = keyFilter.$or;
     }
 
     const total = await ctx.model.Project._count(filter);
@@ -143,7 +148,7 @@ class ProjectService extends Service {
         id,
         name: tradeMap[id] && tradeMap[id].name || '',
       }));
-      l.creatorName = creatorMap[l.creator] && creatorMap[l.creator].username || '';
+      l.creatorName = creatorMap[l.creator] && creatorMap[l.creator].username || '-';
     });
 
     return {

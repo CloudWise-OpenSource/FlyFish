@@ -9,6 +9,7 @@ module.exports = app => {
   const connFlyfish = app.mongooseDB.get('flyfish');
 
   const ComponentSchema = new Schema({
+    account_id: String,
     create_time: {
       type: Date,
       default: Date.now,
@@ -28,6 +29,7 @@ module.exports = app => {
     tags: [ String ],
     applications: [ String ],
     data_config: Object,
+    automatic_cover: Number,
 
     versions: [{
       _id: false,
@@ -60,6 +62,8 @@ module.exports = app => {
     last_change_time: {
       type: Date,
     },
+    from: String,
+    allow_data_search: Number,
   });
 
   ComponentSchema.statics._count = async function(query) {

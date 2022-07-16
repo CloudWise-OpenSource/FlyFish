@@ -6,10 +6,8 @@ const fs = require('fs-extra');
 const path = require('path');
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
-const _ = require('lodash');
-
 const mongoUrl = config.get('mongoose.clients.flyfish.url');
-const staticDir = config.get('pathConfig.staticDir');
+const staticDir = config.get('pathConfig.staticDir') + config.get('pathConfig.commonDirPath');
 
 const appId = process.argv[2];
 const downloadDir = `download/${appId}`;
@@ -80,17 +78,18 @@ async function init() {
 
     console.log(`一共有${[ ...componentIdSet ].length}个组件`);
 
-    for (const chunk of _.chunk(components, 2)) {
-      await Promise.all(chunk.map(async component => {
-        const componentId = component._id.toString();
-        const componentDir = path.resolve(staticDir, 'components');
-        await exec(`cd ${componentDir} && tar -czvf ${componentId}.tar ${componentId} --exclude=${componentId}/*/node_modules`, { maxBuffer: 1024 * 1024 * 1024 });
-        await fs.copy(
-          path.resolve(componentDir, `${componentId}.tar`),
-          path.resolve(downloadDir, 'components', `${componentId}.tar`),
-          { overwrite: true }
-        );
-      }));
+    for (let i = 0; i < components.length; i++) {
+      const component = components[i];
+      const componentId = component._id.toString();
+      const componentDir = path.resolve(staticDir, 'components');
+      await exec(`cd ${componentDir} && tar -czvf ${componentId}.tar ${componentId}/v-current  --exclude=${componentId}/*/src --exclude=${componentId}/*/node_modules`, { maxBuffer: 1024 * 1024 * 1024 });
+      await fs.copy(
+        path.resolve(componentDir, `${componentId}.tar`),
+        path.resolve(downloadDir, 'components', `${componentId}.tar`),
+        { overwrite: true }
+      );
+
+      console.log(`download success ${componentId}, progress: ${i + 1}/${components.length}======`);
     }
 
     await exec(`cd download && tar -czvf ${appId}.tar ${appId}`, { maxBuffer: 1024 * 1024 * 1024 });

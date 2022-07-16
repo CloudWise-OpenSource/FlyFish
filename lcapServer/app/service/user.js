@@ -1,7 +1,6 @@
 'use strict';
 const Service = require('egg').Service;
 const Enum = require('../lib/enum');
-const jwt = require('jsonwebtoken');
 
 const md5 = require('md5');
 const _ = require('lodash');
@@ -59,55 +58,27 @@ class UserService extends Service {
       const roleInfo = await ctx.model.Role._findOne({ id: userInfo.role });
       userInfo.isAdmin = roleInfo.name === Enum.ROLE.ADMIN;
     }
-    await ctx.service.userYapi.syncUser(userInfo);
 
     returnData.data = userInfo;
     return returnData;
   }
 
   async getUserInfo(userId) {
-    const { ctx, logger, config: { docpCookieConfig: { name: docpCookieName }, services: { yapi: { tokenEncryptionKey } } } } = this;
+    const { ctx } = this;
     let userInfo = {};
 
     if (!userId) {
-      const docpCookieValue = ctx.cookies.get(docpCookieName, { signed: false });
-
-      if (docpCookieValue) {
-        const result = await ctx.service.userDouc.syncUser();
-        userInfo = await ctx.model.User._findOne({ id: result.userId }) || {};
-      } else {
-        const curUserInfo = ctx.userInfo;
-        userId = curUserInfo.userId;
-        userInfo = await ctx.model.User._findOne({ id: userId }) || {};
-      }
-    } else {
-      userInfo = await ctx.model.User._findOne({ id: userId }) || {};
+      const curUserInfo = ctx.userInfo;
+      userId = curUserInfo.userId;
     }
 
+    userInfo = await ctx.model.User._findOne({ id: userId }) || {};
     userInfo.isAdmin = false; userInfo.menus = [];
-
-    const docpUserInfo = userInfo.username.split('-');
-    userInfo.docpUserInfo = {
-      accountId: docpUserInfo[1],
-      userId: docpUserInfo[2],
-    };
-
     if (userInfo.role) {
       const roleInfo = await ctx.model.Role._findOne({ id: userInfo.role });
       userInfo.isAdmin = roleInfo.name === Enum.ROLE.ADMIN;
       userInfo.menus = roleInfo.menus || [];
     }
-
-    try {
-      const payLoad = {
-        username: userInfo.username,
-      };
-      const token = jwt.sign(payLoad, tokenEncryptionKey, { expiresIn: '1h' });
-      userInfo.yapiAuthorization = token;
-    } catch (error) {
-      logger.error('gen yapi token error: ' + JSON.stringify(error || error.stack));
-    }
-
     return userInfo || {};
   }
 

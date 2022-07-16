@@ -7,9 +7,8 @@ const _ = require('lodash');
 const path = require('path');
 const fs = require('fs');
 const fsExtra = require('fs-extra');
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-core');
 const CODE = require('../lib/error');
-const Enum = require('../lib/enum');
 
 module.exports = {
   // yapi default data handler
@@ -23,6 +22,19 @@ module.exports = {
       throw new Error(errInfo);
     }
     return data;
+  },
+
+  // core server handler
+  handlerCore({ code, msg, data }) {
+    if (code !== CODE.SUCCESS) {
+      const errInfo = JSON.stringify({
+        code: CODE.INTERNAL_ERR,
+        msg: 'core server request fail:' + msg,
+        data: null,
+      });
+      throw new Error(errInfo);
+    }
+    return JSON.parse(_.get(data, [ 'data' ], ''));
   },
 
   createUUID() {
@@ -48,7 +60,7 @@ module.exports = {
     const { ctx, config, logger } = this;
 
     const opt = {
-      //domain: config.cookieConfig.domain,
+      domain: config.cookieConfig.domain,
       path: '/',
       maxAge: 1000 * 60 * 60 * 24 * 7, // Unit : second  default Max-Age is one week
       httpOnly: false,
@@ -98,73 +110,34 @@ module.exports = {
 
   async isAdmin() {
     const { ctx } = this;
-    const { role } = ctx.userInfo;
-    const roleInfo = await ctx.model.Role._findOne({ id: role });
-
-    return roleInfo.name === Enum.ROLE.ADMIN;
+    return await ctx.service.userDouc.getUserIsAdmin();
   },
 
   async screenshot(url, savePath, options = {}) {
-    const { ctx, logger, config: { docpCookieConfig: { name: docpCookieName, domain: docpCookieDomain }, cookieConfig: { name: cookieName, domain: cookieDomain } } } = this;
+    const { ctx, logger } = this;
     let browser,
       page;
 
+    const browerConfig = await ctx.service.chrome.getBrowserConfig();
+    if (_.isEmpty(browerConfig.webSocketDebuggerUrl)) {
+      logger.error('[broswer-debug] no webSocketDebuggerUrl config');
+      return 'no webSocketDebuggerUrl config';
+    }
+
     try {
-      browser = await puppeteer.launch({
-        headless: true,
-        args: [
-          '--no-sandbox',
-          '–disable-gpu',
-          '–disable-dev-shm-usage',
-          '–disable-setuid-sandbox',
-          '–no-first-run',
-          '–no-zygote',
-          '–single-process',
-        ],
-      });
-
+      browser = await puppeteer.connect({ browserWSEndpoint: browerConfig.webSocketDebuggerUrl });
       page = await browser.newPage();
-      const cookieValue = ctx.cookies.get(cookieName, { signed: false });
-      const docpCookieValue = ctx.cookies.get(docpCookieName, { signed: false });
-
-      const cookie = {
-        path: '/',
-        expires: Date.now() + 3600 * 1000,
-        maxAge: 1000 * 60 * 60 * 24, // Unit : second  default Max-Age is one week
-      };
-      if (docpCookieValue) {
-        Object.assign(cookie, {
-          name: docpCookieName,
-          value: docpCookieValue,
-          domain: docpCookieDomain,
-        });
-
-        const { userid, username } = ctx.headers;
-        if (userid && username) await page.setExtraHTTPHeaders({ userid, username });
-      } else if (cookieValue) {
-        Object.assign(cookie, {
-          name: cookieName,
-          value: cookieValue,
-          domain: cookieDomain,
-        });
-      }
-
-      if (!_.isEmpty(cookie.value)) await page.setCookie(cookie); // 设置cookie
       await page.setViewport({ width: +options.width || 1920, height: +options.height || 1080 });
       await page.goto(url, { waitUntil: 'networkidle0', timeout: 60000 });
 
       const fullPagePng = await page.screenshot({ type: 'jpeg', quality: 40, fullPage: true });
       fs.writeFileSync(savePath, fullPagePng);
       await page.close();
-      await browser.close();
-
-      page = null; browser = null;
+      page = null;
       return 'success';
     } catch (error) {
-
       if (page) await page.close();
-      if (browser) await browser.close();
-      page = null; browser = null;
+      page = null;
 
       throw new Error(error);
     }

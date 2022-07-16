@@ -1,4 +1,4 @@
-// This file is created by egg-ts-helper@1.30.2
+// This file is created by egg-ts-helper@1.30.3
 // Do not modify this file!!!!!!!!!
 
 import 'egg';
@@ -7,6 +7,7 @@ import ExportComponentCategory = require('../../../app/model/component-category'
 import ExportComponent = require('../../../app/model/component');
 import ExportMenu = require('../../../app/model/menu');
 import ExportProject = require('../../../app/model/project');
+import ExportResourceRenderRecords = require('../../../app/model/resource-render-records');
 import ExportRole = require('../../../app/model/role');
 import ExportTag = require('../../../app/model/tag');
 import ExportTrade = require('../../../app/model/trade');
@@ -19,6 +20,7 @@ declare module 'egg' {
     Component: ReturnType<typeof ExportComponent>;
     Menu: ReturnType<typeof ExportMenu>;
     Project: ReturnType<typeof ExportProject>;
+    ResourceRenderRecords: ReturnType<typeof ExportResourceRenderRecords>;
     Role: ReturnType<typeof ExportRole>;
     Tag: ReturnType<typeof ExportTag>;
     Trade: ReturnType<typeof ExportTrade>;

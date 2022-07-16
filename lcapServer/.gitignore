@@ -16,7 +16,8 @@ components/*
 www
 .history/*
 logs/*
-
+workflows/
 dist/
 mongo/data/*
 !.gitkeep
+serviceVersion.json

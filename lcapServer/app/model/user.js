@@ -10,6 +10,8 @@ module.exports = app => {
   const connFlyfish = app.mongooseDB.get('flyfish');
 
   const UserSchema = new Schema({
+    account_id: String,
+
     create_time: {
       type: Date,
       default: Date.now,

@@ -8,6 +8,10 @@ module.exports = app => {
   const connFlyfish = app.mongooseDB.get('flyfish');
 
   const ComponentCategorySchema = new Schema({
+    account_id: String,
+    creator: String,
+    updater: String,
+
     create_time: {
       type: Date,
       default: Date.now,
@@ -16,15 +20,16 @@ module.exports = app => {
       type: Date,
       default: Date.now,
     },
-
     categories: [{
       _id: false,
       id: String,
       name: String,
+      from: String,
       children: [{
         _id: false,
         id: String,
         name: String,
+        from: String,
       }],
     }],
   });

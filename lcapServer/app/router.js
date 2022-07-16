@@ -1,10 +1,3 @@
-/*
- * @Descripttion:
- * @Author: zhangzhiyong
- * @Date: 2021-11-16 15:15:58
- * @LastEditors: zhangzhiyong
- * @LastEditTime: 2021-11-16 18:29:40
- */
 'use strict';
 
 /**
@@ -24,9 +17,6 @@ module.exports = app => {
   router.get('/users/info', controller.user.getInfo);
   router.post('/users/list', controller.user.getList);
   router.put('/users/info/:id', controller.user.updateUserInfo);
-  router.get('/users/info/:id/api_token', controller.user.getApiToken);
-  router.put('/users/application-config/:applicationId', controller.user.updateAppConfig);
-  router.get('/users/application-config/:applicationId', controller.user.getAppConfig);
 
   // roles
   router.post('/roles', controller.role.add);
@@ -46,6 +36,7 @@ module.exports = app => {
   router.get('/projects/:projectId', controller.project.info);
 
   // components
+  router.post('/components/uploadComponentImg', controller.component.uploadComponentImg);
   router.post('/components/categories/list', controller.component.getCategoryList);
   router.put('/components/categories', controller.component.updateCategory);
   router.post('/components/list', controller.component.getList);
@@ -56,9 +47,8 @@ module.exports = app => {
   router.post('/components/copy/:id', controller.component.copy);
   router.post('/components/compile/:id', controller.component.compile);
   router.post('/components/install/:id', controller.component.installDepend);
-  router.post('/components/up-to-lib/:id', controller.component.toLib);
-  router.post('/components/import-source-code/:componentId', controller.component.uploadComponentSource);
-  router.get('/components/export-source-code/:componentId', controller.component.exportComponentSource);
+  router.post('/components/import-source-code/:componentId', controller.component.importSource);
+  router.get('/components/export-source-code/:componentId', controller.component.exportSource);
   router.get('/components/git-history/:id', controller.component.getComponentHistory);
   router.get('/components/git-commit-info/:id', controller.component.getCommitInfo);
   // 注意：放底部
@@ -75,8 +65,6 @@ module.exports = app => {
 
   // application
   router.post('/applications', controller.application.create);
-  router.post('/applications/install', controller.application.install);
-  router.post('/applications/uninstall', controller.application.uninstall);
   router.post('/applications/list', controller.application.getList);
   router.put('/applications/:id/basic', controller.application.editBasicInfo);
   router.put('/applications/:id/design', controller.application.editDesignInfo);
@@ -91,9 +79,9 @@ module.exports = app => {
   router.post('/applications/getModelData', controller.application.getModelData);
   router.get('/applications/exportAll/:id', controller.application.exportAll);
 
-  // dashboard
-  router.get('/dashboard/overview', controller.dashboard.overview);
-
   // 置于最后，莫动！！
   router.get('/applications/:id', controller.application.getInfo);
+
+  router.get('/common/version-info', controller.common.getVersionInfo);
+  router.get('/chrome/screenshot', controller.chrome.screenshot);
 };
