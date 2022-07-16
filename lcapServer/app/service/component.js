@@ -8,21 +8,32 @@ const simpleGit = require('simple-git');
 const Diff2html = require('diff2html');
 const minify = require('html-minifier').minify;
 const fsExtra = require('fs-extra');
+const path = require('path');
+const AdmZip = require('adm-zip');
+const moment = require('moment');
 
 const Enum = require('../lib/enum');
 
 class ComponentService extends Service {
   async updateCategoryInfo(updateInfo) {
-    const { ctx } = this;
+    const { ctx, config: { specialId: { innerComponentCategoryIds } } } = this;
+    const userInfo = ctx.userInfo;
 
-    const existsCategory = await ctx.model.ComponentCategory._find({}, null, { sort: '-create_time', limit: 1 }) || [];
-
-    const existsCategoryIds = _.flatten(_.get(existsCategory, [ 0, 'categories' ], []).map(category => (category.children || []).map(children => children.id + '')));
+    const filter = {};
+    const existsCategory = await ctx.model.ComponentCategory._find(filter, null, { sort: '-create_time', limit: 1 }) || [];
+    const existsCategoryIds = _.flatten(_.get(existsCategory, [0, 'categories'], []).map(category => (category.children || []).map(children => children.id + '')));
     const updateCategoryIds = _.flatten((updateInfo.categories || []).map(category => (category.children || []).filter(children => children.id).map(children => children.id + '')));
     const deleteCategoryIds = _.difference(existsCategoryIds, updateCategoryIds);
 
     const returnData = { msg: 'ok', data: {} };
     if (!_.isEmpty(deleteCategoryIds)) {
+      for (const deleteCategoryId of deleteCategoryIds) {
+        if (innerComponentCategoryIds.includes(deleteCategoryId)) {
+          returnData.msg = 'No Auth';
+          return returnData;
+        }
+      }
+
       const components = await ctx.model.Component._find({ subCategory: { $in: deleteCategoryIds }, status: Enum.COMMON_STATUS.VALID }, null, { limit: 1 }) || [];
       if (!_.isEmpty(components)) {
         returnData.msg = 'Exists Already Components';
@@ -33,7 +44,6 @@ class ComponentService extends Service {
     const names = [];
     for (let i = 0; i < (updateInfo.categories || []).length; i++) {
       const category = updateInfo.categories[i];
-
       const existsName = names.find(name => name === category.name);
       if (!_.isEmpty(existsName)) {
         returnData.msg = 'Exists Already Category Name';
@@ -46,7 +56,6 @@ class ComponentService extends Service {
         const subCategory = category.children[j];
         const existsName = names.find(name => name === subCategory.name);
         if (!_.isEmpty(existsName)) {
-          console.log(subCategory.name);
           returnData.msg = 'Exists Already SubCategory Name';
           return returnData;
         }
@@ -56,6 +65,8 @@ class ComponentService extends Service {
       }
     }
 
+    updateInfo.creator = userInfo.userId;
+    updateInfo.updater = userInfo.userId;
     await ctx.model.ComponentCategory._create(updateInfo);
 
     return returnData;
@@ -65,8 +76,9 @@ class ComponentService extends Service {
     const { ctx } = this;
 
     let returnList = [];
-    const list = await ctx.model.ComponentCategory._find({}, null, { sort: '-create_time', limit: 1 });
-    const categories = _.get(list, [ 0, 'categories' ], []);
+    const filter = {};
+    const list = await ctx.model.ComponentCategory._find(filter, null, { sort: '-create_time', limit: 1 });
+    const categories = _.get(list, [0, 'categories'], []);
 
     returnList = categories;
 
@@ -96,30 +108,23 @@ class ComponentService extends Service {
   async getList(requestData) {
     const { ctx } = this;
 
-    let orderField = 'updateTime';
-    const queryProjects = [];
-    const { key, name, isLib, tags, trades, projectId, developStatus, type, category, subCategory, curPage, pageSize } = requestData;
-    const queryCond = { status: Enum.COMMON_STATUS.VALID };
+    const orderField = 'updateTime';
 
-    const users = await ctx.model.User._find();
+    const queryProjects = [];
+    const { key, name, tags, trades, projectId, developStatus, type, category, subCategory, curPage, pageSize } = requestData;
+    const queryCond = {
+      status: Enum.COMMON_STATUS.VALID,
+    };
+
     const projectList = await ctx.model.Project._find();
     const tagList = await ctx.model.Tag._find();
 
-    queryCond.$or = [];
-    let matchUserIds = [];
     if (key) {
+      queryCond.$or = [];
       queryCond.$or.push({ desc: { $regex: _.escapeRegExp(key) } });
-      if (isLib) {
-        queryCond.$or.push({ name: { $regex: _.escapeRegExp(key) } });
-      } else {
-        const matchUsers = (users || []).filter(user => user.username.includes(key));
-        matchUserIds = matchUsers.map(user => user.id);
-        if (!_.isEmpty(matchUserIds)) queryCond.$or.push({ creator: { $in: matchUserIds } });
-
-        const matchTags = (tagList || []).filter(tag => tag.name.includes(key));
-        const matchTagIds = matchTags.map(tag => tag.id);
-        if (!_.isEmpty(matchTagIds)) queryCond.$or.push({ tags: { $in: matchTagIds } });
-      }
+      const matchTags = (tagList || []).filter(tag => tag.name.includes(key));
+      const matchTagIds = matchTags.map(tag => tag.id);
+      if (!_.isEmpty(matchTagIds)) queryCond.$or.push({ tags: { $in: matchTagIds } });
     }
 
     if (name) queryCond.name = { $regex: _.escapeRegExp(name) };
@@ -129,10 +134,6 @@ class ComponentService extends Service {
     if (type) queryCond.type = type;
     if (projectId) queryProjects.push(projectId);
     if (!_.isEmpty(tags)) queryCond.tags = { $in: tags };
-    if (_.isBoolean(isLib)) {
-      if (isLib) orderField = 'createTime';
-      queryCond.isLib = isLib;
-    }
     if (!_.isEmpty(trades)) {
       const tradeProjects = (projectList || []).filter(project => {
         let match = true;
@@ -156,12 +157,13 @@ class ComponentService extends Service {
       }
     }
     if (!_.isEmpty(queryProjects)) queryCond.projects = { $in: queryProjects };
-
-    if (_.isEmpty(queryCond.$or)) delete queryCond.$or;
     const componentList = await ctx.model.Component._find(queryCond);
 
     const total = componentList.length || 0;
-    const data = _.orderBy(componentList, [ orderField ], [ 'desc' ]).splice(curPage * pageSize, pageSize).map(component => {
+    const creatorUserIds = _.uniq(componentList.map(component => component.creator).filter(userid => userid));
+    const users = await ctx.model.User._find({ id: { $in: creatorUserIds } });
+
+    const data = _.orderBy(componentList, [orderField], ['desc']).splice(curPage * pageSize, pageSize).map(component => {
       const curUser = (users || []).find(user => user.id === component.creator) || {};
       const curProjects = (projectList || []).filter(project => (component.projects || []).includes(project.id));
       const curTags = (tagList || []).filter(tag => (component.tags || []).includes(tag.id));
@@ -173,6 +175,7 @@ class ComponentService extends Service {
         type: component.type,
         category: component.category,
         subCategory: component.subCategory,
+        automaticCover: component.automaticCover,
         tags: (curTags || []).map(tag => {
           return {
             id: tag.id,
@@ -185,11 +188,12 @@ class ComponentService extends Service {
             name: project.name,
           };
         }),
-        version: _.get(component, [ 'versions', (component.versions || []).length - 1, 'no' ], '暂未上线'),
+        version: _.get(component, ['versions', (component.versions || []).length - 1, 'no'], '暂未上线'),
         creator: curUser.username,
-        isLib: component.isLib || false,
         cover: component.cover,
         desc: component.desc,
+        from: component.from,
+        allowDataSearch: component.allowDataSearch || 0,
 
         updateTime: component.updateTime,
         createTime: component.createTime,
@@ -199,12 +203,140 @@ class ComponentService extends Service {
     return { total, data };
   }
 
+  /**
+   * 导入组件源码
+   * @param componentId
+   * @param file
+   */
+  async importSource(componentId, file) {
+    const { ctx, config: { replaceTpl, pathConfig: { staticDir, commonDirPath, componentsPath, initComponentVersion } } } = this;
+    const returnData = { msg: 'ok', data: {} };
+
+    const existsComponent = await ctx.model.Component._findOne({ id: componentId });
+    if (Object.values(Enum.DATA_FROM).includes(existsComponent.from)) {
+      returnData.msg = 'No Auth';
+      return returnData;
+    }
+
+    const filename = path.basename(file.filename, '.zip');
+    const uploadDir = `${staticDir}/${componentsPath}/${componentId}/${filename}_${Date.now()}`;
+    const currentPath = `${staticDir}/${componentsPath}/${componentId}/${initComponentVersion}`;
+    try {
+      await exec(`cd ${currentPath} && rm -rf ./*`);
+
+      await fsExtra.copy(file.filepath, `${uploadDir}/${file.filename}`);
+      const zip = new AdmZip(`${uploadDir}/${file.filename}`);
+      zip.extractAllTo(uploadDir, true);
+      const extractDir = fsExtra.existsSync(`${uploadDir}/${filename}`);
+      if (extractDir) {
+        await fsExtra.copy(`${uploadDir}/${filename}`, currentPath);
+      } else {
+        await fsExtra.remove(`${uploadDir}/${file.filename}`);
+        await fsExtra.copy(uploadDir, currentPath);
+      }
+
+      await exec(`sed -i -e 's#\\${replaceTpl.componentIdTpl}#${componentId}#g' ${currentPath}/src/main.js`);
+      await exec(`sed -i -e 's#\\${replaceTpl.componentIdTpl}#${componentId}#g' ${currentPath}/src/setting.js`);
+      await exec(`sed -i -e 's#\\${replaceTpl.componentIdTpl}#${componentId}#g' ${currentPath}/options.json`);
+
+      const finalCommonDirPath = commonDirPath ? `/${commonDirPath}` : commonDirPath;
+      await exec(`sed -i -e 's#\\${replaceTpl.editorCssTpl}#${finalCommonDirPath}/common/editor.css#g' ${currentPath}/editor.html`);
+      await exec(`sed -i -e 's#\\${replaceTpl.editorEnvTpl}#${finalCommonDirPath}/components/${componentId}/${initComponentVersion}/env.js#g' ${currentPath}/editor.html`);
+      await exec(`sed -i -e 's#\\${replaceTpl.editorDataViTpl}#${finalCommonDirPath}/common/data-vi.js#g' ${currentPath}/editor.html`);
+      await exec(`sed -i -e 's#\\${replaceTpl.editorJsTpl}#${finalCommonDirPath}/common/editor.js#g' ${currentPath}/editor.html`);
+      await exec(`sed -i -e 's#\\${replaceTpl.indexEnvTpl}#${finalCommonDirPath}/components/${componentId}/${initComponentVersion}/env.js#g' ${currentPath}/index.html`);
+      await exec(`sed -i -e 's#\\${replaceTpl.indexDataViTpl}#${finalCommonDirPath}/common/data-vi.js#g' ${currentPath}/index.html`);
+
+      const finalComponentDirPath = commonDirPath ? commonDirPath + '/components' : 'components';
+      await exec(`sed -i -e 's#\\${replaceTpl.envComponentDirTpl}#${finalComponentDirPath}#g' ${currentPath}/env.js`);
+
+      const buildDevPath = `${currentPath}/components`;
+      if (fsExtra.pathExistsSync(buildDevPath)) {
+        await exec(`sed -i -e 's#\\${replaceTpl.componentIdTpl}#${componentId}#g' ${currentPath}/components/main.js`);
+        await exec(`sed -i -e 's#\\${replaceTpl.componentIdTpl}#${componentId}#g' ${currentPath}/components/main.js.map`);
+        await exec(`sed -i -e 's#\\${replaceTpl.componentIdTpl}#${componentId}#g' ${currentPath}/components/setting.js`);
+        await exec(`sed -i -e 's#\\${replaceTpl.componentIdTpl}#${componentId}#g' ${currentPath}/components/setting.js.map`);
+      }
+    } catch (error) {
+      returnData.msg = 'Import Fail';
+      returnData.data.error = error.message || error.stack;
+    } finally {
+      await fsExtra.remove(file.filepath);
+      await fsExtra.remove(uploadDir);
+    }
+
+    return returnData;
+  }
+
+  /**
+   * 导出组件源码
+   * @param componentId
+   */
+  async exportSource(componentId) {
+    const { ctx, logger, config: { replaceTpl, pathConfig: { staticDir, tmpPath, componentsPath, initComponentVersion } } } = this;
+
+    const componentInfo = await ctx.model.Component._findOne({ id: componentId });
+    const sourceFolder = `${staticDir}/${componentsPath}/${componentId}/${initComponentVersion}`;
+    const tmpFolder = `${staticDir}/${tmpPath}/${componentId}`;
+    const destZip = `${staticDir}/${tmpPath}/${componentId}/${componentInfo.name}.zip`;
+    const returnData = { msg: 'ok', data: {} };
+
+    if (!fs.existsSync(`${sourceFolder}/src`)) {
+      logger.error('Export Fail: No Source Code');
+      returnData.msg = 'No Source Code';
+      returnData.data.error = 'Export Fail: no source code';
+      return returnData;
+    }
+
+    try {
+      await fsExtra.copy(sourceFolder, tmpFolder, { filter: src => !(src.includes('node_modules') || src.includes('.git')) });
+
+      await exec(`sed -i -e 's#${componentId}#${replaceTpl.componentIdTpl}#g' ${tmpFolder}/src/main.js`);
+      await exec(`sed -i -e 's#${componentId}#${replaceTpl.componentIdTpl}#g' ${tmpFolder}/src/setting.js`);
+      await exec(`sed -i -e 's#${componentId}#${replaceTpl.componentIdTpl}#g' ${tmpFolder}/options.json`);
+
+      await exec(`sed -i -e 's#href=".*/editor.css"#href="${replaceTpl.editorCssTpl}"#g' ${tmpFolder}/editor.html`);
+      await exec(`sed -i -e 's#src=".*/env.js"#src="${replaceTpl.editorEnvTpl}"#g' ${tmpFolder}/editor.html`);
+      await exec(`sed -i -e 's#src=".*/data-vi.js"#src="${replaceTpl.editorDataViTpl}"#g' ${tmpFolder}/editor.html`);
+      await exec(`sed -i -e 's#src=".*/editor.js"#src="${replaceTpl.editorJsTpl}"#g' ${tmpFolder}/editor.html`);
+      await exec(`sed -i -e 's#src=".*/env.js"#src="${replaceTpl.indexEnvTpl}"#g' ${tmpFolder}/index.html`);
+      await exec(`sed -i -e 's#src=".*/data-vi.js"#src="${replaceTpl.indexDataViTpl}"#g' ${tmpFolder}/index.html`);
+      await exec(`sed -i -e 's#componentsDir.*#componentsDir: "${replaceTpl.envComponentDirTpl}"#g' ${tmpFolder}/env.js`);
+
+      const buildDevPath = `${tmpFolder}/components`;
+      if (fsExtra.pathExistsSync(buildDevPath)) {
+        await exec(`sed -i -e 's#${componentId}#${replaceTpl.componentIdTpl}#g' ${buildDevPath}/main.js`);
+        await exec(`sed -i -e 's#${componentId}#${replaceTpl.componentIdTpl}#g' ${buildDevPath}/main.js.map`);
+        await exec(`sed -i -e 's#${componentId}#${replaceTpl.componentIdTpl}#g' ${buildDevPath}/setting.js`);
+        await exec(`sed -i -e 's#${componentId}#${replaceTpl.componentIdTpl}#g' ${buildDevPath}/setting.js.map`);
+      }
+      const zip = new AdmZip();
+      zip.addLocalFolder(tmpFolder);
+      zip.writeZip(destZip);
+
+      const data = await fsExtra.stat(destZip);
+      ctx.set('Content-Disposition', `attachment;filename=${encodeURIComponent(componentInfo.name + '.zip')}`);
+      ctx.set('Content-Type', 'application/octet-stream');
+      ctx.set('Content-Length', data.size);
+      ctx.body = fsExtra.createReadStream(destZip);
+    } catch (error) {
+      logger.error(`Export Fail: ${error.message || error.stack}`);
+      returnData.msg = 'Export Fail';
+      returnData.data.error = error.message || error.stack;
+    } finally {
+      await fsExtra.remove(tmpFolder);
+    }
+
+    return returnData;
+  }
+
   async getComponentInfo(id) {
     const { ctx } = this;
 
     const componentInfo = await ctx.model.Component._findOne({ id });
-    const userInfo = await ctx.model.User._findOne({ id: componentInfo.creator });
 
+    let userInfo = {};
+    if (componentInfo.creator) userInfo = await ctx.model.User._findOne({ id: componentInfo.creator });
     const projectIds = componentInfo.projects || [];
     const projectsInfo = await ctx.model.Project._find({ id: { $in: projectIds } });
 
@@ -222,7 +354,6 @@ class ComponentService extends Service {
     const returnInfo = {
       id: componentInfo.id,
       name: componentInfo.name,
-      isLib: componentInfo.isLib,
       projects: (componentInfo.projects || []).map(project => {
         const curProject = (projectsInfo || []).find(projectInfo => projectInfo.id === project) || {};
         return {
@@ -251,12 +382,12 @@ class ComponentService extends Service {
           cover: version.cover,
           time: version.time && version.time.getTime(),
         };
-      }), [ 'time' ], [ 'desc' ]),
+      }), ['time'], ['desc']),
       desc: componentInfo.desc,
       dataConfig: componentInfo.dataConfig || {},
       creatorInfo: {
         id: userInfo.id,
-        username: userInfo.username,
+        username: userInfo.username || '-',
       },
       developStatus: componentInfo.developStatus,
     };
@@ -266,12 +397,16 @@ class ComponentService extends Service {
 
   async addComponent(createComponentInfo) {
     const { ctx, config } = this;
-    const { pathConfig: { staticDir, componentsPath, initComponentVersion, defaultComponentCoverPath } } = config;
+    const { pathConfig: { staticDir, componentsPath, initComponentVersion, defaultComponentCoverPath, commonDirPath } } = config;
 
     const userInfo = ctx.userInfo;
     const returnData = { msg: 'ok', data: {} };
 
-    const existsComponents = await ctx.model.Component._findOne({ name: createComponentInfo.name, status: Enum.COMMON_STATUS.VALID });
+    const filter = {
+      name: createComponentInfo.name,
+      status: Enum.COMMON_STATUS.VALID,
+    };
+    const existsComponents = await ctx.model.Component._findOne(filter);
     if (!_.isEmpty(existsComponents)) {
       returnData.msg = 'Exists Already';
       return returnData;
@@ -289,6 +424,8 @@ class ComponentService extends Service {
       desc: createComponentInfo.desc || '无',
       versions: [],
       cover: defaultComponentCoverPath,
+      automaticCover: createComponentInfo.automaticCover,
+
       creator: userInfo.userId,
       updater: userInfo.userId,
     };
@@ -316,6 +453,25 @@ class ComponentService extends Service {
       return returnData;
     }
 
+    try {
+      const customImgPath = `${staticDir}/${createComponentInfo.componentCover}`;
+      const imgUrl = `/${componentsPath}/${componentId}/${initComponentVersion}/components/cover.jpeg`;
+
+      if (createInfo.automaticCover === Enum.SNAPSHOT_TYPE.CUSTOM && fs.existsSync(customImgPath)) {
+        await fsExtra.copy(customImgPath, `${staticDir}${imgUrl}`);
+        await fsExtra.remove(customImgPath);
+
+        await ctx.model.Component._updateOne({ id: componentId }, { cover: imgUrl });
+      } else if (createInfo.automaticCover === Enum.SNAPSHOT_TYPE.AUTO) {
+        await ctx.model.Component._updateOne({ id: componentId }, { cover: `/${commonDirPath}/component_tpl/public/cover.jpeg` });
+        await this.genCoverImage(componentId, initComponentVersion);
+      }
+    } catch (error) {
+      returnData.msg = 'Picture failed';
+      returnData.data.error = error.message || error.stack;
+      return returnData;
+    }
+
     return returnData;
   }
 
@@ -336,20 +492,33 @@ class ComponentService extends Service {
       tags: [
         ...(params.tags || []).filter(item => item.id).map(item => item.id), // 前端传进来的带id的
         ...existTags.map(item => item.id), // 前端传进来无id的，但库里已存在的
-        ...insertedTags.map(item => item.id) ], // 前端传进来无id的，新创建的
+        ...insertedTags.map(item => item.id)], // 前端传进来无id的，新创建的
     };
   }
 
 
   async updateInfo(id, requestData) {
-    const { ctx } = this;
+    const { ctx, config } = this;
+    const { pathConfig: { staticDir, componentsPath, commonDirPath, initComponentVersion } } = config;
+    const { name, status, type, projects, category, subCategory, desc, dataConfig, tags, automaticCover, componentCover } = requestData;
+    const userInfo = ctx.userInfo;
 
-    const { name, status, type, projects, category, subCategory, isLib, desc, dataConfig, tags } = requestData;
     const returnData = { msg: 'ok', data: {} };
+
+    const checkAuthComponent = await ctx.model.Component._findOne({ id });
+    if (Object.values(Enum.DATA_FROM).includes(checkAuthComponent.from)) {
+      returnData.msg = 'No Auth';
+      return returnData;
+    }
 
     const updateData = {};
     if (name) {
-      const existsComponents = await ctx.model.Component._findOne({ id: { $ne: id }, name, status: Enum.COMMON_STATUS.VALID });
+      const filter = {
+        id: { $ne: id },
+        name,
+        status: Enum.COMMON_STATUS.VALID,
+      };
+      const existsComponents = await ctx.model.Component._findOne(filter);
       if (!_.isEmpty(existsComponents)) {
         returnData.msg = 'Exists Already';
         return returnData;
@@ -358,7 +527,6 @@ class ComponentService extends Service {
     }
 
     if (status) updateData.status = status;
-    if (_.isBoolean(isLib)) updateData.isLib = isLib;
     if (projects) updateData.projects = projects;
     if (category) updateData.category = category;
     if (subCategory) updateData.subCategory = subCategory;
@@ -368,30 +536,51 @@ class ComponentService extends Service {
       if (type === Enum.COMPONENT_TYPE.COMMON) updateData.projects = [];
       updateData.type = type;
     }
+    if (automaticCover) updateData.automaticCover = automaticCover;
 
     if (_.isArray(tags)) {
       const tagData = await this.getTagData(requestData);
       updateData.tags = tagData.tags;
     }
 
+    try {
+      const imgUrl = `/${componentsPath}/${id}/${initComponentVersion}/components/cover.jpeg`;
+      const result = await ctx.model.Component._findOne({ id });
+      if (automaticCover === Enum.SNAPSHOT_TYPE.CUSTOM) {
+        if (componentCover && fs.existsSync(`${staticDir}/${componentCover}`)) {
+          await fsExtra.copy(`${staticDir}/${componentCover}`, `${staticDir}${imgUrl}`);
+          await fsExtra.remove(`${staticDir}/${componentCover}`);
+          updateData.cover = imgUrl;
+        }
+      } else if (automaticCover === Enum.SNAPSHOT_TYPE.AUTO) {
+        if (result.automaticCover !== automaticCover) {
+          updateData.cover = `/${commonDirPath}/component_tpl/public/cover.jpeg`;
+          await this.genCoverImage(id, initComponentVersion);
+        }
+      }
+    } catch (error) {
+      returnData.msg = 'Picture failed';
+      returnData.data.error = error.message || error.stack;
+      return returnData;
+    }
+
+    updateData.updater = userInfo.userId;
     await ctx.model.Component._updateOne({ id }, updateData);
 
     return returnData;
   }
 
-  async toLib(id, requestData) {
-    const { ctx } = this;
-
-    const { toLib } = requestData;
-    await ctx.model.Component._updateOne({ id }, { isLib: toLib });
-  }
-
   async delete(id) {
     const { ctx } = this;
+    const userInfo = ctx.userInfo;
 
     const returnData = { msg: 'ok', data: {} };
 
     const existsComponent = await ctx.model.Component._findOne({ id });
+    if (Object.values(Enum.DATA_FROM).includes(existsComponent.from)) {
+      returnData.msg = 'No Auth';
+      return returnData;
+    }
     if (!_.isEmpty(existsComponent.applications)) {
       returnData.msg = 'Exists Already';
       returnData.data.error = existsComponent.applications;
@@ -400,6 +589,7 @@ class ComponentService extends Service {
 
     const updateData = {
       status: Enum.COMMON_STATUS.INVALID,
+      updater: userInfo.userId,
     };
     await ctx.model.Component._updateOne({ id }, updateData);
 
@@ -408,7 +598,7 @@ class ComponentService extends Service {
 
   async copyComponent(id, componentInfo) {
     const { ctx, config } = this;
-    const { pathConfig: { staticDir, componentsPath, initComponentVersion, defaultComponentCoverPath } } = config;
+    const { pathConfig: { staticDir, componentsPath, initComponentVersion, defaultComponentCoverPath, commonDirPath } } = config;
 
     const userInfo = ctx.userInfo;
     const returnData = { msg: 'ok', data: {} };
@@ -420,21 +610,28 @@ class ComponentService extends Service {
       return returnData;
     }
 
-    const existsComponents = await ctx.model.Component._findOne({ name: componentInfo.name, status: Enum.COMMON_STATUS.VALID });
+    const filter = {
+      name: componentInfo.name,
+      status: Enum.COMMON_STATUS.VALID,
+    };
+    const existsComponents = await ctx.model.Component._findOne(filter);
     if (!_.isEmpty(existsComponents)) {
       returnData.msg = 'Exists Already';
       return returnData;
     }
 
+    const tagInfo = await this.getTagData(componentInfo);
     const createInfo = {
       name: componentInfo.name,
-      category: copyComponent.category,
-      subCategory: copyComponent.subCategory,
-      type: copyComponent.type,
-      projects: copyComponent.projects,
-      tags: copyComponent.tags || [],
-      desc: copyComponent.desc || '无',
+      category: componentInfo.category,
+      subCategory: componentInfo.subCategory,
+      type: componentInfo.type,
+      projects: componentInfo.projects,
+      tags: tagInfo.tags || [],
+      desc: componentInfo.desc || '无',
       cover: defaultComponentCoverPath,
+      automaticCover: componentInfo.automaticCover,
+
       creator: userInfo.userId,
       updater: userInfo.userId,
       versions: [],
@@ -449,15 +646,35 @@ class ComponentService extends Service {
     const dest = `${staticDir}/${componentsPath}/${componentId}/${initComponentVersion}`;
 
     try {
-      await ctx.helper.copyAndReplace(src, dest, [ 'node_modules', '.git', 'components', 'release', 'package-lock.json' ], { from: id, to: componentId });
+      await ctx.helper.copyAndReplace(src, dest, ['node_modules', '.git', 'release', 'package-lock.json'], { from: id, to: componentId });
     } catch (error) {
       returnData.msg = 'Init Workplace Fail';
       returnData.data.error = error;
       return returnData;
     }
 
+    try {
+      const imgUrl = `/${componentsPath}/${componentId}/${initComponentVersion}/components/cover.jpeg`;
+      if (createInfo.automaticCover === Enum.SNAPSHOT_TYPE.CUSTOM) {
+        if (componentInfo.componentCover && fs.existsSync(`${staticDir}/${componentInfo.componentCover}`)) {
+          await fsExtra.copy(`${staticDir}/${componentInfo.componentCover}`, `${staticDir}${imgUrl}`);
+          if (copyComponent.cover !== componentInfo.componentCover) {
+            await fsExtra.remove(`${staticDir}/${componentInfo.componentCover}`);
+          }
+        }
+        await ctx.model.Component._updateOne({ id: componentId }, { cover: imgUrl });
+      } else if (createInfo.automaticCover === Enum.SNAPSHOT_TYPE.AUTO) {
+        await ctx.model.Component._updateOne({ id: componentId }, { cover: `/${commonDirPath}/component_tpl/public/cover.jpeg` });
+        await this.genCoverImage(componentId, initComponentVersion);
+      }
+    } catch (error) {
+      returnData.msg = 'Picture failed';
+      returnData.data.error = error.message || error.stack;
+      return returnData;
+    }
+
     // 初始化git仓库
-    if (config.env === 'prod') await this.initGit(componentId);
+    if (config.env === 'docp') await this.initGit(componentId);
 
     return returnData;
   }
@@ -470,6 +687,11 @@ class ComponentService extends Service {
     const existsComponent = await ctx.model.Component._findOne({ id });
     if (_.isEmpty(existsComponent)) {
       returnData.msg = 'No Exists Db';
+      return returnData;
+    }
+
+    if (Object.values(Enum.DATA_FROM).includes(existsComponent.from)) {
+      returnData.msg = 'No Auth';
       return returnData;
     }
 
@@ -497,38 +719,38 @@ class ComponentService extends Service {
       return returnData;
     }
 
-    // note: async screenshot component cover, no wait!!!!!
-    const savePath = `${componentDevPath}/components/cover.jpeg`;
-    this.genCoverImage(id, savePath);
+    if (existsComponent.automaticCover === Enum.SNAPSHOT_TYPE.AUTO) {
+      await this.genCoverImage(id, initComponentVersion);
+    }
 
     // 用于git push
-    if (config.env === 'prod') {
+    if (config.env === 'docp') {
       const git = simpleGit(componentDevPath);
       const status = await git.status();
       if (!status.isClean()) {
-        await ctx.model.Component._updateOne({ id }, { needPushGit: true, lastChangeTime: Date.now(), updater: ctx.userInfo.userId });
+        await git
+          .add('.')
+          .commit(`Update commit at ${moment().format('YYYY-MM-DD HH:mm:ss')}`);
       }
     }
 
     return returnData;
   }
 
-  async genCoverImage(id, savePath) {
-    const { ctx, logger, config } = this;
-    const { pathConfig: { componentsPath } } = config;
+  async genCoverImage(id, version) {
+    const { ctx } = this;
 
-    try {
-      const [ version, buildPath, coverFileName ] = savePath.split('/').slice(-3);
-
-      const url = `http://${config.cluster.listen.hostname}:${config.cluster.listen.port}/${componentsPath}/${id}/${version}/index.html`;
-      const result = await ctx.helper.screenshot(url, savePath);
-      if (result === 'success') {
-        await ctx.model.Component._updateOne({ id }, { cover: `/${componentsPath}/${id}/${version}/${buildPath}/${coverFileName}` });
-      }
-      logger.info(`${id} gen cover success!`);
-    } catch (error) {
-      logger.error(`${id} gen cover error: ${error || error.stack}`);
-    }
+    const insertRenderData = {
+      type: Enum.RESOURCE_TYPE.COMPONENT,
+      renderStage: Enum.RENDER_STAGE.UNDONE,
+      reRenderCount: 0,
+      version,
+    };
+    await ctx.model.ResourceRenderRecords._updateOne(
+      { id },
+      { $set: insertRenderData, $setOnInsert: { _id: id, createTime: new Date() } },
+      { upsert: true }
+    );
   }
 
   async installComponentDepend(id) {
@@ -539,6 +761,11 @@ class ComponentService extends Service {
     const existsComponent = await ctx.model.Component._findOne({ id });
     if (_.isEmpty(existsComponent)) {
       returnData.msg = 'No Exists Db';
+      return returnData;
+    }
+
+    if (Object.values(Enum.DATA_FROM).includes(existsComponent.from)) {
+      returnData.msg = 'No Auth';
       return returnData;
     }
 
@@ -567,6 +794,10 @@ class ComponentService extends Service {
     const returnData = { msg: 'ok', data: {} };
     const { no, compatible, desc } = releaseComponentInfo;
     const componentInfo = await ctx.model.Component._findOne({ id: componentId });
+    if (Object.values(Enum.DATA_FROM).includes(componentInfo.from)) {
+      returnData.msg = 'No Auth';
+      return returnData;
+    }
 
     if (!compatible) {
       const existsVersion = (componentInfo.versions || []).find(version => version.no === no);
@@ -577,7 +808,7 @@ class ComponentService extends Service {
       }
     }
 
-    const newVersion = compatible ? _.get(componentInfo, [ 'versions', (componentInfo.versions || []).length - 1, 'no' ], no || 'v1') : no;
+    const newVersion = compatible ? _.get(componentInfo, ['versions', (componentInfo.versions || []).length - 1, 'no'], no || 'v1') : no;
     const createResult = await this.initReleaseWorkspace(componentId, newVersion, desc);
 
     if (createResult.msg !== 'Success') {
@@ -667,32 +898,20 @@ class ComponentService extends Service {
     fs.writeFileSync(`${componentDevPath}/package.json`, require(`${staticDir}/${componentsTplPath}/package.json.js`)(componentId));
     await fsExtra.copy(`${staticDir}/${componentsTplPath}/.gitignore`, `${componentDevPath}/.gitignore`);
 
-    if (config.env === 'prod') await this.initGit(componentId);
+    if (config.env === 'docp') await this.initGit(componentId);
   }
 
   async initGit(componentId) {
-    const { ctx, config: { pathConfig: { staticDir, componentsPath, initComponentVersion }, componentGit }, logger } = this;
+    const { config: { pathConfig: { staticDir, componentsPath, initComponentVersion } }, logger } = this;
     const componentDevPath = `${staticDir}/${componentsPath}/${componentId}/${initComponentVersion}`;
-    const userInfo = ctx.userInfo;
     try {
       const git = simpleGit(componentDevPath);
-
-      const reqBody = {
-        name: componentId,
-        path: componentId,
-        namespace_id: componentGit.namespaceId,
-      };
-      const newRepo = await ctx.http.post(`https://git.cloudwise.com/api/v4/projects?private_token=${componentGit.privateToken}`, reqBody);
-      const { id: newRepoId, ssh_url_to_repo: newRepoUrl } = newRepo;
-
       await git
         .init()
+        .addConfig('user.email', 'lcap@cloudwise.com')
+        .addConfig('user.name', 'lcap-commit')
         .add('.')
-        .commit(`Update #LOWCODE-581 commit by ${userInfo.username}`)
-        .addRemote('origin', newRepoUrl)
-        .push([ '-u', '--set-upstream', 'origin', 'master' ]);
-
-      await ctx.model.Component._updateOne({ id: componentId }, { gitLabProjectId: newRepoId, needPushGit: false, lastChangeTime: Date.now() });
+        .commit(`Update commit at ${moment().format('YYYY-MM-DD HH:mm:ss')}`);
     } catch (e) {
       logger.error('git init error: ', e || e.stack);
     }

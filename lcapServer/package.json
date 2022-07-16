@@ -1,5 +1,5 @@
 {
-  "name": "FlyFish",
+  "name": "lcapServer",
   "version": "1.0.0",
   "description": "FlyFish server repo",
   "private": true,
@@ -26,7 +26,7 @@
     "md5": "^2.3.0",
     "mongodb": "^4.2.0",
     "mongoose": "^6.0.12",
-    "puppeteer": "^11.0.0",
+    "puppeteer-core": "^15.3.2",
     "simple-git": "^2.47.0",
     "uuid": "^8.3.2"
   },
@@ -43,20 +43,14 @@
     "node": ">=10.0.0"
   },
   "scripts": {
-    "docker-start": "EGG_SERVER_ENV=docker egg-scripts start --port=7001 --workers=1 --title=egg-server-FlyFish",
-    "prod": "EGG_SERVER_ENV=prod egg-scripts start --port=7001 --daemon --title=egg-server-FlyFish",
-    "development": "EGG_SERVER_ENV=development egg-scripts start --port=7001 --daemon --title=egg-server-FlyFish",
-    "docp": "EGG_SERVER_ENV=docp egg-scripts start --port=${CW_MAIN_SERVER_PORT} --daemon --title=egg-server-FlyFish",
-    "test": "EGG_SERVER_ENV=test egg-scripts start --port=7001 --daemon --title=egg-server-FlyFish",
+    "docker-start": "EGG_SERVER_ENV=docker egg-scripts start --workers=1 --title=egg-server-FlyFish",
+    "prod": "EGG_SERVER_ENV=prod egg-scripts start --daemon --title=egg-server-FlyFish",
+    "development": "EGG_SERVER_ENV=development egg-scripts start --daemon --title=egg-server-FlyFish",
     "stop": "egg-scripts stop --title=egg-server-FlyFish",
-    "init-development-database": "EGG_SERVER_ENV=development cd changelog && node scripts/initDatabase.js",
     "build": "cd changelog && node scripts/build.js",
     "dev": "egg-bin dev",
     "debug": "egg-bin debug",
-    "cov": "egg-bin cov",
-    "lint": "eslint .",
-    "ci": "npm run lint && npm run cov",
-    "autod": "autod"
+    "upgrade-database": "cd changelog && node scripts/upgradeDatabase.js"
   },
   "ci": {
     "version": "10"

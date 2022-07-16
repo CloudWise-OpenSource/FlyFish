@@ -1,5 +1,12 @@
 {
-  "include": [
-    "**/*"
-  ]
+	"exclude": [
+		"*/node_modules/",
+		".vscode",
+		"www",
+		".github",
+	],
+	"compilerOptions": {
+		"target": "ES6",
+		"module": "commonjs",
+	}
 }

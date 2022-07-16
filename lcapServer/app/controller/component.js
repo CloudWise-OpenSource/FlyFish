@@ -1,14 +1,11 @@
 'use strict';
 const fs = require('fs-extra');
-const AdmZip = require('adm-zip');
 const path = require('path');
-
+const { v4: uuidv4 } = require('uuid');
 const BaseController = require('./base');
 const CODE = require('../lib/error');
 const _ = require('lodash');
 const Enum = require('../lib/enum');
-const util = require('util');
-const exec = util.promisify(require('child_process').exec);
 
 class ComponentsController extends BaseController {
   async updateCategory() {
@@ -18,9 +15,11 @@ class ComponentsController extends BaseController {
       categories: app.Joi.array().items({
         id: app.Joi.number(),
         name: app.Joi.string().required(),
+        from: app.Joi.string().valid(...Object.values(Enum.DATA_FROM)),
         children: app.Joi.array().items({
           id: app.Joi.number(),
           name: app.Joi.string().required(),
+          from: app.Joi.string().valid(...Object.values(Enum.DATA_FROM)),
         }),
       }).required(),
     });
@@ -33,6 +32,8 @@ class ComponentsController extends BaseController {
       this.fail('更新失败, 组件分类名称重复！', null, CODE.FAIL);
     } else if (categoryInfo.msg === 'Exists Already SubCategory Name') {
       this.fail('更新失败, 组件分类名称重复！', null, CODE.FAIL);
+    } else if (categoryInfo.msg === 'No Auth') {
+      this.fail('更新失败, 内置分类不允许修改！', null, CODE.FAIL);
     } else {
       this.success('更新成功', null);
     }
@@ -81,6 +82,55 @@ class ComponentsController extends BaseController {
 
   async add() {
     const { ctx, app, service } = this;
+    const addComponentSchema = app.Joi.object().keys({
+      name: app.Joi.string(),
+      type: app.Joi.string().valid(...Object.values(Enum.COMPONENT_TYPE)),
+      projects: app.Joi.array().items(app.Joi.string()),
+      tags: app.Joi.array().items(app.Joi.object().keys({
+        id: app.Joi.string().length(24),
+        name: app.Joi.string().required(),
+      })),
+      category: app.Joi.number().required(),
+      subCategory: app.Joi.number().required(),
+      desc: app.Joi.string().allow(''),
+      automaticCover: app.Joi.number().valid(...Object.values(Enum.SNAPSHOT_TYPE)).default(Enum.SNAPSHOT_TYPE.AUTO),
+      componentCover: app.Joi.string().allow(),
+    });
+
+    const { value: requestData } = ctx.validate(addComponentSchema, ctx.request.body);
+
+    const componentInfo = await service.component.addComponent(requestData);
+
+    const errInfo = componentInfo.data.error || null;
+    if (componentInfo.msg === 'Exists Already') {
+      this.fail('创建失败, 组件名称已存在', errInfo, CODE.FAIL);
+    } else if (componentInfo.msg === 'Init Workplace Fail') {
+      this.fail('创建失败, 初始化开发空间失败', errInfo, CODE.FAIL);
+    } else if (componentInfo.msg === 'Build Workplace Fail') {
+      this.fail('编译失败', errInfo, CODE.FAIL);
+    } else if (componentInfo.msg === 'Picture failed') {
+      this.fail('图片错误', errInfo, CODE.FAIL);
+    } else {
+      this.success('创建成功', { id: _.get(componentInfo, [ 'data', 'id' ]) });
+    }
+  }
+
+  async uploadComponentImg() {
+    const { ctx, config: { pathConfig: { staticDir, tmpPath } } } = this;
+    const file = ctx.request.files[0];
+    const targetRelativePath = `${tmpPath}/${uuidv4()}${path.extname(file.filepath)}`;
+    const targetPath = path.resolve(staticDir, targetRelativePath);
+
+    try {
+      await fs.copy(file.filepath, targetPath);
+    } finally {
+      await fs.remove(file.filepath);
+    }
+    this.success('创建成功', targetRelativePath);
+  }
+
+  async copy() {
+    const { ctx, app, service } = this;
 
     const addComponentSchema = app.Joi.object().keys({
       name: app.Joi.string(),
@@ -93,29 +143,10 @@ class ComponentsController extends BaseController {
       category: app.Joi.number().required(),
       subCategory: app.Joi.number().required(),
       desc: app.Joi.string().allow(''),
+      automaticCover: app.Joi.number().valid(...Object.values(Enum.SNAPSHOT_TYPE)).default(Enum.SNAPSHOT_TYPE.AUTO),
+      componentCover: app.Joi.string().allow(),
     });
-    const { value: requestData } = ctx.validate(addComponentSchema, ctx.request.body);
 
-    const componentInfo = await service.component.addComponent(requestData);
-
-    const errInfo = componentInfo.data.error || null;
-    if (componentInfo.msg === 'Exists Already') {
-      this.fail('创建失败, 组件名称已存在', errInfo, CODE.FAIL);
-    } else if (componentInfo.msg === 'Init Workplace Fail') {
-      this.fail('创建失败, 初始化开发空间失败', errInfo, CODE.FAIL);
-    } else if (componentInfo.msg === 'Build Workplace Fail') {
-      this.fail('编译失败', errInfo, CODE.FAIL);
-    } else {
-      this.success('创建成功', { id: _.get(componentInfo, [ 'data', 'id' ]) });
-    }
-  }
-
-  async copy() {
-    const { ctx, app, service } = this;
-
-    const addComponentSchema = app.Joi.object().keys({
-      name: app.Joi.string(),
-    });
     const { value: id } = ctx.validate(app.Joi.string().length(24).required(), ctx.params.id);
     const { value: requestData } = ctx.validate(addComponentSchema, ctx.request.body);
 
@@ -130,6 +161,8 @@ class ComponentsController extends BaseController {
       this.fail('复制失败, 复制组件不存在', null, CODE.FAIL);
     } else if (componentInfo.msg === 'Init Workplace Fail') {
       this.fail('复制失败, 复制组件空间失败', errInfo, CODE.FAIL);
+    } else if (componentInfo.msg === 'Picture failed') {
+      this.fail('图片错误', errInfo, CODE.FAIL);
     } else {
       this.success('复制成功', { id: _.get(componentInfo, [ 'data', 'id' ]) });
     }
@@ -150,6 +183,8 @@ class ComponentsController extends BaseController {
       this.fail('编译失败, 请先安装依赖', errInfo, CODE.FAIL);
     } else if (componentInfo.msg === 'Compile Fail') {
       this.fail('编译失败', errInfo, CODE.FAIL);
+    } else if (componentInfo.msg === 'No Auth') {
+      this.fail('编译失败, 无权限', errInfo, CODE.FAIL);
     } else {
       this.success('编译成功', null);
     }
@@ -168,6 +203,8 @@ class ComponentsController extends BaseController {
       this.fail('安装失败, 组件文件不存在', errInfo, CODE.FAIL);
     } else if (componentInfo.msg === 'Install Fail') {
       this.fail('依赖安装失败', errInfo, CODE.FAIL);
+    } else if (componentInfo.msg === 'No Auth') {
+      this.fail('依赖安装失败, 无权限', errInfo, CODE.FAIL);
     } else {
       this.success('依赖安装成功', null);
     }
@@ -188,14 +225,22 @@ class ComponentsController extends BaseController {
       subCategory: app.Joi.number(),
       desc: app.Joi.string().allow(''),
       dataConfig: app.Joi.object(),
+      automaticCover: app.Joi.number().valid(...Object.values(Enum.SNAPSHOT_TYPE)).default(Enum.SNAPSHOT_TYPE.AUTO),
+      componentCover: app.Joi.string().allow(),
     });
+
     const { value: id } = ctx.validate(app.Joi.string().length(24).required(), ctx.params.id);
     const { value: requestData } = ctx.validate(updateInfoSchema, ctx.request.body);
+
 
     const updateResult = await service.component.updateInfo(id, requestData);
     const errInfo = updateResult.data.error || null;
     if (updateResult.msg === 'Exists Already') {
       this.fail('更新失败, 组件名称已存在', errInfo, CODE.FAIL);
+    } else if (updateResult.msg === 'Picture failed') {
+      this.fail('图片错误', errInfo, CODE.FAIL);
+    } else if (updateResult.msg === 'No Auth') {
+      this.fail('更新失败, 无权限', errInfo, CODE.FAIL);
     } else {
       this.success('更新成功', { id });
     }
@@ -221,8 +266,11 @@ class ComponentsController extends BaseController {
     const componentInfo = await service.component.delete(id);
 
     const errInfo = componentInfo.data.error || null;
-    if (componentInfo.msg === 'Exists Already') {
-      this.fail('删除失败, 该组件已经被项目应用使用', errInfo, CODE.FAIL);
+
+    if (componentInfo.msg === 'No Auth') {
+      this.fail('删除失败, 无权限', errInfo, CODE.FAIL);
+    } else if (componentInfo.msg === 'Exists Already') {
+      this.fail('删除失败, 该组件被使用, 不允许删除', errInfo, CODE.FAIL);
     } else {
       this.success('删除成功', null);
     }
@@ -251,6 +299,8 @@ class ComponentsController extends BaseController {
       this.fail('发行版本失败, 初始化空间失败', errInfo, CODE.FAIL);
     } else if (releaseComponent.msg === 'Build Workplace Fail') {
       this.fail('发行版本失败, npm build失败', errInfo, CODE.FAIL);
+    } else if (releaseComponent.msg === 'No Auth') {
+      this.fail('更新失败, 无权限', errInfo, CODE.FAIL);
     } else {
       this.success('发行版本成功', null);
     }
@@ -268,84 +318,34 @@ class ComponentsController extends BaseController {
     }
   }
 
-  async uploadComponentSource() {
-    const { ctx, config: { pathConfig: { staticDir, commonDirPath, componentsPath, initComponentVersion } } } = this;
-    const componentId = ctx.params.componentId;
-
+  async importSource() {
+    const { ctx, app, service } = this;
+    const { value: componentId } = ctx.validate(app.Joi.string().length(24).required(), ctx.params.componentId);
     const file = ctx.request.files[0];
-    const filename = path.basename(file.filename, '.zip');
-    const uploadDir = `${staticDir}/${componentsPath}/${componentId}/${filename}_${Date.now()}`;
-    const currentPath = `${staticDir}/${componentsPath}/${componentId}/${initComponentVersion}`;
-    try {
-      await exec(`cd ${currentPath} && rm -rf ./*`);
 
-      await fs.copy(file.filepath, `${uploadDir}/${file.filename}`);
-      const zip = new AdmZip(`${uploadDir}/${file.filename}`);
-      zip.extractAllTo(uploadDir, true);
-      const extractDir = fs.existsSync(`${uploadDir}/${filename}`);
-      if (extractDir) {
-        await fs.copy(`${uploadDir}/${filename}`, currentPath);
-      } else {
-        await fs.remove(`${uploadDir}/${file.filename}`);
-        await fs.copy(uploadDir, currentPath);
-      }
+    const importResult = await service.component.importSource(componentId, file);
+    const errInfo = importResult.data.error || null;
 
-      const optionsJson = fs.readJSONSync(`${currentPath}/options.json`);
-      const oldId = _.get(optionsJson, [ 'components', 0, 'type' ]);
-
-      await exec(`sed -i -e "s#${oldId}#${componentId}#g" ${currentPath}/src/main.js`);
-      await exec(`sed -i -e "s#${oldId}#${componentId}#g" ${currentPath}/src/setting.js`);
-      await exec(`sed -i -e "s#${oldId}#${componentId}#g" ${currentPath}/options.json`);
-      await exec(`sed -i -e "s#${oldId}#${componentId}#g" ${currentPath}/index.html`);
-      await exec(`sed -i -e "s#${oldId}#${componentId}#g" ${currentPath}/editor.html`);
-
-      const replaceStr = commonDirPath ? `/${commonDirPath}` : commonDirPath;
-      await exec(`sed -i -e 's#src=".*/components/#src="${replaceStr}/components/#g' ${currentPath}/editor.html`);
-      await exec(`sed -i -e 's#src=".*/common/#src="${replaceStr}/common/#g' ${currentPath}/editor.html`);
-      await exec(`sed -i -e 's#href=".*/common/#href="${replaceStr}/common/#g' ${currentPath}/editor.html`);
-      await exec(`sed -i -e 's#src=".*/components/#src="${replaceStr}/components/#g' ${currentPath}/index.html`);
-      await exec(`sed -i -e 's#src=".*/common/#src="${replaceStr}/common/#g' ${currentPath}/index.html`);
-
-      await exec(`sed -i -e "s#componentsDir.*components'#componentsDir: '${commonDirPath ? commonDirPath + '/components' : 'components'}'#g" ${currentPath}/env.js`);
-
-      const buildDevPath = `${currentPath}/components`;
-      if (fs.pathExistsSync(buildDevPath)) {
-        await exec(`sed -i -e "s#${oldId}#${componentId}#g" ${currentPath}/components/main.js`);
-        await exec(`sed -i -e "s#${oldId}#${componentId}#g" ${currentPath}/components/main.js.map`);
-        await exec(`sed -i -e "s#${oldId}#${componentId}#g" ${currentPath}/components/setting.js`);
-        await exec(`sed -i -e "s#${oldId}#${componentId}#g" ${currentPath}/components/setting.js.map`);
-      }
-    } finally {
-      await fs.remove(file.filepath);
-      await fs.remove(uploadDir);
+    if (importResult.msg === 'Import Fail') {
+      this.fail('导入失败', errInfo, CODE.FAIL);
+    } else if (importResult.msg === 'No Auth') {
+      this.fail('更新失败, 无权限', errInfo, CODE.FAIL);
+    } else {
+      this.success('导入成功', null);
     }
-
-    this.success('上传成功');
   }
 
-  async exportComponentSource() {
-    const { ctx, config: { pathConfig: { staticDir, componentsPath, initComponentVersion } } } = this;
-    const componentId = ctx.params.componentId;
+  async exportSource() {
+    const { ctx, app, service } = this;
+    const { value: componentId } = ctx.validate(app.Joi.string().length(24).required(), ctx.params.componentId);
 
-    const componentInfo = await ctx.model.Component._findOne({ id: componentId });
-    const sourceFolder = `${staticDir}/${componentsPath}/${componentId}/${initComponentVersion}`;
-    const destZip = `${staticDir}/${componentsPath}/${componentId}/${componentInfo.name}.zip`;
-    try {
-      const zip = new AdmZip();
-      zip.addLocalFolder(sourceFolder, '', src => {
-        const dirname = src.split('/')[0];
-        return dirname !== 'node_modules' && dirname !== '.git';
-      });
-      zip.writeZip(destZip);
-      const zipName = `${componentInfo.name}.zip`;
+    const exportResult = await service.component.exportSource(componentId);
+    const errInfo = exportResult.data.error || null;
 
-      const data = await fs.stat(destZip);
-      ctx.set('Content-Disposition', `attachment;filename=${encodeURIComponent(zipName)}`);
-      ctx.set('Content-Type', 'application/octet-stream');
-      ctx.set('Content-Length', data.size);
-      ctx.body = fs.createReadStream(destZip);
-    } finally {
-      await fs.remove(destZip);
+    if (exportResult.msg === 'No Source Code') {
+      this.fail('导出失败: 源码不存在, 不允许导出', errInfo, CODE.FAIL);
+    } else if (exportResult.msg === 'Export Fail') {
+      this.fail('导出失败', errInfo, CODE.FAIL);
     }
   }
 

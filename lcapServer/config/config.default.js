@@ -7,21 +7,24 @@ const path = require('path');
  * @param {Egg.EggAppInfo} appInfo app info
  */
 module.exports = appInfo => {
-  const staticDir = path.join(__dirname, '../www');
-  const commonDirPath = '';
-
-  const serverIp = 'localhost';
+  // 静态目录 eg:  /data/app/lcapWeb
+  const staticDir = '${CW_INSTALL_STATIC_DIR}';
+  // 组件开发目录, 默认www, 配置staticDir使用，eg: /data/app/lcapWeb/www
+  const commonDirPath = 'www';
+  // 数据目录 eg:  /data/appData
+  const dataBaseDir = '${CW_DATA_BASE_DIR}';
+  // 日志目录 eg:  /data/logs
+  const logsBaseDir = '${CW_LOGS_BASE_DIR}';
+  
+  const serverIp = '127.0.0.1';
   const serverPort = 7001;
 
-  const yapiServerIp = '10.2.3.56';
-  const yapiServerPort = 3001;
-
-  const mongodbIp = '10.2.3.56';
+  const mongodbIp = '127.0.0.1';
   const mongodbPort = 27017;
+  // const mongodbUsername = '${CW_MONGODB_USERNAME}';
+  // const mongodbPassword = encodeURIComponent('${CW_MONGODB_PASSWORD}');
 
-  const docpServerIp = '10.0.3.142';
-  const docpServerPort = 18080;
-
+  const chromePort = 9222;
   /**
    * built-in config
    * @type {Egg.EggAppConfig}
@@ -43,6 +46,7 @@ module.exports = appInfo => {
     clients: {
       flyfish: {
         url: `mongodb://${mongodbIp}:${mongodbPort}/flyfish`,
+        // url: `mongodb://${mongodbUsername}:${mongodbPassword}@${mongodbIp}:${mongodbPort}/flyfish?authSource=test`,
         options: {
           useUnifiedTopology: true,
         },
@@ -52,8 +56,8 @@ module.exports = appInfo => {
 
   config.cluster = {
     listen: {
-      port: serverPort,
-      // hostname: '127.0.0.1', // 不建议设置 hostname 为 '0.0.0.0'，它将允许来自外部网络和来源的连接，请在知晓风险的情况下使用
+      hostname: serverIp,
+      port: +serverPort,
     },
   };
 
@@ -62,18 +66,12 @@ module.exports = appInfo => {
     allowMethods: 'GET,HEAD,PUT,POST,DELETE,PATCH,OPTIONS',
   };
 
-  config.httpProxy = {
-    '/gatewayApi': {
-      target: `http://${docpServerIp}:${docpServerPort}`,
-      changeOrigin: true,
-      secure: false,
-    },
-  };
-
   // 路由鉴权白名单
   config.reqUrlWhiteList = [
     '/users/login',
     '/users/register',
+
+    '/applications/:id',
   ];
 
   // 同步用户url
@@ -88,6 +86,7 @@ module.exports = appInfo => {
   };
 
   config.specialId = {
+    innerComponentCategoryIds: [ '19700101', '197001010', '197001011', '19700102', '197001020' ],
   };
 
   config.apiKey = 'bsl2a4BAVW5YZ4vL';
@@ -118,12 +117,15 @@ module.exports = appInfo => {
   };
 
   config.services = {
-    douc: {
+    core: {
+      baseURL: `http://${lcapDataServerIp}:${lcapDataServerPort}`,
+    },
+    docp: {
       baseURL: `http://${docpServerIp}:${docpServerPort}`,
     },
-    yapi: {
-      baseURL: `http://${yapiServerIp}:${yapiServerPort}`,
-      tokenEncryptionKey: 'BYkCpvTfyZ%hrJYSrOUWxPhrJAOZcVZo',
+    chrome: {
+      host: '127.0.0.1',
+      port: chromePort,
     },
     ffPlatform: {
       host: 'http://10.0.9.204:8360',
@@ -141,7 +143,6 @@ module.exports = appInfo => {
 
   config.docpCookieConfig = {
     name: 'aops-sessionId',
-    domain: docpServerIp,
   };
 
   config.cookieConfig = {
@@ -151,6 +152,8 @@ module.exports = appInfo => {
 
   config.pathConfig = {
     staticDir,
+    dataDir: `${dataBaseDir}/${appInfo.name}`,
+    logsDir: `${logsBaseDir}/${appInfo.name}`,
     commonDirPath,
 
     applicationPath: commonDirPath ? `${commonDirPath}/applications` : 'applications',
@@ -163,10 +166,23 @@ module.exports = appInfo => {
     componentsTplPath: commonDirPath ? `${commonDirPath}/component_tpl` : 'component_tpl',
 
     commonPath: commonDirPath ? `${commonDirPath}/common` : 'common',
+    tmpPath: commonDirPath ? `${commonDirPath}/tmp` : 'tmp',
     webPath: commonDirPath ? `${commonDirPath}/web` : 'web',
 
     defaultComponentCoverPath: commonDirPath ? `/${commonDirPath}/component_tpl/public/cover.jpeg` : '/component_tpl/public/cover.jpeg',
     initComponentVersion: 'v-current',
+  };
+
+  config.replaceTpl = {
+    componentIdTpl: '${ComponentIdTpl}',
+    editorCssTpl: '${EditorCssTpl}',
+    editorEnvTpl: '${EditorEnvTpl}',
+    editorDataViTpl: '${EditorDataViTpl}',
+    editorJsTpl: '${EditorJsTpl}',
+
+    indexEnvTpl: '${IndexEnvTpl}',
+    indexDataViTpl: '${IndexDataViTpl}',
+    envComponentDirTpl: '${EnvComponentDirTpl}',
   };
 
   config.multipart = {

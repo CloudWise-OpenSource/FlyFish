@@ -1,5 +1,7 @@
 // 项目
 projects: {
+	account_id: String,
+
 	create_time: Time,
 	update_time: Time,
 
@@ -14,6 +16,8 @@ projects: {
 
 // 应用
 applications: {
+	account_id: String,
+
 	create_time: Time,
 	update_time: Time,
 
@@ -34,6 +38,8 @@ applications: {
 
 // 组件
 components: {
+	account_id: String,
+
 	create_time: Time,
 	update_time: Time,
 
@@ -64,6 +70,8 @@ components: {
 
 // 组件分类
 component_categories: {
+	account_id: String,
+
 	create_time: Time,
 	update_time: Time,
 
@@ -79,6 +87,8 @@ component_categories: {
 
 // 标签
 tags: {
+	account_id: String,
+
 	create_time: Time,
 	update_time: Time,
 
@@ -89,6 +99,8 @@ tags: {
 
 // 行业
 trades: {
+	account_id: String,
+
 	create_time: Time,
 	update_time: Time,
 

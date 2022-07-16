@@ -76,7 +76,7 @@ class UserController extends BaseController {
     const { ctx, app, service } = this;
 
     const getUserInfoSchema = app.Joi.object().keys({
-      id: app.Joi.string(),
+      id: app.Joi.string().required(),
     });
     ctx.validate(getUserInfoSchema, ctx.query);
 
@@ -88,27 +88,6 @@ class UserController extends BaseController {
       this.fail('获取失败', null, CODE.FAIL);
     } else {
       this.success('获取成功', userInfo);
-    }
-  }
-
-  async getApiToken() {
-    const { ctx, app, service } = this;
-
-    const getUserInfoSchema = app.Joi.object().keys({
-      id: app.Joi.string(),
-      lang: app.Joi.string(),
-      __timestap: app.Joi.string(),
-    });
-    ctx.validate(getUserInfoSchema, ctx.query);
-
-    const { id } = ctx.params;
-
-    const userInfo = await service.user.getUserInfo(id);
-
-    if (_.isEmpty(userInfo)) {
-      this.fail('获取失败', null, CODE.FAIL);
-    } else {
-      this.success('获取成功', userInfo.yapiAuthorization);
     }
   }
 

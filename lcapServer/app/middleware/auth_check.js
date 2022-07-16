@@ -1,35 +1,22 @@
 'use strict';
 const CODE = require('../lib/error');
-const _ = require('lodash');
-
 module.exports = config => {
   return async function authCheck(ctx, next) {
-    const { reqUrlWhiteList, syncUserList, docpCookieConfig: { name: docpCookieName }, cookieConfig: { name }, services: { douc: { baseURL } }, apiKey } = config;
+    const { reqUrlWhiteList, cookieConfig: { name }, apiKey } = config;
 
-    const docpCookieValue = ctx.cookies.get(docpCookieName, { signed: false });
     const lcapCookieValue = ctx.cookies.get(name, { signed: false });
 
     // 白名单
-    if (reqUrlWhiteList.includes(ctx.url)) {
-      await next();
-
-    // docp用户鉴权
-    } else if (docpCookieValue) {
-      const userInfo = await ctx.service.userDouc.syncUser();
-      if (!userInfo.username || !userInfo.userId || !userInfo.role) {
-        ctx.body = {
-          code: CODE.AUTH_FAIL,
-          msg: 'AUTH FAIL',
-          data: null,
-        };
-        return;
+    const splitPaths = ctx.url.split('/');
+    for (let i = 0; i < reqUrlWhiteList.length; i++) {
+      const whiteUrl = reqUrlWhiteList[i];
+      for (const path of splitPaths) {
+        if (path.length === 24) reqUrlWhiteList[i] = whiteUrl.replace(':id', path);
       }
-
-      if (syncUserList.includes(ctx.url)) await ctx.service.userYapi.syncUser(userInfo);
-      ctx.userInfo = userInfo;
+    }
+    if (reqUrlWhiteList.some(url => ctx.url === url)) {
       await next();
 
-    // lcap用户鉴权
     } else if (lcapCookieValue) {
       const userInfo = ctx.helper.getCookie();
       if (!userInfo.username || !userInfo.userId || !userInfo.role) {
@@ -41,7 +28,6 @@ module.exports = config => {
         return;
       }
 
-      if (syncUserList.includes(ctx.url)) await ctx.service.userYapi.syncUser(userInfo);
       ctx.userInfo = userInfo;
       await next();
     } else if (ctx.apiKey === apiKey) {
@@ -56,4 +42,3 @@ module.exports = config => {
     }
   };
 };
-

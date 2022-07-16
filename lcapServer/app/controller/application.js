@@ -5,7 +5,6 @@ const fs = require('fs-extra');
 const AdmZip = require('adm-zip');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
-const jwt = require('jsonwebtoken');
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 
@@ -33,69 +32,6 @@ class ApplicationController extends BaseController {
       this.fail('创建失败, 应用名称已存在', null, CODE.FAIL);
     } else {
       this.success('创建成功', { id: _.get(applicationInfo, [ 'data', 'id' ]) });
-    }
-  }
-
-  /**
-   * 安装大屏
-   */
-  async install() {
-    const { ctx, app: { Joi }, service } = this;
-
-    const createSchema = Joi.object().keys({
-      name: Joi.string().required(),
-      modelId: Joi.string(),
-      models: Joi.array().items(Joi.object().keys({
-        modelInfo: Joi.object().keys({
-          id: Joi.string(),
-          name: Joi.string(),
-        }),
-        ciInfos: Joi.array().items(Joi.object().keys({
-          id: Joi.string(),
-          name: Joi.string(),
-        })),
-      })),
-      type: Joi.string().valid(...Object.values(Enum.APP_TYPE)).required(),
-      isLib: Joi.boolean(),
-      isMonitor: Joi.boolean(),
-      width: Joi.number().default(1424),
-      height: Joi.number().default(960),
-
-      metrics: Joi.array().items(Joi.object().keys({
-        key: Joi.any(),
-        name: Joi.string().required(),
-        unit: Joi.any(),
-        componentId: Joi.string().required(),
-        location: Joi.object().keys({
-          x: Joi.number().required(),
-          y: Joi.number().required(),
-          width: Joi.number().required(),
-          height: Joi.number().required(),
-        }),
-      }).unknown()),
-    });
-    const body = await createSchema.validateAsync(ctx.request.body);
-    const applicationInfo = await service.application.install(body);
-
-    this.success('安装成功', { id: _.get(applicationInfo, [ 'data', 'id' ]) });
-  }
-
-  /**
-   * 卸载大屏
-   */
-  async uninstall() {
-    const { ctx, app, service } = this;
-
-    const { value: dashboardName } = ctx.validate(app.Joi.string().required(), ctx.request.body.dashboardName);
-    const uninstallResult = await service.application.uninstall(dashboardName);
-    if (uninstallResult.msg === 'Delete Doma App Error') {
-      this.fail('卸载失败： 监控中心删除失败', JSON.stringify(uninstallResult.data || null), CODE.FAIL);
-    } else if (uninstallResult.msg === 'No Auth') {
-      this.fail('卸载失败： 无权限', null, CODE.FAIL);
-    } else if (uninstallResult.msg === 'No Item') {
-      this.fail('卸载失败： 无此应用', null, CODE.FAIL);
-    } else {
-      this.success('卸载成功', { dashboardName });
     }
   }
 
@@ -155,6 +91,8 @@ class ApplicationController extends BaseController {
     const designResult = await service.application.updateDesignInfo(id, body);
     if (designResult.msg === 'Params Error') {
       this.fail('编辑失败, 关联资源必传！', JSON.stringify(designResult.data), CODE.FAIL);
+    } else if (designResult.msg === 'No Auth') {
+      this.fail('编辑失败, 无权限！', null);
     } else {
       this.success('编辑成功', { id });
     }
@@ -227,7 +165,6 @@ class ApplicationController extends BaseController {
       projectId: Joi.string().length(24),
       tags: Joi.array().items(Joi.string().length(24)),
       developStatus: Joi.string(),
-      isLib: Joi.boolean(),
       isRecommend: Joi.boolean(),
       isMonitor: Joi.boolean(),
       trades: Joi.array().items(Joi.string().length(24)),
@@ -253,8 +190,9 @@ class ApplicationController extends BaseController {
   async getComponentList() {
     const { ctx, app: { Joi }, service } = this;
     const getListSchema = Joi.object().keys({
-      id: Joi.string().length(24).required(),
+      id: Joi.string().length(24),
       type: Joi.string().valid(...Object.values(Enum.COMPONENT_TYPE)).required(),
+      allowDataSearch: Joi.number().valid(...Object.values(Enum.COMPONENT_ALLOW_DATA_SOURCE)),
       name: Joi.string(),
     });
 
@@ -268,7 +206,7 @@ class ApplicationController extends BaseController {
   }
 
   async export() {
-    const { ctx, logger, config: { apiKey, pathConfig: { staticDir, commonPath, componentsPath, appTplPath, appBuildPath, applicationPath }, services: { yapi } } } = this;
+    const { ctx, config: { apiKey, pathConfig: { staticDir, commonPath, componentsPath, appTplPath, appBuildPath, applicationPath } } } = this;
     const id = ctx.params.id;
 
     const buildPath = path.resolve(staticDir, appBuildPath, id);
@@ -277,22 +215,8 @@ class ApplicationController extends BaseController {
 
     const appInfo = await ctx.model.Application._findOne({ id });
 
-    let appKey,
-      appSecret;
-    try {
-      const userInfo = ctx.userInfo;
-      const payLoad = { username: userInfo.username };
-      const authorizationToken = jwt.sign(payLoad, yapi.tokenEncryptionKey, { expiresIn: '1h' });
-      ({ data: { app_key: appKey, app_secret: appSecret } } = await ctx.http.get(
-        `${yapi.baseURL}/api/app/detail`,
-        {
-          application_id: id,
-          authorizationToken,
-        }
-      ));
-    } catch (error) {
-      logger.error(`get yapi application appKey error: ${JSON.stringify(error)}`);
-    }
+    const appKey = null,
+      appSecret = null;
 
     await fs.outputFile(path.resolve(configPath, 'env.conf.json'), '');
     await fs.writeJson(path.resolve(configPath, 'env.conf.json'), {

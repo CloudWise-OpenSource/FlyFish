@@ -1,27 +1,30 @@
 /* eslint valid-jsdoc: "off" */
 
 'use strict';
-const path = require('path');
 
 /**
  * @param {Egg.EggAppInfo} appInfo app info
  */
 module.exports = appInfo => {
-  const staticDir = path.join(__dirname, '../www');
-  const commonDirPath = '';
-
-  const serverIp = '0.0.0.0';
+  // 静态目录 eg:  /data/app/lcapWeb
+  const staticDir = '${CW_INSTALL_STATIC_DIR}';
+  // 组件开发目录, 默认www, 配置staticDir使用，eg: /data/app/lcapWeb/www
+  const commonDirPath = 'www';
+  // 数据目录 eg:  /data/appData
+  const dataBaseDir = '${CW_DATA_BASE_DIR}';
+  // 日志目录 eg:  /data/logs
+  const logsBaseDir = '${CW_LOGS_BASE_DIR}';
+  
+  const serverIp = '127.0.0.1';
   const serverPort = 7001;
 
-  const yapiServerIp = '10.2.3.56';
-  const yapiServerPort = 3001;
+  const mongodbIp = '127.0.0.1';
+  const mongodbPort = 27017;
+  // const mongodbUsername = '${CW_MONGODB_USERNAME}';
+  // const mongodbPassword = encodeURIComponent('${CW_MONGODB_PASSWORD}');
 
-  const mongodbIp = '10.2.2.254';
-  const mongodbPort = 18017;
-
-  const docpServerIp = '10.0.14.73';
-  const docpServerPort = 18080;
-
+  // chrome 端口，用于自动生成组件、应用缩略图服务，默认9222
+  const chromePort = 9222;
   /**
    * built-in config
    * @type {Egg.EggAppConfig}
@@ -34,13 +37,6 @@ module.exports = appInfo => {
   // add your middleware config here
   config.middleware = [ 'errorHandler', 'notfoundHandler', 'accessLogger' ];
 
-  config.httpProxy = {
-    '/gatewayApi': {
-      target: `http://${docpServerIp}:${docpServerPort}`,
-      changeOrigin: true,
-      secure: false,
-    },
-  };
 
   // add your user config here
   const userConfig = {
@@ -50,7 +46,8 @@ module.exports = appInfo => {
   config.mongoose = {
     clients: {
       flyfish: {
-        url: `mongodb://admin:${encodeURIComponent('Yzh@redis_123')}@${mongodbIp}:${mongodbPort}/flyfish?authSource=test`,
+        url: `mongodb://${mongodbIp}:${mongodbPort}/flyfish`,
+        // url: `mongodb://${mongodbUsername}:${mongodbPassword}@${mongodbIp}:${mongodbPort}/flyfish?authSource=test`,
         options: {
           useUnifiedTopology: true,
         },
@@ -58,8 +55,28 @@ module.exports = appInfo => {
     },
   };
 
+  config.cluster = {
+    listen: {
+      hostname: serverIp,
+      port: +serverPort,
+    },
+  };
+
+  config.specialId = {
+    // 筛选框组件id
+    componentId1: '6220579b706a880c8d848c54',
+  };
+
+  config.cookieConfig = {
+    name: 'FLY_FISH_V2.0',
+    domain: serverIp,
+    encryptionKey: 'BYkCpvTfyZ%hrJYSrOUWxPhrJAOZcVZo',
+  };
+
   config.pathConfig = {
     staticDir,
+    dataDir: `${dataBaseDir}/${appInfo.name}`,
+    logsDir: `${logsBaseDir}/${appInfo.name}`,
     commonDirPath,
 
     applicationPath: commonDirPath ? `${commonDirPath}/applications` : 'applications',
@@ -72,6 +89,7 @@ module.exports = appInfo => {
     componentsTplPath: commonDirPath ? `${commonDirPath}/component_tpl` : 'component_tpl',
 
     commonPath: commonDirPath ? `${commonDirPath}/common` : 'common',
+    tmpPath: commonDirPath ? `${commonDirPath}/tmp` : 'tmp',
     webPath: commonDirPath ? `${commonDirPath}/web` : 'web',
 
     defaultComponentCoverPath: commonDirPath ? `/${commonDirPath}/component_tpl/public/cover.jpeg` : '/component_tpl/public/cover.jpeg',
@@ -79,12 +97,38 @@ module.exports = appInfo => {
   };
 
   config.services = {
-    douc: {
-      baseURL: `http://${docpServerIp}:${docpServerPort}`,
+    chrome: {
+      host: '127.0.0.1',
+      port: chromePort,
     },
-    yapi: {
-      baseURL: `http://${yapiServerIp}:${yapiServerPort}`,
-      tokenEncryptionKey: 'BYkCpvTfyZ%hrJYSrOUWxPhrJAOZcVZo',
+  };
+
+  config.logger = {
+    dir: `${logsBaseDir}/${appInfo.name}`,
+    // level: 'ERROR',
+    // consoleLevel: 'ERROR',
+    appLogName: `${appInfo.name}-info.log`,
+    errorLogName: `${appInfo.name}-error.log`,
+    coreLogName: 'egg-web.log',
+    agentLogName: 'egg-agent.log',
+  };
+
+  config.customLogger = {
+    // 请求响应日志
+    accessLogger: {
+      file: `${logsBaseDir}/${appInfo.name}/${appInfo.name}-access.log`,
+      format: meta => {
+        return '[' + meta.date + '] '
+                + meta.level + ' '
+                + meta.pid + ' '
+                + meta.message;
+      },
+      formatter: meta => {
+        return '[' + meta.date + '] '
+                + meta.level + ' '
+                + meta.pid + ' '
+                + meta.message;
+      },
     },
   };
 
@@ -95,23 +139,6 @@ module.exports = appInfo => {
     preload: false,
     dynamic: true,
     buffer: false,
-  };
-
-  config.cluster = {
-    listen: {
-      hostname: serverIp,
-      port: serverPort,
-    },
-  };
-
-  config.specialId = {
-    // 筛选框组件id
-    componentId1: '6220579b706a880c8d848c54',
-  };
-
-  config.docpCookieConfig = {
-    name: 'aops-sessionId',
-    domain: docpServerIp,
   };
 
   return {

@@ -6,11 +6,10 @@ const fs = require('fs-extra');
 const path = require('path');
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
-const _ = require('lodash');
 const moment = require('moment');
 
 const mongoUrl = config.get('mongoose.clients.flyfish.url');
-const wwwDir = config.get('pathConfig.staticDir') + config.get('pathConfig.commonDirPath');
+const wwwDir = config.get('pathConfig.staticDir') + '/' + config.get('pathConfig.commonDirPath');
 
 const now = moment().format('YYYYMMDDHHmmss');
 const componentIds = process.argv.slice(2);
@@ -40,17 +39,18 @@ async function init() {
 
     console.log(`一共有${components.length}个组件`);
 
-    for (const chunk of _.chunk(components, 2)) {
-      await Promise.all(chunk.map(async component => {
-        const componentId = component._id.toString();
-        const componentDir = path.resolve(wwwDir, 'components');
-        await exec(`cd ${componentDir} && tar -czvf ${componentId}.tar ${componentId}`, { maxBuffer: 1024 * 1024 * 1024 });
-        await fs.move(
-          path.resolve(componentDir, `${componentId}.tar`),
-          path.resolve(downloadTmpDir, 'components', `${componentId}.tar`),
-          { overwrite: true }
-        );
-      }));
+    for (let i = 0; i < components.length; i++) {
+      const component = components[i];
+      const componentId = component._id.toString();
+      const componentDir = path.resolve(wwwDir, 'components');
+      await exec(`cd ${componentDir} && tar -czvf ${componentId}.tar ${componentId} --exclude=${componentId}/*/src --exclude=${componentId}/*/*.tar --exclude=${componentId}/*/*.zip --exclude=${componentId}/*/release_code --exclude=${componentId}/*/node_modules --exclude=${componentId}/*/.git --exclude=${componentId}/*/.npmrc --exclude=${componentId}/*/.gitignore`, { maxBuffer: 1024 * 1024 * 1024 });
+      await fs.move(
+        path.resolve(componentDir, `${componentId}.tar`),
+        path.resolve(downloadTmpDir, 'components', `${componentId}.tar`),
+        { overwrite: true }
+      );
+
+      console.log(`download success ${componentId}, progress: ${i + 1}/${components.length}======`);
     }
 
     await exec(`cd download && tar -czvf components_${now}.tar components_${now}`, { maxBuffer: 1024 * 1024 * 1024 });

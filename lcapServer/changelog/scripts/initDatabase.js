@@ -265,19 +265,22 @@ async function initMenu() {
 async function initComponentCategory() {
   const exists = await db.collection('component_categories').findOne();
   if (_.isEmpty(exists)) {
-    const now = Date.now();
     const doc = {
       categories: [
         {
-          id: `${now}0`,
+          id: '19700101',
           name: '2D图表组件',
           children: [
             {
-              id: `${now}00`,
+              id: '197001010',
+              name: '未分类',
+            },
+            {
+              id: '197001011',
               name: '基础组件',
             },
             {
-              id: `${now}01`,
+              id: '197001012',
               name: '项目组件',
             },
           ],

@@ -10,6 +10,8 @@ module.exports = app => {
   const connFlyfish = app.mongooseDB.get('flyfish');
 
   const TagSchema = new Schema({
+    account_id: String,
+
     create_time: {
       type: Date,
       default: Date.now,
@@ -28,6 +30,7 @@ module.exports = app => {
       type: String,
       default: Enum.COMMON_STATUS.VALID,
     },
+    from: String,
   });
 
   TagSchema.statics._create = async function(params) {

@@ -14,6 +14,6 @@ module.exports = Object.assign(require('../../config/config.development')({}), {
     url: 'mysql://Rootmaster:Rootmaster@777@10.0.3.142:18103/cw_dodb',
   },
   douc: {
-    url: 'mysql://Rootmaster:Rootmaster@777@10.0.3.142:18103/cw_douc',
+    url: 'mysql://Rootmaster:Rootmaster@777@10.2.2.253:18103/cw_douc',
   },
 });
