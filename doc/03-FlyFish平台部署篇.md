@@ -33,9 +33,27 @@ npm run build
 vim lcapWeb/lcapWeb/conf/env-config.js
 
 # hostname 修改为当前主机IP
-# hostname = IP
-# vscodeFolderPrefix 修改为以下路径
-# vscodeFolderPrefix: '/data/app/FlyFish/lcapWww'
+hostname = IP
+# web部署端口
+fontPort = 8089  
+# server端部署的端口
+backPort = 7001
+# code-server访问静态资源时的路径前缀
+static_dir = '/data/app/FlyFish'
+# 静态资源的代理路径，与nginx配置要匹配
+common_dir = 'lcapWeb/www'
+# api请求前缀，与nginx配置匹配
+apiDomain :'/api'
+# java服务api请求前缀，与nginx配置匹配
+javaApiDomain : '/lcap-data-server'
+# code-server部署端口
+code_port = 3001
+# 组件平台是否拆分，默认为false
+isSplitComponentModule : false
+# 是否独立部署api,默认为false
+onlyApiModule : false
+# 组件平台接口api的前缀，在isSplitComponentModule为false时，与apiDomain保持一致
+componentSplitApiPrefix : '/api'
 
 ```
 
@@ -72,7 +90,14 @@ server {
     # IP 替换成当前主机IP
     proxy_cookie_domain 0.0.0.0 IP;
   }
-
+  # lcapServer 反向代理
+  location ^~ /lcap-data-server/ {
+    proxy_pass   http://0.0.0.0:18532/;
+  }
+  # 静态资源代理
+  location /lcapWeb/www {
+    root  /data/app/FlyFish;
+  }
   # lcapWeb
   location / {
     root  /data/app/FlyFish/lcapWeb/dist/;
