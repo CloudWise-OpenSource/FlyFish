@@ -30,7 +30,7 @@ npm run build
 
 ```bash
 # 修改配置
-vim dist/conf/env-config.js
+vim lcapWeb/lcapWeb/conf/env-config.js
 
 # hostname 修改为当前主机IP
 # hostname = IP
@@ -99,15 +99,11 @@ http://ip:8089
 
 ```bash
 ### 安装主服务依赖
-cd /data/app/FlyFish/lcapServer/
+cd lcapServer/
 npm install --unsafe-perm=true --allow-root
 
 ### 安装初始化脚本依赖
-cd /data/app/FlyFish/lcapServer/changelog
-npm install
-
-### 安装组件开发依赖
-cd /data/app/FlyFish/lcapWww/components
+cd lcapServer/changelog
 npm install
 ```
 
@@ -115,8 +111,8 @@ npm install
 
 ```bash
 # 初始化数据库
-cd /data/app/FlyFish/lcapServer/
-npm run init-development-database
+cd lcapServer/changelog
+NODE_ENV=development node scripts/initDatabase.js
 
 # 提示以下内容意味初始化成功
 # init menu success
@@ -130,15 +126,40 @@ npm run init-development-database
 
 ```bash
 # 修改后端配置
-# 以下命令在 lcapServer 下执行
+cd lcapServer
 vim ./config/config.development.js
 
-# staticDir 修改为以下路径
-# const staticDir = '/data/app/FlyFish/lcapWww'
-# serverIp 修改为 0.0.0.0
-# const serverIp = '0.0.0.0';
+staticDir -> 静态目录 eg:  /data/app/lcapWeb
+commonDirPath -> 组件开发目录, 默认www, 配置staticDir使用，eg: /data/app/lcapWeb/www
+dataBaseDir -> 数据目录 eg:  /data/appData
+logsBaseDir -> 日志目录 eg:  /data/logs
 
+serverIp -> 服务ip eg: '127.0.0.1'
+serverPort -> 服务port eg: 7001
 
+mongodbIp -> monggodbIp eg: '127.0.0.1'
+mongodbPort -> mongodbPort eg: '127.0.0.1'
+
+// 非必须
+mongodbUsername -> mongodbUsername eg: 'admin'
+mongodbPassword -> mongodbPassword eg: 'admin'
+
+// chrome 端口，用于自动生成组件、应用缩略图服务，默认9222
+chromePort -> chrome无头浏览器port eg: 9222
+```
+ 
+3. 修改生成缩略图配置
+```
+cd lcapServer
+vim lib/chrome-linux/fonts/fonts.conf
+
+修改${CW_INSTALL_CHROME_DIR}为chrome-linux的绝对路径（有两处，注意都要修改掉）
+
+eg: <dir>/data/app/lcapServer/lib/chrome-linux/fonts/fonts</dir>
+```
+
+4. 启动服务
+```
 # 启动后端服务
 npm run development
 
@@ -152,7 +173,7 @@ npm run stop
 ```bash
 # 以下命令在 lcapWww 下执行
 # 进入组件开发目录
-cd /data/app/FlyFish/lcapWww/components
+cd lcapWeb/lcapWeb/www/components
 
 # 安装依赖
 npm install
