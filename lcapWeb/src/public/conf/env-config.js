@@ -3,13 +3,13 @@
  * @Author: zhangzhiyong
  * @Date: 2021-12-07 14:08:25
  * @LastEditors: zhangzhiyong
- * @LastEditTime: 2022-07-15 18:17:25
+ * @LastEditTime: 2022-07-18 16:13:55
  */
 window.LCAP_CONFIG = (function () {
   //后端服务
   const hostname = '10.2.3.56';
-  const fontPort = '8089';
-  const port = '7001';
+  const frontPort = '8089';
+  const backPort = '7001';
   //服务端目录
   const static_dir = '/data/app';
   //协议
@@ -29,8 +29,8 @@ window.LCAP_CONFIG = (function () {
       ? `${httpProtocol}://${hostname}:${fontPort}/${common_dir}/web/screen/index.html`
       : `${httpProtocol}://${hostname}/${common_dir}/web/screen/index.html`,
     wwwAddress: `${common_dir}`,
-    snapshotAddress: port
-      ? `${httpProtocol}://${hostname}:${port}`
+    snapshotAddress: backPort
+      ? `${httpProtocol}://${hostname}:${backPort}`
       : `${httpProtocol}://${hostname}`,
 
     apiDomain: '/api',//api代理
