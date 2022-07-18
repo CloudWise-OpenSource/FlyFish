@@ -15,7 +15,7 @@ module.exports = appInfo => {
   const dataBaseDir = path.join(__dirname, '../../../appData');
   // 日志目录 eg:  /data/logs
   const logsBaseDir = path.join(__dirname, '../../logs');
-  
+
   const serverIp = '127.0.0.1';
   const serverPort = 7001;
 
