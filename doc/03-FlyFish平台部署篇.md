@@ -249,10 +249,10 @@ config_filename=config_filename
 # mongo数据源配置
 spring.application.name=lcapDataServer
 spring.main.allow-bean-definition-overriding=true
-spring.data.mongodb.host=10.0.16.232
-spring.data.mongodb.port=18017
-spring.data.mongodb.username=admin
-spring.data.mongodb.password=Yzh@redis_123
+spring.data.mongodb.host=${IP}
+spring.data.mongodb.port=${PORT}
+spring.data.mongodb.username=${USERNAME}
+spring.data.mongodb.password=${PASSWORD}
 spring.data.mongodb.database=flyfish
 spring.data.mongodb.authenticationDatabase=test
 spring.servlet.multipart.max-file-size=1024MB
