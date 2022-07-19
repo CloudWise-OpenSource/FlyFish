@@ -205,7 +205,7 @@ cd lcapWeb/lcapWeb/www/components
 npm install
 
 # 修改大屏应用配置
-vim /data/app/FlyFish/lcapWww/web/screen/config/env.js
+vim /data/app/FlyFish/lcapWeb/lcapWeb/www/web/screen/config/env.js
 
 # 修改为当前主机IP
 # const apiDomain = 'http://IP:7001';
@@ -217,7 +217,7 @@ vim /data/app/FlyFish/lcapWww/web/screen/config/env.js
 1. 生成并解压压缩包压缩包
 ```bash
 # 服务打包
-cd ./lcapDataserver && mvn clean package -Dmaven.test.skip=true -am -pl lcap-server
+cd ./lcapDataServer && mvn clean package -Dmaven.test.skip=true -am -pl lcap-server
 # 生成 lcapDataServer-${version}-${datetime}-${git_commit_id}.tar.gz 安装包
 
 # 将压缩包上传到服务器，解压缩
