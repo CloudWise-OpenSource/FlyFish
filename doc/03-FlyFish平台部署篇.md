@@ -147,7 +147,7 @@ NODE_ENV=development node scripts/initDatabase.js
 
 ```
 
-2. 修改配置并启动后端服务
+3. 修改配置并启动后端服务
 
 ```bash
 # 修改后端配置
@@ -193,7 +193,7 @@ npm run stop
 
 ```
 
-3. 组件开发环境配置
+4. 组件开发环境配置
 
 ```bash
 # 以下命令在 lcapWww 下执行
@@ -211,9 +211,57 @@ vim /data/app/FlyFish/lcapWww/web/screen/config/env.js
 # 例如：const apiDomain = 'http://127.0.0.1:7001';
 ```
 
+> lcapDataserver源码部署
+
+1. 生成并解压压缩包压缩包
+```bash
+# 服务打包
+cd ./lcapDataserver && mvn clean package -Dmaven.test.skip=true -am -pl lcap-server
+# 生成 lcapDataServer-${version}-${datetime}-${git_commit_id}.tar.gz 安装包
+
+# 将压缩包上传到服务器，解压缩
+tar -zxvf ./lcapDataServer-${version}-${datetime}-${git_commit_id}.tar.gz
+
+# 解压后生成的核心文件目录如下：
+[root@host233 app]# cd ./lcapDataServer
+[root@host233 lcapDataServer]# ll
+总用量 32
+drwxrwxr-x  2 kid kid    56 7月  18 21:31 bin
+drwxrwxr-x  3 kid kid   107 7月  18 21:41 conf
+drwxrwxr-x  2 kid kid 12288 7月  18 21:25 lib
+```
+
+2. 修改服务配置文件
+```bash
+# 进入服务解压目录，执行以下命令
+vim ./conf/application.properties
+
+# 修改以下配置项
+
+# 应用/组件导入导出相关配置，导入导出时需要用到web端的应用/组件源码,所以请设置对应的路径
+file.basepath=/data/app/portalWeb/lcapWeb/www
+application_basepath=/data/app/portalWeb/lcapWeb/www/applications
+component_basepath=/data/app/portalWeb/lcapWeb/www/components
+component_down_tmp_basepath=/data/appData/lcapDataServer/down_tmp_basepath
+component_upload_tmp_basepath=/data/appData/lcapDataServer/upload_tmp_basepath
+config_filename=config_filename
+
+# mongo数据源配置
+spring.application.name=lcapDataServer
+spring.main.allow-bean-definition-overriding=true
+spring.data.mongodb.host=10.0.16.232
+spring.data.mongodb.port=18017
+spring.data.mongodb.username=admin
+spring.data.mongodb.password=Yzh@redis_123
+spring.data.mongodb.database=flyfish
+spring.data.mongodb.authenticationDatabase=test
+spring.servlet.multipart.max-file-size=1024MB
+spring.servlet.multipart.max-request-size=1024MB
+```
+
 ### 三、验证
 
-> 防火墙要开放对应端口，默认 code-server:8081、前端: 8089、server: 7001、mongodb:27017
+> 防火墙要开放对应端口，默认 code-server:8081、前端: 8089、lcapServer: 7001、lcapDataServer：8099、mongodb:27017
 
 访问：http:ip:8089 注册、登录、开发组件大屏。
 
