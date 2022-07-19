@@ -178,9 +178,10 @@ chromePort -> chrome无头浏览器port eg: 9222
 cd lcapServer
 vim lib/chrome-linux/fonts/fonts.conf
 
-修改${CW_INSTALL_CHROME_DIR}为chrome-linux的绝对路径（有两处，注意都要修改掉）
+修改所有${CW_INSTALL_CHROME_DIR}为chrome-linux的绝对路径（有两处，注意都要修改掉）
 
-eg: <dir>/data/app/lcapServer/lib/chrome-linux/fonts/fonts</dir>
+eg: 
+<dir>${CW_INSTALL_CHROME_DIR}/chrome-linux/fonts/fonts</dir> 替换为 <dir>/data/app/lcapServer/lib/chrome-linux/fonts/fonts</dir>
 ```
 
 4. 启动服务
