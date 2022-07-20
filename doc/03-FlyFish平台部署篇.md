@@ -220,7 +220,9 @@ vim /data/app/FlyFish/lcapWeb/lcapWeb/www/web/screen/config/env.js
 cd ./lcapDataServer && mvn clean package -Dmaven.test.skip=true -am -pl lcap-server
 # 生成 lcapDataServer-${version}-${datetime}-${git_commit_id}.tar.gz 安装包
 
-# 将压缩包上传到服务器，解压缩
+cd ./lcap-server/target
+
+# 解压部署包
 tar -zxvf ./lcapDataServer-${version}-${datetime}-${git_commit_id}.tar.gz
 
 # 解压后生成的核心文件目录如下：
@@ -240,9 +242,9 @@ vim ./conf/application.properties
 # 修改以下配置项
 
 # 应用/组件导入导出相关配置，导入导出时需要用到web端的应用/组件源码,所以请设置对应的路径
-file.basepath=/data/app/portalWeb/lcapWeb/www
-application_basepath=/data/app/portalWeb/lcapWeb/www/applications
-component_basepath=/data/app/portalWeb/lcapWeb/www/components
+file.basepath=/data/app/FlyFish/lcapWeb/www
+application_basepath=/data/app/FlyFish/lcapWeb/www/applications
+component_basepath=/data/app/FlyFish/lcapWeb/www/components
 component_down_tmp_basepath=/data/appData/lcapDataServer/down_tmp_basepath
 component_upload_tmp_basepath=/data/appData/lcapDataServer/upload_tmp_basepath
 config_filename=config_filename
@@ -258,6 +260,15 @@ spring.data.mongodb.database=flyfish
 spring.data.mongodb.authenticationDatabase=test
 spring.servlet.multipart.max-file-size=1024MB
 spring.servlet.multipart.max-request-size=1024MB
+```
+
+3. 启动服务
+```bash
+# 通过shell脚本启动服务
+./bin/lcapDataServer start
+
+# 查看日志验证服务是否启动
+tail -200f /data/logs/lcapDataServer/lcapDa
 ```
 
 ### 三、验证
