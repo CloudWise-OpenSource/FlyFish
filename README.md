@@ -114,17 +114,10 @@ $ git pull
 
 > FlyFish 2022 Roadmap
 
-### 系统
-
-- 支持创建网格化画布应用
-- 支持响应式布局
-- 新增表单类应用
-
 ### 数据源
 
 - 增加数据源管理
 - 对接 MySQL、Http等数据存储数据源
-- 对接 HTTP API 数据源
 - 支持对数据源进行模型建表
 
 ### 数据处理
@@ -132,10 +125,6 @@ $ git pull
 - 支持根据数据表进行SQL查询
 - 支持查询的可视化
 - 新增数据处理
-
-### 用户管理
-
-- 用户管理和权限管控
 
 ## 组件库
 [FlyFish组件库](https://github.com/CloudWise-OpenSource/FlyFishComponents)
