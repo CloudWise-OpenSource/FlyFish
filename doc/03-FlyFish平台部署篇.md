@@ -268,7 +268,7 @@ spring.servlet.multipart.max-request-size=1024MB
 ./bin/lcapDataServer start
 
 # 查看日志验证服务是否启动
-tail -200f /data/logs/lcapDataServer/lcapDa
+tail -200f /data/logs/lcapDataServer/lcap-dataserver.info.log
 ```
 
 ### 三、验证
