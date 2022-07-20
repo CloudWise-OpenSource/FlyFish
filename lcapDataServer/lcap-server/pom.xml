@@ -30,17 +30,6 @@
         <logback.version>1.2.11</logback.version>
     </properties>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.cloudwise</groupId>
-                <artifactId>inf-bom</artifactId>
-                <version>0.0.5</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
     <dependencies>
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -386,18 +375,6 @@
         </plugins>
     </build>
 
-    <distributionManagement>
-        <repository>
-            <id>cloudwise</id>
-            <name>Nexus Release Repository</name>
-            <url>http://10.0.2.97:18081/content/repositories/internal/</url>
-        </repository>
-        <snapshotRepository>
-            <id>cloudwise-snapshot</id>
-            <name>Nexus Release Repository</name>
-            <url>http://10.0.2.97:18081/content/repositories/snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
 
     <profiles>
         <profile>

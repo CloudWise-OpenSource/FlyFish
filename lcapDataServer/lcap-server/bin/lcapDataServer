@@ -9,7 +9,7 @@ THIS_SCRIPT="$CURRENT_DIR/$(basename $0)"
 
 ######### 内部变量 部署时自动替换占位符 部署完成后若调整需手动修改变量后面的值
 # root 用户部署时，${CW_RUN_USER} 占位符会替换成内置的默认普通用户或部署前修改配置文件使用指定普通用户
-INNER_RUN_USER="commonuser"
+INNER_RUN_USER="kid"
 # 该节点通信地址
 INNER_LOCAL_IP="127.0.0.1"
 INNER_SERVICE_PORT="18532"
@@ -20,8 +20,8 @@ INNER_DATA_DIR="/data/appData"
 ######### END
 
 ######### JVM HEAP SIZE #########
-INNER_JVM_HEAP_SIZE_MIN="${CW_JVM_HEAP_SIZE}"
-INNER_JVM_HEAP_SIZE_MAX="${CW_JVM_HEAP_SIZE}"
+INNER_JVM_HEAP_SIZE_MIN="1024m"
+INNER_JVM_HEAP_SIZE_MAX="1024m"
 ######### END
 
 ######### 服务目录 通过内部变量自动解析
