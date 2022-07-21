@@ -1,248 +1,136 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-#模拟运维执行变量替换
-#. ../varibles
+usage="Usage: server.sh (start|stop|restart)"
 
-# 服务启动脚本
-CURRENT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
-THIS_SCRIPT="$CURRENT_DIR/$(basename $0)"
+# forbidden root execute this script
+#if [ `whoami` == root ]; then
+#  echo Do not run this script as root or using sudo.
+#  exit 1
+#fi
 
-######### 内部变量 部署时自动替换占位符 部署完成后若调整需手动修改变量后面的值
-# root 用户部署时，${CW_RUN_USER} 占位符会替换成内置的默认普通用户或部署前修改配置文件使用指定普通用户
-INNER_RUN_USER="kid"
-# 该节点通信地址
-INNER_LOCAL_IP="127.0.0.1"
-INNER_SERVICE_PORT="18532"
-# PATH
-INNER_APP_DIR="/data/app"
-INNER_LOG_DIR="/data/logs"
-INNER_DATA_DIR="/data/appData"
-######### END
-
-######### JVM HEAP SIZE #########
-INNER_JVM_HEAP_SIZE_MIN="1024m"
-INNER_JVM_HEAP_SIZE_MAX="1024m"
-######### END
-
-######### 服务目录 通过内部变量自动解析
-# APP_NAME 为服务名，与服务目录保持一致
-APP_NAME="lcapDataServer"
-# 服务主类
-MAIN_CLASS="com.cloudwise.lcap.LcapDataServer"
-APP_HOME="${INNER_APP_DIR}/${APP_NAME}"
-APP_LOG_DIR="${INNER_LOG_DIR}"
-APP_PID_FILE="${APP_HOME}/${APP_NAME}.pid"
-APP_CONF_DIR="${APP_HOME}/conf"
-
-######### 读取环境
-# bash_profile 为一键部署生成的环境变量文件,位于服务安装目录下
-test -f /etc/profile && source /etc/profile
-test -f ${INNER_APP_DIR}/bash_profile && source ${INNER_APP_DIR}/bash_profile
-
-######### JVM CLASSPATH 路径，自动遍历 服务目录下的 lib
-if [[ "$(uname -s)" == "Darwin"  ]]; then
-  for i in "${APP_HOME}"/lib/*.jar; do
-     if [[ -z ${CW_CLASSPATH} ]]; then
-         CW_CLASSPATH="$i"
-     else
-         CW_CLASSPATH="$CW_CLASSPATH":"$i"
-     fi
-  done
-  CW_CLASSPATH=".:$CW_CLASSPATH:$APP_CONF_DIR"
-else
-  CW_CLASSPATH=".:$APP_CONF_DIR:${APP_HOME}/lib/*"
+# if no args specified, show usage
+if [ $# -ne 1 ]; then
+  echo $usage
+  exit 1
 fi
-######### END
 
-######### JVM 参数
-# 各服务独自维护 #
-JVM_OPTS="
- -server
- -Xms${INNER_JVM_HEAP_SIZE_MIN}
- -Xmx${INNER_JVM_HEAP_SIZE_MAX}
- -DlogDir=${APP_LOG_DIR}
- -Xss512k
- -XX:+PrintGCDetails
- -XX:+PrintGCDateStamps
- -XX:+UseG1GC
- -Xloggc:$APP_LOG_DIR/${APP_NAME}/gc-%t.log
- -XX:ErrorFile=$APP_LOG_DIR/${APP_NAME}/hs_err-%t.log
- -XX:+UseGCLogFileRotation
- -XX:NumberOfGCLogFiles=3
- -XX:GCLogFileSize=20m
- -Dfile.encoding=UTF-8
-"
-######### END
+cmd=$1
+shift
 
-######### 服务目录检查
-if [ ! -d $APP_HOME ]; then
-    echo "APP_HOME: $APP_HOME, Directory does not exist."
-    exit 1
+
+CLASS=com.cloudwise.lcap.LcapDataServer
+
+echo "Begin $cmd start......"
+
+BIN_DIR=`dirname $0`
+BIN_DIR=`cd "$BIN_DIR"; pwd`
+SERVER_HOME=$BIN_DIR/..
+
+export JAVA_HOME=$JAVA_HOME
+export HOSTNAME=`hostname`
+
+export SERVER_PID_DIR=$SERVER_HOME/logs
+export SERVER_LOG_DIR=$SERVER_HOME/logs
+export SERVER_CONF_DIR=$SERVER_HOME/conf
+export SERVER_LIB_JARS=$SERVER_HOME/lib/*
+
+if [ ! -d "$SERVER_LOG_DIR" ]; then
+  mkdir $SERVER_LOG_DIR
 fi
-if [ ! -d $APP_LOG_DIR ]; then
-    mkdir -p $APP_LOG_DIR
-fi
-######### END
 
-######### 调试模式
-# -l 参数设置脚本上级目录为服务目录, -f 前台启动
-opt_original=$@
-opts="$(echo $opt_original | tr ' ' '\n' | grep -Ev '\-l|\-f' | tr '\n' ' ')"
-if [[ "$@" == *"-l"* ]]; then
-    APP_HOME="$(cd ${CURRENT_DIR}/.. &>/dev/null && pwd)"
-    APP_LOG_DIR="${APP_HOME}/logs"
-    mkdir -p "${APP_HOME}/pid"
-    APP_PID_FILE="${APP_HOME}/pid/${APP_NAME}.pid"
-    INNER_DATA_DIR="${APP_HOME}/data"
-    app_local="-l"
-fi
-######### END
+log=$SERVER_LOG_DIR/server.out
+pid=$SERVER_PID_DIR/server.pid
 
-######### Java 命令检查
-if [ -n "$JAVA_HOME" ]; then
-    if [ -x "$JAVA_HOME/jre/sh/java" ]; then
-        JAVACMD="$JAVA_HOME/jre/sh/java"
-    else
-        JAVACMD="$JAVA_HOME/bin/java"
-    fi
-    if [ ! -x "$JAVACMD" ]; then
-        echo "ERROR: JAVA_HOME is set to an invalid directory: $JAVA_HOME"
-    fi
-else
-    JAVACMD="java"
-    which java >/dev/null 2>&1 || echo "ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH."
-fi
-######### END
+cd $SERVER_HOME
 
-######### 执行脚本用户判断
-user_id=$(id -u)
-if [ ${user_id} -eq 0 ]; then
-    runUser=$INNER_RUN_USER
-fi
-######### END
+JAVA_OPTS="-Xloggc:$SERVER_LOG_DIR/gc_memory_logs.log -Xms1g -Xmx1g -XX:+PrintGCDetails -XX:+PrintGCDateStamps
+-XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:NumberOfGCLogFiles=5 -XX:+UseGCLogFileRotation -XX:GCLogFileSize=20m"
 
-######### 服务状态检查
-alive() {
-    PID=$(cat $APP_PID_FILE 2>/dev/null)
-    PS_PID=$(ps -ef | grep $MAIN_CLASS | grep -v grep | awk '{print $2}')
-    ps -p $PID &>/dev/null
-    RETVAL=$?
-    ps -p $PS_PID &>/dev/null
-    PS_RETVAL=$?
-    PORT_CHECK_CMD="</dev/tcp/${INNER_LOCAL_IP}/${INNER_SERVICE_PORT}"
-    if $(echo ${PORT_CHECK_CMD} | bash &>/dev/null); then
-        PORT_RETVAL=0
-        echo $PS_PID >$APP_PID_FILE
-    else
-        PORT_RETVAL=1
-    fi
-    if [[ $port_check -eq 1 ]]; then
-        echo $PORT_RETVAL
-    elif [ $RETVAL -eq 0 ]; then
-        echo 0
-    elif [ $PS_RETVAL -eq 0 ]; then
-        echo 0
-        echo $PS_PID >$APP_PID_FILE
-    else
-        echo $RETVAL
-    fi
-}
-######### END
-
-######### 服务状态输出
-status() {
-    if [ $(alive) -eq 0 ]; then
-        echo "$APP_NAME [running]" | column -t
-    else
-        echo "$APP_NAME [not running]" | column -t
-    fi
-}
-#########
-
-######### 内部启动命令
-start_inside() {
-    shift
-    foreground=$1
-    if [ $(alive) -eq 0 ]; then
-        echo "$APP_NAME [running]" | column -t
-    elif [[ "$foreground" == "-f" ]]; then
-        cd $APP_HOME && $JAVACMD $JVM_OPTS -classpath $CW_CLASSPATH $MAIN_CLASS
-    else
-        cd $APP_HOME
-        # 具体的 java 启动命令
-        nohup $JAVACMD $JVM_OPTS -classpath $CW_CLASSPATH $MAIN_CLASS 1>/dev/null 2>&1 &
-        echo $! >$APP_PID_FILE
-        sleep 1
-        status
-    fi
-}
-######### END
-
-######### 启动服务
+# start function
 start() {
-    shift
-    foreground=$1
-    # 判断执行脚本的用户，执行相应逻辑
-    if [ ${user_id} -eq 0 ]; then
-        id ${runUser} &>/dev/null
-        if [ $? -ne 0 ]; then
-            useradd ${runUser}
-        fi
-        chown -R ${runUser}.${runUser} ${APP_HOME} &>/dev/null
-        chown -R ${runUser}.${runUser} ${APP_LOG_DIR} &>/dev/null
-        chown -R ${runUser}.${runUser} ${INNER_DATA_DIR}/${APP_NAME} &>/dev/null
-        su $runUser -c "$THIS_SCRIPT start_inside $foreground"
-    elif [[ "$(uname -s)" == "Darwin" ]]; then
-        $THIS_SCRIPT start_inside $foreground $app_local
-    else
-        $THIS_SCRIPT start_inside $foreground $app_local
-    fi
-}
-######### END
+  [ -w "$SERVER_PID_DIR" ] ||  mkdir -p "$SERVER_PID_DIR"
 
-######### 停止服务
+  if [ -f $pid ]; then
+    # kill -0, not kill in fact, only check if process is exist
+    if kill -0 `cat $pid` > /dev/null 2>&1; then
+      echo "$service running as process `cat $pid`, stop it first"
+      exit 1
+    fi
+  fi
+
+  echo "starting $service, logging to $log"
+
+  if [ -z $JAVA_HOME ]; then
+     exec_command="java $JAVA_OPTS -classpath $SERVER_CONF_DIR:$SERVER_LIB_JARS $CLASS"
+  else
+     exec_command="$JAVA_HOME/bin/java $JAVA_OPTS -classpath $SERVER_CONF_DIR:$SERVER_LIB_JARS $CLASS"
+  fi
+
+  echo "nohup $exec_command > $log 2>&1 < /dev/null &"
+  nohup $exec_command > $log 2>&1 < /dev/null &
+
+  if [ $? -ne 0 ]; then
+    echo "start failed"
+  else
+    echo $! > $pid
+    echo "start succeed, pid is `cat $pid`"
+  fi
+}
+
+# stop function
 stop() {
-    PID=$(cat $APP_PID_FILE 2>/dev/null)
-    kill $PID &>/dev/null
-    sleep 2
-    if [[ -z $PID ]];then
-        PID=$(ps -ef | grep $MAIN_CLASS | grep -v grep | awk '{print $2}')
-    fi
-    if [ $(alive) -eq 0 ]; then
-        kill -9 $PID &>/dev/null
-    fi
-    sleep 1
-    status
-    rm -f $APP_PID_FILE &>/dev/null
-}
-######### END
+  if [ -f $pid ]; then
+    TARGET_PID=`cat $pid`
 
-main() {
-    if [[ "$1" == "status" ]]; then
-        port_check=1
+    if kill -0 $TARGET_PID > /dev/null 2>&1; then
+      # echo "stopping $TARGET_PID"
+      # kill $TARGET_PID
+
+      # sleep for five seconds
+      # sleep 120
+
+      while kill -0 $TARGET_PID > /dev/null 2>&1;
+      do
+        echo "stopping $TARGET_PID"
+        kill $TARGET_PID
+        sleep 5
+      done
+
+      if kill -0 $TARGET_PID > /dev/null 2>&1; then
+        echo "$service did not stop gracefully after five seconds: killing with kill -9"
+        kill -9 $TARGET_PID
+      else
+        echo "kill $service successful"
+      fi
+    else
+      echo "no $service to stop"
     fi
-    case $1 in
-    start)
-        start $@
-        ;;
-    start_inside)
-        start_inside $@
-        ;;
-    stop)
-        stop
-        ;;
-    restart)
-        stop
-        start
-        ;;
-    status)
-        status
-        ;;
-    *) echo "usage: $0 [-l] [start [-f]|stop|restart|status|db [update|tag|rollback]]" ;;
-    esac
+
+    rm -f $pid
+  else
+    echo "no $service to stop"
+  fi
 }
-if [[ "$@" == *"-f"* ]]; then
-    main $opts -f
-else
-    main $opts
-fi
+
+case $cmd in
+  (start)
+    start
+    ;;
+
+  (stop)
+    stop
+    ;;
+
+  (restart)
+    stop
+    start
+    ;;
+
+  (*)
+    echo $usage
+    exit 1
+    ;;
+
+esac
+
+echo "End $cmd $service."
