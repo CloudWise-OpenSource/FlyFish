@@ -100,7 +100,7 @@ server {
   }
   # lcapWeb
   location / {
-    root  /data/app/FlyFish/lcapWeb/dist/;
+    root  /data/app/FlyFish/lcapWeb/lcapWeb/;
     index  index.html index.htm;
   }
 }
@@ -252,10 +252,13 @@ config_filename=config_filename
 # mongo数据源配置
 spring.application.name=lcapDataServer
 spring.main.allow-bean-definition-overriding=true
+# mongodb 有密码使用此配置
 spring.data.mongodb.host=${IP}
 spring.data.mongodb.port=${PORT}
 spring.data.mongodb.username=${USERNAME}
 spring.data.mongodb.password=${PASSWORD}
+# mongodb 没有密码使用此配置
+# spring.data.mongodb.uri=mongodb://${IP}:${PORT}
 spring.data.mongodb.database=flyfish
 spring.data.mongodb.authenticationDatabase=test
 spring.servlet.multipart.max-file-size=1024MB
