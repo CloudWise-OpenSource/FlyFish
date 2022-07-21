@@ -211,8 +211,12 @@ public class FileUtils {
     }
 
     public static void copyFolder(String sourceFolder,String[] excludePath , String destFolder) {
-        if (Arrays.asList(excludePath).contains(sourceFolder)){
-            return;
+        if (null != excludePath && excludePath.length > 0){
+            for (String path : excludePath) {
+                if (path.equalsIgnoreCase(sourceFolder)){
+                    return;
+                }
+            }
         }
         File file = new File(sourceFolder);
         if (!file.exists()) {
@@ -249,12 +253,17 @@ public class FileUtils {
                 }
             }
         } else if (file.isDirectory()) {
-            File file2 = new File(destFolder + File.separator + file.getName());
+            File file2 = new File(destFolder);
+            if (!file2.exists()){
+                file2.mkdirs();
+            }
             file2.mkdirs();
             //是文件夹，先创建同名文件夹
             File[] files = file.listFiles();
             for (File file1 : files) {
-                copyFolder(file1.getAbsolutePath(), excludePath, file2.getAbsolutePath());
+                if (!file1.getName().equals(excludePath)){
+                    copyFolder(file1.getAbsolutePath(), excludePath, file2.getAbsolutePath());
+                }
             }
         }
     }
