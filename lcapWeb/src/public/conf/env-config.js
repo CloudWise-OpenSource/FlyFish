@@ -8,7 +8,7 @@
 window.LCAP_CONFIG = (function () {
   //后端服务
   const hostname = '10.2.3.56';
-  const frontPort = '8089';
+  const fontPort = "8089";
   const backPort = '7001';
   //服务端目录
   const static_dir = '/data/app';
