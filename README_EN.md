@@ -114,28 +114,17 @@ $ git pull
 
 > FlyFish 2022 Roadmap
 
-### System
-
-- Support the creation of grid canvas applications
-- Support responsive layout
-- Newly added form application
-
 ### Data Source
 
 - Newly added data source management
 - Support docking MySql, MongoDB,Redis or Postgres for data storage
-- Support the data source of HTTP API
-- Support model building for data sources
+- - Support model building for data sources
 
 ### Data Processing
 
 - Support SQL query by data sheet
 - Support query visualization
 - Newly added complex data processing
-
-### User Management
-
-- User management and authority control
 
 ## Components
 [FlyFishComponents](https://github.com/CloudWise-OpenSource/FlyFishComponents)
