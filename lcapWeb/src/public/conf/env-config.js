@@ -9,7 +9,7 @@ window.LCAP_CONFIG = (function () {
   //后端服务
   const hostname = 'IP';
   const fontPort = "8089";
-  const backPort = '7001';
+  const backPort = '';
   //服务端目录
   const static_dir = '/data/app/FlyFish/lcapWeb/lcapWeb';
   //协议
@@ -17,7 +17,7 @@ window.LCAP_CONFIG = (function () {
   //www路径
   const common_dir = 'www';
   //code-server端口
-  const code_port = '8081';
+  const code_port = '';
 
   let config = {
     basename: 'lcap', // 路由统一前缀，注册为微服务后必须有唯一值
@@ -43,7 +43,7 @@ window.LCAP_CONFIG = (function () {
     vscodeFolderPrefix: `${static_dir}/${common_dir}`,
     vscodeAddress: code_port
       ? `${httpProtocol}://${hostname}:${code_port}`
-      : `${httpProtocol}://${hostname}`,
+      : '/lcapCode',
   };
   return config;
 })();

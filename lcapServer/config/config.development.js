@@ -8,9 +8,9 @@ const path = require('path');
  */
 module.exports = appInfo => {
   // 静态目录 eg:  /data/app/lcapWeb
-  const staticDir = path.join(__dirname, '/data/app/lcapWeb');
+  const staticDir = '/data/app/FlyFish/lcapWeb/lcapWeb';
   // 组件开发目录, 默认www, 配置staticDir使用，eg: /data/app/lcapWeb/www
-  const commonDirPath = '/data/app/lcapWeb/www';
+  const commonDirPath = 'www';
   // 数据目录 eg:  /data/appData
   const dataBaseDir = path.join(__dirname, '../../../appData');
   // 日志目录 eg:  /data/logs

@@ -119,7 +119,7 @@ deploy_flyfish_web() {
   npm install
   npm run build
 
-  sed -i "s/127.0.0.1/$local_ip/g" ./lcapWeb/conf/env-config.js
+  sed -i "s/IP/$local_ip/g" ./lcapWeb/conf/env-config.js
 
   # 提示缺少 conf.d
   cd /
@@ -296,7 +296,7 @@ reinstall_flyfish() {
   npm install --production --unsafe-perm=true --allow-root
   npm run development
   
-  sed -i "s/IP/$local_ip/g" /data/app/FlyFish/lcapWww/web/screen/config/env.js
+  # sed -i "s/IP/$local_ip/g" /data/app/FlyFish/lcapWww/web/screen/config/env.js
 
   echo "部署后端结束。"
 
