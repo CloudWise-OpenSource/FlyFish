@@ -43,7 +43,7 @@ get_local_ip() {
 }
 
 function init_system() {
-  echo "开始准备环境：git node.js nvm pm2 mongodb nginx"
+  echo "开始准备环境：git node.js nvm pm2 mongodb nginx maven jdk"
 
   echo "start install git"
   yum install git -y
@@ -100,14 +100,8 @@ function init_system() {
   source  /etc/profile
 
   cp /usr/local/apache-maven-3.6.3/conf/settings.xml /usr/local/apache-maven-3.6.3/conf/settings_bak.xml
-  mvn_xml = /usr/local/apache-maven-3.6.3/conf/settings.xml
-  sed -i 's/<mirrors>/&
-    <mirror>
-      <id>aliyunmaven</id>
-      <mirrorOf>*</mirrorOf>
-      <name>阿里云公共仓库</name>
-      <url>https://maven.aliyun.com/repository/public</url>
-    </mirror>/' $mvn_xml
+  rm -rf /usr/local/apache-maven-3.6.3/conf/settings.xml
+  cp /data/app/FlyFish/shell_tpl/settings.xml /usr/local/apache-maven-3.6.3/conf/
   
   echo "start install jdk"
   yum install java-1.8.0-openjdk-devel.x86_64 -y
@@ -125,7 +119,7 @@ deploy_flyfish_web() {
   npm install
   npm run build
 
-  sed -i "s/127.0.0.1/$local_ip/g" ./dist/conf/env-config.js
+  sed -i "s/127.0.0.1/$local_ip/g" ./lcapWeb/conf/env-config.js
 
   # 提示缺少 conf.d
   cd /
@@ -133,7 +127,7 @@ deploy_flyfish_web() {
   if [ ! -d "$tempPath" ]; then
     mkdir $tempPath
   fi
-  cp /data/app/FlyFish/flyfish.conf /etc/nginx/conf.d/
+  cp /data/app/FlyFish/shell_tpl/flyfish.conf /etc/nginx/conf.d/
 
   sed -i "s/IP/$local_ip/g" /etc/nginx/conf.d/flyfish.conf
 
@@ -151,7 +145,7 @@ deploy_flyfish_server() {
   npm install --production
 
   echo "开始初始化数据库："
-  cd lcapServer/changelog
+  cd /data/app/FlyFish/lcapServer/changelog
   NODE_ENV=development node ./scripts/initDatabase.js
   echo "初始化数据库结束。"
 
