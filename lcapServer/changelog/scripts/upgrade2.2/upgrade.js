@@ -4,6 +4,7 @@ const config = require('config');
 const { MongoClient, ObjectId } = require('mongodb');
 const util = require('util');
 const fs = require('fs');
+const _ = require('lodash');
 const exec = util.promisify(require('child_process').exec);
 
 const mongoUrl = config.get('mongoose.clients.flyfish.url');
@@ -21,7 +22,8 @@ let mongoClient,
     await init();
 
     await upgradeMenu();
-    await upgradeWww();
+    await upgradeAdminRole();
+    // await upgradeWww();
   } catch (error) {
     console.log(error.stack || error);
   } finally {
@@ -34,6 +36,61 @@ async function init() {
   mongoClient = new MongoClient(mongoUrl);
   await mongoClient.connect();
   db = mongoClient.db('flyfish');
+}
+
+async function upgradeAdminRole() {
+  const adminRoleInfo = await db.collection('roles').findOne({ name: '管理员' });
+  if (!_.isEmpty(adminRoleInfo)) {
+    const menus = [
+      {
+        name: '应用创建',
+        url: '/app',
+        index: 1,
+      },
+      {
+        name: '项目管理',
+        url: '/app/project-manage',
+        index: 2,
+      },
+      {
+        name: '应用开发',
+        url: '/app/apply-develop',
+        index: 3,
+      },
+      {
+        name: '组件列表',
+        url: '/app/component-develop',
+        index: 4,
+      },
+      {
+        name: '数据源管理',
+        url: '/data',
+        index: 5,
+      },
+      {
+        name: '数据查询',
+        url: '/data-search',
+        index: 6,
+      },
+      {
+        name: '用户管理',
+        url: '/user',
+        index: 7,
+      },
+      {
+        name: '用户列表',
+        url: '/user/user-manage',
+        index: 8,
+      },
+      {
+        name: '角色列表',
+        url: '/user/role-manage',
+        index: 9,
+      },
+    ];
+    await db.collection('roles').updateOne({ _id: adminRoleInfo._id }, { $set: { menus } });
+    console.log('upgrade role success');
+  }
 }
 
 async function upgradeMenu() {
