@@ -11,7 +11,7 @@
 'use strict';
 
 window.DATAVI_ENV = (function() {
-  const apiDomain = '/gateway/lcap';
+  const apiDomain = '/api';
 
   return {
     debug: true,
@@ -31,9 +31,9 @@ window.DATAVI_ENV = (function() {
       getModelList: '/applications/getModelList', // 获取模型列表
       getModelData: '/applications/getModelData', // 获取模型数据
       getScreenComponentList: '/applications/components/list',
-      getDataSearchData: 'http://${CW_LOCAL_IP}:${CW_LOCAL_PORT}/gateway/lcap-data-server/api/dataplateform/unit/query', // 获取数据查询数据
-      getDataSearch: 'http://${CW_LOCAL_IP}:${CW_LOCAL_PORT}/gateway/lcap-data-server/api/dataplateform/unit/findAll',
-      httpProxy: 'http://${CW_LOCAL_IP}:${CW_LOCAL_PORT}/gateway/lcap-data-server/api/dataplateform/apiProxy', // http代理服务
+      getDataSearchData: 'http://${CW_LOCAL_IP}:${CW_LOCAL_PORT}/lcap-data-server/api/dataplateform/unit/query', // 获取数据查询数据
+      getDataSearch: 'http://${CW_LOCAL_IP}:${CW_LOCAL_PORT}/lcap-data-server/api/dataplateform/unit/findAll',
+      httpProxy: 'http://${CW_LOCAL_IP}:${CW_LOCAL_PORT}/lcap-data-server/api/dataplateform/apiProxy', // http代理服务
     },
   };
 }());

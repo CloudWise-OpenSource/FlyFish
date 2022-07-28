@@ -100,7 +100,7 @@ server {
   }
   # lcapWeb
   location / {
-    root  /data/app/FlyFish/lcapWeb/dist/;
+    root  /data/app/FlyFish/lcapWeb/lcapWeb/;
     index  index.html index.htm;
   }
 }
@@ -165,9 +165,22 @@ serverPort -> 服务port eg: 7001
 mongodbIp -> monggodbIp eg: '127.0.0.1'
 mongodbPort -> mongodbPort eg: '127.0.0.1'
 
-// 非必须
+// 非必须 如mongodb没有username和password，请使用//将username和password注释掉
 mongodbUsername -> mongodbUsername eg: 'admin'
 mongodbPassword -> mongodbPassword eg: 'admin'
+
+// mongodb没有username和password，使用第一个url配置
+config.mongoose = {
+    clients: {
+      flyfish: {
+        // url: `mongodb://${mongodbIp}:${mongodbPort}/flyfish`,
+        url: `mongodb://${mongodbUsername}:${mongodbPassword}@${mongodbIp}:${mongodbPort}/flyfish?authSource=test`,
+        options: {
+          useUnifiedTopology: true,
+        },
+      },
+    },
+  };
 
 // chrome 端口，用于自动生成组件、应用缩略图服务，默认9222
 chromePort -> chrome无头浏览器port eg: 9222
@@ -210,6 +223,7 @@ vim /data/app/FlyFish/lcapWeb/lcapWeb/www/web/screen/config/env.js
 # 修改为当前主机IP
 # const apiDomain = 'http://IP:7001';
 # 例如：const apiDomain = 'http://127.0.0.1:7001';
+# http://${CW_LOCAL_IP}:${CW_LOCAL_PORT} 做替换
 ```
 
 > lcapDataserver源码部署
@@ -243,8 +257,8 @@ vim ./conf/application.properties
 
 # 应用/组件导入导出相关配置，导入导出时需要用到web端的应用/组件源码,所以请设置对应的路径
 file.basepath=/data/app/FlyFish/lcapWeb/www
-application_basepath=/data/app/FlyFish/lcapWeb/www/applications
-component_basepath=/data/app/FlyFish/lcapWeb/www/components
+application_basepath=/data/app/FlyFish/lcapWeb/lcapWeb/www/applications
+component_basepath=/data/app/FlyFish/lcapWeb/lcapWeb/www/components
 component_down_tmp_basepath=/data/appData/lcapDataServer/down_tmp_basepath
 component_upload_tmp_basepath=/data/appData/lcapDataServer/upload_tmp_basepath
 config_filename=config_filename
@@ -254,6 +268,7 @@ spring.application.name=lcapDataServer
 spring.main.allow-bean-definition-overriding=true
 spring.data.mongodb.host=${IP}
 spring.data.mongodb.port=${PORT}
+# 如mongodb没有username和password，请使用#将username和password注释掉
 spring.data.mongodb.username=${USERNAME}
 spring.data.mongodb.password=${PASSWORD}
 spring.data.mongodb.database=flyfish
