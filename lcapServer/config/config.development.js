@@ -8,19 +8,19 @@ const path = require('path');
  */
 module.exports = appInfo => {
   // 静态目录 eg:  /data/app/lcapWeb
-  const staticDir = path.join(__dirname, '../../lcapWeb');
+  const staticDir = path.join(__dirname, '/data/app/lcapWeb');
   // 组件开发目录, 默认www, 配置staticDir使用，eg: /data/app/lcapWeb/www
-  const commonDirPath = 'www';
+  const commonDirPath = '/data/app/lcapWeb/www';
   // 数据目录 eg:  /data/appData
   const dataBaseDir = path.join(__dirname, '../../../appData');
   // 日志目录 eg:  /data/logs
   const logsBaseDir = path.join(__dirname, '../../logs');
 
-  const serverIp = '127.0.0.1';
+  const serverIp = '0.0.0.0';
   const serverPort = 7001;
 
-  const mongodbIp = '10.2.3.223';
-  const mongodbPort = 18017;
+  const mongodbIp = '127.0.0.1';
+  const mongodbPort = 27017;
   const mongodbUsername = 'admin';
   const mongodbPassword = encodeURIComponent('Yzh@redis_123');
 
@@ -47,8 +47,8 @@ module.exports = appInfo => {
   config.mongoose = {
     clients: {
       flyfish: {
-        // url: `mongodb://${mongodbIp}:${mongodbPort}/flyfish`,
-        url: `mongodb://${mongodbUsername}:${mongodbPassword}@${mongodbIp}:${mongodbPort}/flyfish?authSource=test`,
+        url: `mongodb://${mongodbIp}:${mongodbPort}/flyfish`,
+        // url: `mongodb://${mongodbUsername}:${mongodbPassword}@${mongodbIp}:${mongodbPort}/flyfish?authSource=test`,
         options: {
           useUnifiedTopology: true,
         },
