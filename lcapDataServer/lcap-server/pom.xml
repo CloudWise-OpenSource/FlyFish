@@ -291,13 +291,19 @@
                 </executions>
                 <configuration>
                     <!-- 使properties扩展到整个maven bulid 周期 Ref: https://github.com/ktoso/maven-git-commit-id-plugin/issues/280 -->
+                     <!-- 使properties扩展到整个maven bulid 周期 Ref: https://github.com/ktoso/maven-git-commit-id-plugin/issues/280 -->
                     <injectAllReactorProjects>true</injectAllReactorProjects>
-                    <dateFormat>yyyyMMddHHmmss</dateFormat>
                     <verbose>true</verbose>
                     <!-- 是否生 git.properties 属性文件 -->
                     <generateGitPropertiesFile>true</generateGitPropertiesFile>
+                    <prefix>git</prefix>
+                    <format>properties</format>
+                    <dateFormat>yyyyMMddHHmmss</dateFormat>
                     <generateGitPropertiesFilename>${project.basedir}/src/main/resources/git.properties</generateGitPropertiesFilename>
-                    <!--git描述配置,可选;由JGit提供实现; -->
+                    <dotGitDirectory>../../.git</dotGitDirectory>
+                    <failOnNoGitDirectory>false</failOnNoGitDirectory>
+                    <!--@since 2.1.5 默认true,默认情况下，如果插件无法获取足够的数据来完成,跳过执行该插件。-->
+                    <failOnUnableToExtractRepoInfo>false</failOnUnableToExtractRepoInfo>
                     <gitDescribe>
                         <!--是否生成描述属性 -->
                         <skip>false</skip>
