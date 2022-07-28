@@ -7,17 +7,17 @@
  */
 window.LCAP_CONFIG = (function () {
   //后端服务
-  const hostname = '10.2.3.56';
+  const hostname = 'IP';
   const fontPort = "8089";
   const backPort = '7001';
   //服务端目录
-  const static_dir = '/data/app';
+  const static_dir = '/data/app/FlyFish/lcapWeb/lcapWeb';
   //协议
   const httpProtocol = 'http';
   //www路径
-  const common_dir = 'lcapWeb/www';
+  const common_dir = 'www';
   //code-server端口
-  const code_port = '';
+  const code_port = '8081';
 
   let config = {
     basename: 'lcap', // 路由统一前缀，注册为微服务后必须有唯一值

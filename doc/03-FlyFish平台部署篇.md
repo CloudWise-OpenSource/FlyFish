@@ -39,15 +39,15 @@ fontPort = 8089
 # server端部署的端口
 backPort = 7001
 # code-server访问静态资源时的路径前缀
-static_dir = '/data/app/FlyFish'
+static_dir = '/data/app/FlyFish/lcapWeb/lcapWeb'
 # 静态资源的代理路径，与nginx配置要匹配
-common_dir = 'lcapWeb/www'
-# api请求前缀，与nginx配置匹配
+common_dir = 'www'
+# api请求前缀，与nginx配置匹配
 apiDomain :'/api'
 # java服务api请求前缀，与nginx配置匹配
 javaApiDomain : '/lcap-data-server'
 # code-server部署端口
-code_port = 3001
+code_port = 8081
 # 组件平台是否拆分，默认为false
 isSplitComponentModule : false
 # 是否独立部署api,默认为false

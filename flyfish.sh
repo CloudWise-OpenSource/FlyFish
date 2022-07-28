@@ -157,9 +157,9 @@ deploy_flyfish_server() {
 
   # sed -i "s/IP/$local_ip/g" /data/app/FlyFish/lcapWww/web/screen/config/env.js
   echo "lcapDataServer部署："
-  cd /data/app/FlyFish/lcapDataServer && mvn clean package -Dmaven.test.skip=true -am -pl lcap-server
+  cd /data/app/FlyFish/lcapDataServer && mvn clean package -Dmaven.test.skip=true -Dmaven.gitcommitid.skip=true -am -pl lcap-server
   cd ./lcap-server/target
-  tar -zxvf ./lcapDataServer-\$\{version\}-\$\{datetime\}-\$\{git_commit_id\}.tar.gz
+  tar -zxvf lcapDataServer-\$\{git.build.version\}-\$\{git.commit.time\}-\$\{git.commit.id.abbrev\}.tar.gz
   cd ./lcapDataServer
   ./bin/lcapDataServer start
 
