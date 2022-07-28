@@ -48,18 +48,7 @@ function init_system() {
   echo "start install git"
   yum install git -y
   yum install at-spi2-atk libxkbcommon nss -y
-
-  # echo "start install node.js"
-  # mkdir -p /usr/local/node/
-  # cd /usr/local/node/
-  # wget -c https://nodejs.org/dist/v14.9.0/node-v14.9.0-linux-x64.tar.xz
-  # tar -xvf node-v14.9.0-linux-x64.tar.xz
-  # rm -rf node-v14.9.0-linux-x64.tar.xz
-  # echo "export NODE_HOME=/usr/local/node/node-v14.9.0-linux-x64" >>/etc/profile
-  # echo 'export PATH=$NODE_HOME/bin:$PATH' >>/etc/profile
-  # source /etc/profile
-  # npm config set registry=https://registry.npmmirror.com
-  # echo "node版本：" $(node -v)
+  yum install wget -y
 
   echo "start install nvm"
   cd ~
@@ -101,6 +90,32 @@ function init_system() {
   yum install -y nginx-1.20.1
   systemctl enable nginx
   systemctl start nginx
+
+  echo "start install maven"
+  wget https://dlcdn.apache.org/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz --no-check-certificate
+  mkdir -p /usr/local
+  tar -zxvf apache-maven-3.6.3-bin.tar.gz -C /usr/local
+  echo "export M2_HOME=/usr/local/apache-maven-3.6.3" >>/etc/profile
+  echo 'export PATH=$PATH:$M2_HOME/bin' >>/etc/profile
+  source  /etc/profile
+
+  cp /usr/local/apache-maven-3.6.3/conf/settings.xml /usr/local/apache-maven-3.6.3/conf/settings_bak.xml
+  mvn_xml = /usr/local/apache-maven-3.6.3/conf/settings.xml
+  sed -i 's/<mirrors>/&
+    <mirror>
+      <id>aliyunmaven</id>
+      <mirrorOf>*</mirrorOf>
+      <name>阿里云公共仓库</name>
+      <url>https://maven.aliyun.com/repository/public</url>
+    </mirror>/' $mvn_xml
+  
+  echo "start install jdk"
+  yum install java-1.8.0-openjdk-devel.x86_64 -y
+  echo 'export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.332.b09-1.el7_9.x86_64' >>/etc/profile
+  echo 'export JRE_HOME=$JAVA_HOME/jre' >>/etc/profile
+  echo 'export PATH=$PATH:$JAVA_HOME/bin:$JRE_HOME/bin' >>/etc/profile
+  source  /etc/profile
+
   echo "初始化环境结束。"
 }
 
@@ -118,11 +133,9 @@ deploy_flyfish_web() {
   if [ ! -d "$tempPath" ]; then
     mkdir $tempPath
   fi
-  cd /data/app/FlyFish/lcapWeb
+  cp /data/app/FlyFish/flyfish.conf /etc/nginx/conf.d/
 
-  cp FlyFish-2.1.0.conf /etc/nginx/conf.d/FlyFish-2.1.0.conf
-
-  sed -i "s/IP/$local_ip/g" /etc/nginx/conf.d/FlyFish-2.1.0.conf
+  sed -i "s/IP/$local_ip/g" /etc/nginx/conf.d/flyfish.conf
 
   systemctl restart nginx
 
@@ -135,20 +148,26 @@ deploy_flyfish_server() {
   npm install
 
   cd /data/app/FlyFish/lcapServer/
-  npm install --production --unsafe-perm=true --allow-root
+  npm install --production
 
   echo "开始初始化数据库："
-  npm run init-development-database
+  cd lcapServer/changelog
+  NODE_ENV=development node ./scripts/initDatabase.js
   echo "初始化数据库结束。"
 
   npm run development
 
   echo "初始化组件开发环境:"
-  cd /data/app/FlyFish/lcapWww/components
+  cd /data/app/FlyFish/lcapWeb/lcapWeb/www/components
   npm install
 
-  echo "初始化大屏开发环境:"
-  sed -i "s/IP/$local_ip/g" /data/app/FlyFish/lcapWww/web/screen/config/env.js
+  # sed -i "s/IP/$local_ip/g" /data/app/FlyFish/lcapWww/web/screen/config/env.js
+  echo "lcapDataServer部署："
+  cd /data/app/FlyFish/lcapDataServer && mvn clean package -Dmaven.test.skip=true -am -pl lcap-server
+  cd ./lcap-server/target
+  tar -zxvf ./lcapDataServer-\$\{version\}-\$\{datetime\}-\$\{git_commit_id\}.tar.gz
+  cd ./lcapDataServer
+  ./bin/lcapDataServer start
 
   echo "部署后端结束。"
 }
