@@ -23,7 +23,7 @@ let mongoClient,
 
     await upgradeMenu();
     await upgradeAdminRole();
-    // await upgradeWww();
+    await upgradeWww();
   } catch (error) {
     console.log(error.stack || error);
   } finally {
