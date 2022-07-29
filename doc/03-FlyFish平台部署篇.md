@@ -96,7 +96,7 @@ server {
   }
   # 静态资源代理
   location /lcapWeb/www {
-    root  /data/app/FlyFish;
+    root  /data/app/FlyFish/lcapWeb/lcapWeb/www;
   }
   # lcapWeb
   location / {
