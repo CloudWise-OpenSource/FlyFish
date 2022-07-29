@@ -49,7 +49,6 @@ const model = {
                 type: this.type || '2D',
                 curPage: this.curPage,
                 pageSize: this.pageSize,
-                isLib: true,
                 ...this.searchParams,
                 ...params
             };
