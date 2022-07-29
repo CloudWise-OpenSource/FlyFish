@@ -39,7 +39,7 @@ fontPort = 8089
 # server端部署的端口
 backPort = 7001
 # code-server访问静态资源时的路径前缀
-static_dir = '/data/app/FlyFish'
+static_dir = '/data/app/FlyFish/lcapWeb'
 # 静态资源的代理路径，与nginx配置要匹配
 common_dir = 'lcapWeb/www'
 # api请求前缀，与nginx配置匹配
@@ -155,7 +155,7 @@ cd lcapServer
 vim ./config/config.development.js
 
 staticDir -> 静态目录 eg:  /data/app/lcapWeb
-commonDirPath -> 组件开发目录, 默认www, 配置staticDir使用，eg: /data/app/lcapWeb/www
+commonDirPath -> 组件开发目录, 默认www, 配置staticDir使用，eg: /data/app/lcapWeb/lacpWeb/www
 dataBaseDir -> 数据目录 eg:  /data/appData
 logsBaseDir -> 日志目录 eg:  /data/logs
 
