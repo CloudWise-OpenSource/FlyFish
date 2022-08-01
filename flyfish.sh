@@ -45,15 +45,14 @@ get_local_ip() {
 function init_system() {
   echo "开始准备环境：git node.js nvm pm2 mongodb nginx maven jdk"
 
-  echo "start install git"
-  yum install git -y
-  yum install at-spi2-atk libxkbcommon nss -y
-  yum install wget -y
+  echo "start install wget"
+  yum install at-spi2-atk libxkbcommon nss wget -y
 
   echo "start install nvm"
   cd ~
-  git clone -b v0.39.1 https://gitee.com/mirrors/nvm
-  $(source nvm/nvm.sh)
+
+  git clone -b v0.39.1 --depth=1 https://gitee.com/mirrors/nvm
+
   echo "source ~/nvm/nvm.sh" >>~/.bashrc
   source ~/.bashrc
   NVM_NODEJS_ORG_MIRROR=https://npmmirror.com/mirrors/node
@@ -92,23 +91,23 @@ function init_system() {
   systemctl start nginx
 
   echo "start install maven"
-  wget https://dlcdn.apache.org/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz --no-check-certificate
+  wget https://mirrors.tuna.tsinghua.edu.cn/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz --no-check-certificate
   mkdir -p /usr/local
   tar -zxvf apache-maven-3.6.3-bin.tar.gz -C /usr/local
   echo "export M2_HOME=/usr/local/apache-maven-3.6.3" >>/etc/profile
   echo 'export PATH=$PATH:$M2_HOME/bin' >>/etc/profile
-  source  /etc/profile
+  source /etc/profile
 
   cp /usr/local/apache-maven-3.6.3/conf/settings.xml /usr/local/apache-maven-3.6.3/conf/settings_bak.xml
   rm -rf /usr/local/apache-maven-3.6.3/conf/settings.xml
   cp /data/app/FlyFish/shell_tpl/settings.xml /usr/local/apache-maven-3.6.3/conf/
   
   echo "start install jdk"
-  yum install java-1.8.0-openjdk-devel.x86_64 -y
-  echo 'export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.332.b09-1.el7_9.x86_64' >>/etc/profile
+  yum install java-1.8.0-openjdk.x86_64 java-1.8.0-openjdk-devel.x86_64 -y
+  echo 'export JAVA_HOME=/usr/lib/jvm/jre-1.8.0-openjdk-1.8.0.342.b07-1.el7_9.x86_64' >>/etc/profile
   echo 'export JRE_HOME=$JAVA_HOME/jre' >>/etc/profile
   echo 'export PATH=$PATH:$JAVA_HOME/bin:$JRE_HOME/bin' >>/etc/profile
-  source  /etc/profile
+  source /etc/profile
 
   echo "初始化环境结束。"
 }
@@ -119,7 +118,7 @@ deploy_flyfish_web() {
   npm install
   npm run build
 
-  sed -i "s/IP/$local_ip/g" ./lcapWeb/conf/env-config.js
+  sed -i "s/local_ip/$local_ip/g" ./lcapWeb/conf/env-config.js
 
   # 提示缺少 conf.d
   cd /
@@ -149,8 +148,8 @@ deploy_flyfish_server() {
   NODE_ENV=development node ./scripts/initDatabase.js
   echo "初始化数据库结束。"
 
-  npm run development
-
+  cd /data/app/FlyFish/lcapServer/ && npm run development
+  
   echo "初始化组件开发环境:"
   cd /data/app/FlyFish/lcapWeb/lcapWeb/www/components
   npm install

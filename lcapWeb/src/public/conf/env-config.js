@@ -7,7 +7,7 @@
  */
 window.LCAP_CONFIG = (function () {
   //后端服务
-  const hostname = 'IP';
+  const hostname = 'local_ip';
   const fontPort = "8089";
   const backPort = '';
   //服务端目录
