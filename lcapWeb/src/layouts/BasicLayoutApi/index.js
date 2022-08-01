@@ -221,7 +221,7 @@ const Layout = observer((props) => {
           <span style={{ fontSize: '16px', marginLeft: '8px' }}>智能业务运维</span>
         </div>
       }
-      headerTitle='低代码开发平台LCAP'
+      headerTitle='低代码开发平台FlyFish'
       showHead={!window.isInPortal} // 嵌入大屏的不显示头部
       showTopNavigation={false}
       customContent={false}

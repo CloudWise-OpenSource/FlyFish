@@ -31,7 +31,7 @@ window.LCAP_CONFIG = (function () {
     wwwAddress: `${common_dir}`,
     snapshotAddress: backPort
       ? `${httpProtocol}://${hostname}:${backPort}`
-      : `${httpProtocol}://${hostname}`,
+      : `${httpProtocol}://${hostname}:${fontPort}`,
 
     apiDomain: '/api',//api代理
     javaApiDomain: '/lcap-data-server',
