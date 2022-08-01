@@ -52,7 +52,7 @@ function init_system() {
 
   echo "start install nvm"
   cd ~
-  git clone https://gitee.com/mirrors/nvm
+  git clone -b v0.39.1 https://gitee.com/mirrors/nvm
   $(source nvm/nvm.sh)
   echo "source ~/nvm/nvm.sh" >>~/.bashrc
   source ~/.bashrc
