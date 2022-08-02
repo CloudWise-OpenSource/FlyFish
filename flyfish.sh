@@ -154,7 +154,6 @@ deploy_flyfish_server() {
   cd /data/app/FlyFish/lcapWeb/lcapWeb/www/components
   npm install
 
-  # sed -i "s/IP/$local_ip/g" /data/app/FlyFish/lcapWww/web/screen/config/env.js
   echo "lcapDataServer部署："
   cd /data/app/FlyFish/lcapDataServer && mvn clean package -Dmaven.test.skip=true -Dmaven.gitcommitid.skip=true -am -pl lcap-server
   cd ./lcap-server/target
@@ -209,6 +208,8 @@ stop_flyfish() {
   echo "停止运行FlyFish后端："
   cd /data/app/FlyFish/lcapServer/
   npm run stop
+  cd /data/app/FlyFish/lcapDataServer/lcap-server/target/lcapDataServer
+  ./bin/lcapDataServer stop
 
   echo "停止运行Code Server:"
   cd /data/app/FlyFish/lcapCodeServer/
@@ -217,7 +218,7 @@ stop_flyfish() {
 }
 
 remove_system() {
-  echo "开始移除基础环境：nginx mongodb pm2 node.js nvm"
+  echo "开始移除基础环境：nginx mongodb pm2 node.js nvm maven jdk"
 
   echo "start uninstall nginx"
   # systemctl stop nginx
@@ -244,6 +245,13 @@ remove_system() {
   cd ~
   rm -rf nvm
   sed -i '/nvm/d' ~/.bashrc
+
+  echo "start uninstall maven && jdk"
+  yum remove -y maven
+  yum -y remove java-1.8.0-openjdk.x86_64 java-1.8.0-openjdk-devel.x86_64 tzdata-java.noarch
+  sed -i '/M2_HOME/d' /etc/profile
+  sed -i '/JAVA_HOME/d' /etc/profile
+  sed -i '/JRE_HOME/d' /etc/profile
 
   echo "基础环境移除完毕。"
 }
@@ -283,54 +291,35 @@ get_source_code() {
 
 }
 
-reinstall_flyfish() {
+# function update_flyfish() {
+#   read -p "是否更新FlyFish？是(Y)，否（N）" value
 
-  # Update FlyFish-2.1.2
-  systemctl start nginx
-  rm -rf /etc/nginx/conf.d/FlyFish-2.1.0.conf
-  deploy_flyfish_web
+#   if [[ $value == "Y" ]] || [[ $value == "y" ]]; then
 
-  echo "开始部署FLyFish后端："
-  cd /data/app/FlyFish/lcapServer/
-  npm install --production --unsafe-perm=true --allow-root
-  npm run development
-  
-  # sed -i "s/IP/$local_ip/g" /data/app/FlyFish/lcapWww/web/screen/config/env.js
+#     get_local_ip
 
-  echo "部署后端结束。"
+#     stop_flyfish
 
-  deploy_flyfish_code_server
+#     reinstall_flyfish
 
-}
+#     echo_flyfish_info
 
-function update_flyfish() {
-  read -p "是否更新FlyFish？是(Y)，否（N）" value
-
-  if [[ $value == "Y" ]] || [[ $value == "y" ]]; then
-
-    get_local_ip
-
-    stop_flyfish
-
-    reinstall_flyfish
-
-    echo_flyfish_info
-
-    echo "更新成功！"
-    exit 1
-  elif [[ $value == "N" ]] || [[ $value == "n" ]]; then
-    echo "取消更新！"
-    exit 1
-  else
-    echo "请输入Y或者N"
-    exit 1
-  fi
-}
+#     echo "更新成功！"
+#     exit 1
+#   elif [[ $value == "N" ]] || [[ $value == "n" ]]; then
+#     echo "取消更新！"
+#     exit 1
+#   else
+#     echo "请输入Y或者N"
+#     exit 1
+#   fi
+# }
 
 check_user
 
 if [[ $# -eq 0 ]]; then
-  echo "bash flyfish.sh [ install | uninstall | update ]"
+  echo "bash flyfish.sh [ install | uninstall ]"
+  # echo "bash flyfish.sh [ install | uninstall | update ]"
 else
   case $1 in
   install)
@@ -341,9 +330,9 @@ else
     shift
     uninstall_flyfish
     ;;
-  update)
-    shift
-    update_flyfish
-    ;;
+  # update)
+  #   shift
+  #   update_flyfish
+  #   ;;
   esac
 fi
