@@ -120,7 +120,7 @@ deploy_flyfish_web() {
   npm run build
 
   sed -i "s/local_ip/$local_ip/g" ./lcapWeb/conf/env-config.js
-  sed -i "s/PRO_PATH/${PROJECT_PATH}/g" ./lcapWeb/conf/env-config.js
+  sed -i "s|PRO_PATH|${PROJECT_PATH}|g" ./lcapWeb/conf/env-config.js
 
   # 提示缺少 conf.d
   cd /
@@ -131,7 +131,7 @@ deploy_flyfish_web() {
   cp ${PROJECT_PATH}/shell_tpl/flyfish.conf /etc/nginx/conf.d/
 
   sed -i "s/IP/$local_ip/g" /etc/nginx/conf.d/flyfish.conf
-  sed -i "s/PRO_PATH/${PROJECT_PATH}/g" /etc/nginx/conf.d/flyfish.conf
+  sed -i "s|PRO_PATH|${PROJECT_PATH}|g" /etc/nginx/conf.d/flyfish.conf
 
   systemctl restart nginx
 
@@ -140,9 +140,9 @@ deploy_flyfish_web() {
 
 deploy_flyfish_server() {
 
-  sed -i "s/PRO_PATH/${PROJECT_PATH}/g" ${PROJECT_PATH}/lcapServer/config/config.development.js
-  sed -i "s/PRO_PATH/${PROJECT_PATH}/g" ${PROJECT_PATH}/lcapServer/lib/chrome-linux/fonts/fonts.conf
-  
+  sed -i "s|PRO_PATH|${PROJECT_PATH}|g" ${PROJECT_PATH}/lcapServer/config/config.development.js
+  sed -i "s|PRO_PATH|${PROJECT_PATH}|g" ${PROJECT_PATH}/lcapServer/lib/chrome-linux/fonts/fonts.conf
+
   cd ${PROJECT_PATH}/lcapServer/lib/chrome-linux/
   unzip ./chrome-core.zip
 
@@ -164,8 +164,8 @@ deploy_flyfish_server() {
   cd ${PROJECT_PATH}/lcapWeb/lcapWeb/www/components
   npm install
 
-  sed -i "s/PRO_PATH/${PROJECT_PATH}/g" ${PROJECT_PATH}/lcapDataServer/lcap-server/src/main/resources/application.properties
-  sed -i "s/PRO_PATH/${PROJECT_PATH}/g" ${PROJECT_PATH}/lcapDataServer/lcap-server/target/classes/application.properties
+  sed -i "s|PRO_PATH|${PROJECT_PATH}|g" ${PROJECT_PATH}/lcapDataServer/lcap-server/src/main/resources/application.properties
+  sed -i "s|PRO_PATH|${PROJECT_PATH}|g" ${PROJECT_PATH}/lcapDataServer/lcap-server/target/classes/application.properties
   echo "lcapDataServer部署："
   cd ${PROJECT_PATH}/lcapDataServer && mvn clean package -Dmaven.test.skip=true -Dmaven.gitcommitid.skip=true -am -pl lcap-server
   cd ./lcap-server/target
