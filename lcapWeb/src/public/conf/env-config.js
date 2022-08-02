@@ -11,7 +11,7 @@ window.LCAP_CONFIG = (function () {
   const fontPort = "8089";
   const backPort = '';
   //服务端目录
-  const static_dir = '/data/app/FlyFish/lcapWeb/lcapWeb';
+  const static_dir = 'PRO_PATH/lcapWeb/lcapWeb';
   //协议
   const httpProtocol = 'http';
   //www路径
