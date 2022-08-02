@@ -47,7 +47,7 @@ function init_system() {
   echo "开始准备环境：git node.js nvm pm2 mongodb nginx maven jdk"
 
   echo "start install wget"
-  yum install at-spi2-atk libxkbcommon nss wget -y
+  yum install at-spi2-atk libxkbcommon nss wget zip unzip -y
 
   echo "start install nvm"
   cd ~
@@ -137,6 +137,10 @@ deploy_flyfish_web() {
 }
 
 deploy_flyfish_server() {
+
+  cd ${PROJECT_PATH}/lcapServer/lib/chrome-linux/
+  unzip ./chrome-core.zip
+  
   echo "开始部署FlyFish后端："
   cd ${PROJECT_PATH}/lcapServer/changelog
   npm install
