@@ -191,7 +191,7 @@ chromePort -> chrome无头浏览器port eg: 9222
 3. 解压缩略图依赖
 
 ```bash
-cd lcapServer/lib
+cd lcapServer/lib/chrome-linux
 
 unzip chrome-core.zip
 ```
