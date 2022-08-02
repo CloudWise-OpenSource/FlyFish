@@ -44,7 +44,7 @@ const config = {
   },
   htmlPlugin: (config) => {
     config.excludeAssets = [];
-    config.title = 'LCAP';
+    config.title = 'FlyFish';
     return config;
   },
   copyPlugin: (config) => {
