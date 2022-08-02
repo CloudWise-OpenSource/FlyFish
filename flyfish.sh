@@ -165,7 +165,7 @@ deploy_flyfish_server() {
   npm install
 
   sed -i "s/PRO_PATH/${PROJECT_PATH}/g" ${PROJECT_PATH}/lcapDataServer/lcap-server/src/main/resources/application.properties
-  sed -i "s/PRO_PATH/${PROJECT_PATH}/g" ${PROJECT_PATH}lcapDataServer/lcap-server/target/classes/application.properties
+  sed -i "s/PRO_PATH/${PROJECT_PATH}/g" ${PROJECT_PATH}/lcapDataServer/lcap-server/target/classes/application.properties
   echo "lcapDataServer部署："
   cd ${PROJECT_PATH}/lcapDataServer && mvn clean package -Dmaven.test.skip=true -Dmaven.gitcommitid.skip=true -am -pl lcap-server
   cd ./lcap-server/target
