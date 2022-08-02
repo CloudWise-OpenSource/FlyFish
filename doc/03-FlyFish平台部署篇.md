@@ -188,17 +188,12 @@ config.mongoose = {
 chromePort -> chrome无头浏览器port eg: 9222
 ```
 
-3. 修改生成缩略图配置
+3. 解压缩略图依赖
 
 ```bash
-cd lcapServer
-vim lib/chrome-linux/fonts/fonts.conf
-# 源码中默认修改为 /data/app/FlyFish/lcapServer/lib
+cd lcapServer/lib
 
-修改所有${CW_INSTALL_CHROME_DIR}为chrome-linux的绝对路径（有两处，注意都要修改掉）
-
-eg:
-<dir>${CW_INSTALL_CHROME_DIR}/chrome-linux/fonts/fonts</dir> 替换为 <dir>/data/app/lcapServer/lib/chrome-linux/fonts/fonts</dir>
+unzip chrome-core.zip
 ```
 
 4. 启动服务
@@ -212,7 +207,7 @@ npm run stop
 
 ```
 
-4. 组件开发环境配置
+5. 组件开发环境配置
 
 ```bash
 # 以下命令在 lcapWww 下执行
