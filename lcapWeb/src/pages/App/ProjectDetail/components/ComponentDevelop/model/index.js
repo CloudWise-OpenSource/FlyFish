@@ -89,7 +89,6 @@ const model = {
     *getLibraryListData(options, state) {
       const { category, subCategory } = toJS(this.selectedData);
       const params = {
-        isLib: true,
         type: 'project',
         category: category,
         subCategory: subCategory === '' ? undefined : subCategory,

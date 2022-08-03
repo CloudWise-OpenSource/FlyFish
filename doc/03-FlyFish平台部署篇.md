@@ -78,32 +78,46 @@ or
 vim /usr/local/nginx/conf/conf.d/FlyFish-2.1.0.conf
 
 # 复制并修改以下配置到 flyfish.conf
+map $http_upgrade $connection_upgrade {
+  default upgrade;
+  '' close;
+}
+
 server {
-  listen       8089;
-  server_name  flyfish;
+  listen 8089;
+  server_name FlyFish;
   default_type application/octet-stream;
   client_max_body_size 100m;
+
+  # lcapWeb
+  location / {
+    root PRO_PATH/lcapWeb/lcapWeb/;
+    index index.html index.htm;
+  }
+
+  # code-server
+  location ^~ /lcapCode/ {
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection $connection_upgrade;
+    proxy_pass http://127.0.0.1:8081/;
+  }
+
+  # 静态资源代理
+  location /lcapWww/ {
+    alias PRO_PATH/lcapWeb/lcapWeb/www/;
+  }
 
   # lcapServer 反向代理
   location ^~ /api/ {
     proxy_pass http://0.0.0.0:7001/;
-    # IP 替换成当前主机IP
+    # ip 替换成当前主机 ip
     proxy_cookie_domain 0.0.0.0 IP;
   }
+
   # lcapServer 反向代理
   location ^~ /lcap-data-server/ {
     proxy_pass http://0.0.0.0:18532/;
-  }
-
-  # 静态资源代理
-  location /lcapWeb/www {
-    root /data/app/FlyFish;
-  }
-
-  # lcapWeb
-  location / {
-    root /data/app/FlyFish/lcapWeb/lcapWeb/;
-    index index.html index.htm;
   }
 }
 
@@ -157,7 +171,7 @@ cd lcapServer
 vim ./config/config.development.js
 
 staticDir -> 静态目录 eg:  /data/app/lcapWeb
-commonDirPath -> 组件开发目录, 默认www, 配置staticDir使用，eg: /data/app/lcapWeb/www
+commonDirPath -> 组件开发目录, 默认www, 配置staticDir使用，eg: /data/app/lcapWeb/lacpWeb/www
 dataBaseDir -> 数据目录 eg:  /data/appData
 logsBaseDir -> 日志目录 eg:  /data/logs
 
