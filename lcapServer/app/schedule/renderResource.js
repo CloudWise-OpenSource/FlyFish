@@ -13,7 +13,7 @@ class RenderResource extends Subscription {
     return {
       interval: INTERVAL,
       type: 'worker',
-      env: [ 'prod' ],
+      env: [ 'development' ],
       disable: false,
     };
   }
@@ -22,7 +22,7 @@ class RenderResource extends Subscription {
    * 如果success, 更新资源cover地址
    */
   async subscribe() {
-    const { ctx, logger, config: { apiKey, services: { docp: { baseURL } }, pathConfig: { staticDir, webPath, componentsPath, applicationPath } } } = this;
+    const { ctx, logger, config: { services: { web: { baseURL } }, pathConfig: { staticDir, webPath, componentsPath, applicationPath } } } = this;
     let browser;
 
     const prxfix = '[render-schedule]';

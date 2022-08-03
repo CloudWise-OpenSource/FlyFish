@@ -5,16 +5,7 @@ module.exports = config => {
     const { reqUrlWhiteList, cookieConfig: { name }, apiKey } = config;
 
     const lcapCookieValue = ctx.cookies.get(name, { signed: false });
-
-    // 白名单
-    const splitPaths = ctx.url.split('/');
-    for (let i = 0; i < reqUrlWhiteList.length; i++) {
-      const whiteUrl = reqUrlWhiteList[i];
-      for (const path of splitPaths) {
-        if (path.length === 24) reqUrlWhiteList[i] = whiteUrl.replace(':id', path);
-      }
-    }
-    if (reqUrlWhiteList.some(url => ctx.url === url)) {
+    if (reqUrlWhiteList.some(url => ctx.url.match(new RegExp(url)))) {
       await next();
 
     } else if (lcapCookieValue) {

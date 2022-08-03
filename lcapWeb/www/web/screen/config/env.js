@@ -24,7 +24,7 @@ window.DATAVI_ENV = (function() {
 
     screenAPI: {
       // 大屏展示和编辑用到的API
-      getScreenData: '/applications', // 获取大屏数据
+      getScreenData: '/applications/info', // 获取大屏数据
       saveScreenConf: '/applications/{id}/design', // 保存大屏配置
       uploadScreenImg: '/applications/img/{id}', // 上传大屏所需图片
       deleteUploadScreenImg: '/applications/img/{id}', // 删除上传的大屏所需图片
