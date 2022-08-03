@@ -17,7 +17,7 @@ window.DATAVI_ENV = (function() {
     debug: true,
     useHttpProxy: true,
     apiDomain,
-    componentsDir: 'lcapWeb/www/components',
+    componentsDir: 'www/components',
     apiSuccessCode: 200,
 
     yapiAddress: 'http://${CW_LOCAL_IP}:${CW_LOCAL_PORT}/lcapWeb/index.html#/api',

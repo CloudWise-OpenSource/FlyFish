@@ -35,19 +35,19 @@ vim lcapWeb/lcapWeb/conf/env-config.js
 # hostname 修改为当前主机IP
 hostname = IP
 # web部署端口
-fontPort = 8089  
+fontPort = 8089
 # server端部署的端口
-backPort = 7001
+backPort = ''
 # code-server访问静态资源时的路径前缀
-static_dir = '/data/app/FlyFish/lcapWeb'
+static_dir = '/data/app/FlyFish/lcapWeb/lcapWeb'
 # 静态资源的代理路径，与nginx配置要匹配
-common_dir = 'lcapWeb/www'
-# api请求前缀，与nginx配置匹配
+common_dir = 'www'
+# api请求前缀，与nginx配置匹配
 apiDomain :'/api'
 # java服务api请求前缀，与nginx配置匹配
 javaApiDomain : '/lcap-data-server'
 # code-server部署端口
-code_port = 3001
+code_port = 8081
 # 组件平台是否拆分，默认为false
 isSplitComponentModule : false
 # 是否独立部署api,默认为false
@@ -77,31 +77,47 @@ vim /etc/nginx/conf.d/FlyFish-2.1.0.conf
 or
 vim /usr/local/nginx/conf/conf.d/FlyFish-2.1.0.conf
 
-# 复制并修改以下配置到 FlyFish-2.1.0.conf
+# 复制并修改以下配置到 flyfish.conf
+map $http_upgrade $connection_upgrade {
+  default upgrade;
+  '' close;
+}
+
 server {
-  listen       8089;
-  server_name  FlyFish-2.1.0;
+  listen 8089;
+  server_name FlyFish;
   default_type application/octet-stream;
   client_max_body_size 100m;
+
+  # lcapWeb
+  location / {
+    root PRO_PATH/lcapWeb/lcapWeb/;
+    index index.html index.htm;
+  }
+
+  # code-server
+  location ^~ /lcapCode/ {
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection $connection_upgrade;
+    proxy_pass http://127.0.0.1:8081/;
+  }
+
+  # 静态资源代理
+  location /lcapWww/ {
+    alias PRO_PATH/lcapWeb/lcapWeb/www/;
+  }
 
   # lcapServer 反向代理
   location ^~ /api/ {
     proxy_pass http://0.0.0.0:7001/;
-    # IP 替换成当前主机IP
+    # ip 替换成当前主机 ip
     proxy_cookie_domain 0.0.0.0 IP;
   }
+
   # lcapServer 反向代理
   location ^~ /lcap-data-server/ {
-    proxy_pass   http://0.0.0.0:18532/;
-  }
-  # 静态资源代理
-  location /lcapWeb/www {
-    root  /data/app/FlyFish/lcapWeb/lcapWeb/www;
-  }
-  # lcapWeb
-  location / {
-    root  /data/app/FlyFish/lcapWeb/lcapWeb/;
-    index  index.html index.htm;
+    proxy_pass http://0.0.0.0:18532/;
   }
 }
 
@@ -125,7 +141,7 @@ http://ip:8089
 ```bash
 ### 安装主服务依赖
 cd lcapServer/
-npm install --unsafe-perm=true --allow-root
+npm install
 
 ### 安装初始化脚本依赖
 cd lcapServer/changelog
@@ -185,20 +201,18 @@ config.mongoose = {
 // chrome 端口，用于自动生成组件、应用缩略图服务，默认9222
 chromePort -> chrome无头浏览器port eg: 9222
 ```
- 
-3. 修改生成缩略图配置
-```
-cd lcapServer
-vim lib/chrome-linux/fonts/fonts.conf
 
-修改所有${CW_INSTALL_CHROME_DIR}为chrome-linux的绝对路径（有两处，注意都要修改掉）
+3. 解压缩略图依赖
 
-eg: 
-<dir>${CW_INSTALL_CHROME_DIR}/chrome-linux/fonts/fonts</dir> 替换为 <dir>/data/app/lcapServer/lib/chrome-linux/fonts/fonts</dir>
+```bash
+cd lcapServer/lib/chrome-linux
+
+unzip chrome-core.zip
 ```
 
 4. 启动服务
-```
+
+```bash
 # 启动后端服务
 npm run development
 
@@ -207,7 +221,7 @@ npm run stop
 
 ```
 
-4. 组件开发环境配置
+5. 组件开发环境配置
 
 ```bash
 # 以下命令在 lcapWww 下执行
@@ -217,27 +231,21 @@ cd lcapWeb/lcapWeb/www/components
 # 安装依赖
 npm install
 
-# 修改大屏应用配置
-vim /data/app/FlyFish/lcapWeb/lcapWeb/www/web/screen/config/env.js
-
-# 修改为当前主机IP
-# const apiDomain = 'http://IP:7001';
-# 例如：const apiDomain = 'http://127.0.0.1:7001';
-# http://${CW_LOCAL_IP}:${CW_LOCAL_PORT} 做替换
 ```
 
-> lcapDataserver源码部署
+> lcapDataserver 源码部署
 
 1. 生成并解压压缩包压缩包
+
 ```bash
 # 服务打包
-cd ./lcapDataServer && mvn clean package -Dmaven.test.skip=true -am -pl lcap-server
+cd ./lcapDataServer && mvn clean package -Dmaven.test.skip=true -Dmaven.gitcommitid.skip=true -am -pl lcap-server
 # 生成 lcapDataServer-${version}-${datetime}-${git_commit_id}.tar.gz 安装包
 
 cd ./lcap-server/target
 
 # 解压部署包
-tar -zxvf ./lcapDataServer-${version}-${datetime}-${git_commit_id}.tar.gz
+tar -zxvf lcapDataServer-\$\{git.build.version\}-\$\{git.commit.time\}-\$\{git.commit.id.abbrev\}.tar.gz
 
 # 解压后生成的核心文件目录如下：
 [root@host233 app]# cd ./lcapDataServer
@@ -249,6 +257,7 @@ drwxrwxr-x  2 kid kid 12288 7月  18 21:25 lib
 ```
 
 2. 修改服务配置文件
+
 ```bash
 # 进入服务解压目录，执行以下命令
 vim ./conf/application.properties
@@ -278,9 +287,13 @@ spring.servlet.multipart.max-request-size=1024MB
 ```
 
 3. 启动服务
+
 ```bash
-# 通过shell脚本启动服务
+# 启动 lcapDataServer 服务
 ./bin/lcapDataServer start
+
+# 停止 lcapDataServer 服务
+./bin/lcapDataServer stop
 
 # 查看日志验证服务是否启动
 tail -200f /data/logs/lcapDataServer/lcap-dataserver.info.log

@@ -7,15 +7,15 @@
  */
 window.LCAP_CONFIG = (function () {
   //后端服务
-  const hostname = '10.2.3.56';
+  const hostname = 'local_ip';
   const fontPort = "8089";
-  const backPort = '7001';
+  const backPort = '';
   //服务端目录
-  const static_dir = '/data/app';
+  const static_dir = 'PRO_PATH/lcapWeb/lcapWeb';
   //协议
   const httpProtocol = 'http';
   //www路径
-  const common_dir = 'lcapWeb/www';
+  const common_dir = 'www';
   //code-server端口
   const code_port = '';
 
@@ -31,7 +31,7 @@ window.LCAP_CONFIG = (function () {
     wwwAddress: `${common_dir}`,
     snapshotAddress: backPort
       ? `${httpProtocol}://${hostname}:${backPort}`
-      : `${httpProtocol}://${hostname}`,
+      : `${httpProtocol}://${hostname}:${fontPort}`,
 
     apiDomain: '/api',//api代理
     javaApiDomain: '/lcap-data-server',
@@ -43,7 +43,7 @@ window.LCAP_CONFIG = (function () {
     vscodeFolderPrefix: `${static_dir}/${common_dir}`,
     vscodeAddress: code_port
       ? `${httpProtocol}://${hostname}:${code_port}`
-      : `${httpProtocol}://${hostname}`,
+      : '/lcapCode',
   };
   return config;
 })();

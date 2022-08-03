@@ -52,19 +52,19 @@ const Layout = observer((props) => {
           }
           return menu.includes(item.name);
         });
-  
+
         const authMenu = getMenuData(routeData || []);
         setAuthMenuData(authMenu);
       }
     });
     if (isScreenFrame) {
-      var style = document.createElement('style'); 
-      style.type = 'text/css'; 
-      style.innerHTML=".cw-side,.cwlayout{ display:none !important } #singlespa-container{height:100% !important;top:0 !important}"; 
+      var style = document.createElement('style');
+      style.type = 'text/css';
+      style.innerHTML=".cw-side,.cwlayout{ display:none !important } #singlespa-container{height:100% !important;top:0 !important}";
       document.getElementsByTagName('head').item(0).appendChild(style);
     }
   }, []);
-  
+
   // useEffect(() => {
   //   // 更新全局状态通知子应用
   //   actions.setGlobalState({
@@ -252,7 +252,7 @@ const Layout = observer((props) => {
           <span style={{ fontSize: '16px', marginLeft: '8px' }}>智能业务运维</span>
         </div>
       }
-      headerTitle='低代码开发平台LCAP'
+      headerTitle='低代码开发平台FlyFish'
       showHead={!(window.isInPortal||isScreenFrame)} // 集成portal不显示头部
       showTopNavigation={false}
       customContent={false}
