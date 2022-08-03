@@ -3,6 +3,7 @@
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd)"
 THIS_SCRIPT="${CURRENT_DIR}/$(basename $0)"
 PROJECT_FOLDER="$(dirname ${CURRENT_DIR})"
+PROJECT_PATH=$(pwd);
 
 function check_user() {
   user=root
@@ -46,7 +47,7 @@ function init_system() {
   echo "开始准备环境：git node.js nvm pm2 mongodb nginx maven jdk"
 
   echo "start install wget"
-  yum install at-spi2-atk libxkbcommon nss wget -y
+  yum install at-spi2-atk libxkbcommon nss wget zip unzip -y
 
   echo "start install nvm"
   cd ~
@@ -100,7 +101,7 @@ function init_system() {
 
   cp /usr/local/apache-maven-3.6.3/conf/settings.xml /usr/local/apache-maven-3.6.3/conf/settings_bak.xml
   rm -rf /usr/local/apache-maven-3.6.3/conf/settings.xml
-  cp /data/app/FlyFish/shell_tpl/settings.xml /usr/local/apache-maven-3.6.3/conf/
+  cp ${PROJECT_PATH}/shell_tpl/settings.xml /usr/local/apache-maven-3.6.3/conf/
   
   echo "start install jdk"
   yum install java-1.8.0-openjdk.x86_64 java-1.8.0-openjdk-devel.x86_64 -y
@@ -114,11 +115,12 @@ function init_system() {
 
 deploy_flyfish_web() {
   echo "开始部署FLyFish前端："
-  cd /data/app/FlyFish/lcapWeb
+  cd ${PROJECT_PATH}/lcapWeb
   npm install
   npm run build
 
   sed -i "s/local_ip/$local_ip/g" ./lcapWeb/conf/env-config.js
+  sed -i "s|PRO_PATH|${PROJECT_PATH}|g" ./lcapWeb/conf/env-config.js
 
   # 提示缺少 conf.d
   cd /
@@ -126,9 +128,10 @@ deploy_flyfish_web() {
   if [ ! -d "$tempPath" ]; then
     mkdir $tempPath
   fi
-  cp /data/app/FlyFish/shell_tpl/flyfish.conf /etc/nginx/conf.d/
+  cp ${PROJECT_PATH}/shell_tpl/flyfish.conf /etc/nginx/conf.d/
 
   sed -i "s/IP/$local_ip/g" /etc/nginx/conf.d/flyfish.conf
+  sed -i "s|PRO_PATH|${PROJECT_PATH}|g" /etc/nginx/conf.d/flyfish.conf
 
   systemctl restart nginx
 
@@ -136,26 +139,35 @@ deploy_flyfish_web() {
 }
 
 deploy_flyfish_server() {
+
+  sed -i "s|PRO_PATH|${PROJECT_PATH}|g" ${PROJECT_PATH}/lcapServer/config/config.development.js
+  sed -i "s|PRO_PATH|${PROJECT_PATH}|g" ${PROJECT_PATH}/lcapServer/lib/chrome-linux/fonts/fonts.conf
+
+  cd ${PROJECT_PATH}/lcapServer/lib/chrome-linux/
+  unzip ./chrome-core.zip
+
   echo "开始部署FlyFish后端："
-  cd /data/app/FlyFish/lcapServer/changelog
+  cd ${PROJECT_PATH}/lcapServer/changelog
   npm install
 
-  cd /data/app/FlyFish/lcapServer/
+  cd ${PROJECT_PATH}/lcapServer/
   npm install --production
 
   echo "开始初始化数据库："
-  cd /data/app/FlyFish/lcapServer/changelog
+  cd ${PROJECT_PATH}/lcapServer/changelog
   NODE_ENV=development node ./scripts/initDatabase.js
   echo "初始化数据库结束。"
 
-  cd /data/app/FlyFish/lcapServer/ && npm run development
+  cd ${PROJECT_PATH}/lcapServer/ && npm run development
   
   echo "初始化组件开发环境:"
-  cd /data/app/FlyFish/lcapWeb/lcapWeb/www/components
+  cd ${PROJECT_PATH}/lcapWeb/lcapWeb/www/components
   npm install
 
+  sed -i "s|PRO_PATH|${PROJECT_PATH}|g" ${PROJECT_PATH}/lcapDataServer/lcap-server/src/main/resources/application.properties
+  sed -i "s|PRO_PATH|${PROJECT_PATH}|g" ${PROJECT_PATH}/lcapDataServer/lcap-server/target/classes/application.properties
   echo "lcapDataServer部署："
-  cd /data/app/FlyFish/lcapDataServer && mvn clean package -Dmaven.test.skip=true -Dmaven.gitcommitid.skip=true -am -pl lcap-server
+  cd ${PROJECT_PATH}/lcapDataServer && mvn clean package -Dmaven.test.skip=true -Dmaven.gitcommitid.skip=true -am -pl lcap-server
   cd ./lcap-server/target
   tar -zxvf lcapDataServer-\$\{git.build.version\}-\$\{git.commit.time\}-\$\{git.commit.id.abbrev\}.tar.gz
   cd ./lcapDataServer
@@ -166,7 +178,7 @@ deploy_flyfish_server() {
 
 deploy_flyfish_code_server() {
   echo "开始部署FlyFish Code Server:"
-  cd /data/app/FlyFish/lcapCodeServer/
+  cd ${PROJECT_PATH}/lcapCodeServer/
   npm run linux-start
 
   echo "部署FlyFish Code Server结束。"
@@ -206,13 +218,13 @@ stop_flyfish() {
   source nvm/nvm.sh
 
   echo "停止运行FlyFish后端："
-  cd /data/app/FlyFish/lcapServer/
+  cd ${PROJECT_PATH}/lcapServer/
   npm run stop
-  cd /data/app/FlyFish/lcapDataServer/lcap-server/target/lcapDataServer
+  cd ${PROJECT_PATH}/lcapDataServer/lcap-server/target/lcapDataServer
   ./bin/lcapDataServer stop
 
   echo "停止运行Code Server:"
-  cd /data/app/FlyFish/lcapCodeServer/
+  cd ${PROJECT_PATH}/lcapCodeServer/
   npm run stop
 
 }
@@ -259,7 +271,7 @@ remove_system() {
 remove_flyfish() {
   echo "开始删除FlyFish源码："
   cd /
-  rm -rf /data/app/FlyFish
+  rm -rf ${PROJECT_PATH}
 }
 
 function uninstall_flyfish() {

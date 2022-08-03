@@ -36,13 +36,14 @@
 - [AIOps 社区](https://www.cloudwise.ai/#/datalaker/dashboard)
 
 ## 功能示例
-![产品功能示例1](./doc/images/产品功能示例1.gif)|![产品功能示例2](./doc/images/产品功能示例2.gif)
----|---
+
+| ![产品功能示例1](./doc/images/产品功能示例1.gif) | ![产品功能示例2](./doc/images/产品功能示例2.gif) |
+| ------------------------------------------------ | ------------------------------------------------ |
 
 ## 大屏案例
-![IT监控设施概览](./doc/images/IT监控设施概览.gif)|![基础监控](./doc/images/基础监控.gif)
----|---
 
+| ![IT监控设施概览](./doc/images/IT监控设施概览.gif) | ![基础监控](./doc/images/基础监控.gif) |
+| -------------------------------------------------- | -------------------------------------- |
 
 ## 安装说明
 
@@ -59,14 +60,16 @@
 | node    | 14.19.3 |
 | mongodb | 4.0.0   |
 | nginx   | 1.20.1  |
+| jdk     | 1.8     |
 
-### 开放端口
+### 占用端口
 
-| 服务台                              | 端口 |
-| ----------------------------------- | ---- |
-| FlyfishWeb 端口(nginx 静态资源代理) | 8089 |
-| FlyfishCodeServer(在线编辑器)端口   | 8081 |
-| FlyfishServer(主后端服务)端口       | 7001 |
+| 服务台                                | 端口  |
+| ------------------------------------- | ----- |
+| FlyfishWeb 端口(nginx 静态资源代理)   | 8089  |
+| FlyfishCodeServer(在线编辑器)端口     | 8081  |
+| FlyfishServer(主后端服务)端口         | 7001  |
+| FlyfishDataServer(数据源管理服务)端口 | 18532 |
 
 ### 部署流程
 
@@ -79,9 +82,10 @@
 > 或执行一键脚本：
 
 ```bash
-# 此安装脚本为2.1.1版本，请先尝试手动部署2.2.0版本，近期将更新2.2.0安装脚本
 # CentOS 7.5/7.6  x86-64
 # 须使用root账户
+# 可在任意有权限的目录下安装 FlyFish
+# 这里指定安装目录为 /data/app/
 mkdir -p /data/app/
 cd /data/app/
 
@@ -95,12 +99,6 @@ bash flyfish.sh install
 # 一键卸载
 bash flyfish.sh uninstall
 
-# 一键更新
-# FlyFish-2.1.1 升级至 FlyFish-2.1.2
-git checkout main
-git pull origin main
-
-bash flyfish.sh update
 ```
 
 ## 升级流程
@@ -115,21 +113,21 @@ $ git pull
 
 > FlyFish 2022 Roadmap
 
-
 ### 数据源
 
 - 增加数据源管理
-- 对接 MySQL、Http等数据存储数据源
+- 对接 MySQL、Http 等数据存储数据源
 - 支持对数据源进行模型建表
 
 ### 数据处理
 
-- 支持根据数据表进行SQL查询
+- 支持根据数据表进行 SQL 查询
 - 支持查询的可视化
 - 新增数据处理
 
 ## 组件库
-[FlyFish组件库](https://github.com/CloudWise-OpenSource/FlyFishComponents)
+
+[FlyFish 组件库](https://github.com/CloudWise-OpenSource/FlyFishComponents)
 
 ## 贡献者名单
 
@@ -142,11 +140,11 @@ $ git pull
 | [aiwhj](https://github.com/aiwhj) | [zengqiu](https://github.com/zengqiu) | [Rise.Hao（郝玉鹏)](https://github.com/RiseHao1029) |
 | [Markuuuu](https://github.com/Markuuuu) | [郝少聪](https://github.com/laocong) | |
 
-
 ## 如何参与贡献
-[FlyFish体验官招募计划](https://github.com/CloudWise-OpenSource/FlyFish/issues/131)
 
-[FlyFish组件激励计划](https://github.com/CloudWise-OpenSource/FlyFishComponents/issues/7)
+[FlyFish 体验官招募计划](https://github.com/CloudWise-OpenSource/FlyFish/issues/131)
+
+[FlyFish 组件激励计划](https://github.com/CloudWise-OpenSource/FlyFishComponents/issues/7)
 
 ## 欢迎加入
 

@@ -36,13 +36,14 @@ https://gitee.com/CloudWise/fly-fish
 - [AIOps community](https://www.cloudwise.ai/#/datalaker/dashboard)
 
 ## Product Features
-![产品功能示例1](./doc/images/产品功能示例1.gif)|![产品功能示例2](./doc/images/产品功能示例2.gif)
----|---
+
+| ![产品功能示例1](./doc/images/产品功能示例1.gif) | ![产品功能示例2](./doc/images/产品功能示例2.gif) |
+| ------------------------------------------------ | ------------------------------------------------ |
 
 ## Data Visualization Case
-![IT监控设施概览](./doc/images/IT监控设施概览.gif)|![基础监控](./doc/images/基础监控.gif)
----|---
 
+| ![IT监控设施概览](./doc/images/IT监控设施概览.gif) | ![基础监控](./doc/images/基础监控.gif) |
+| -------------------------------------------------- | -------------------------------------- |
 
 ## Installation Instructions
 
@@ -59,14 +60,16 @@ https://gitee.com/CloudWise/fly-fish
 | node    | 14.19.3     |
 | mongodb | 4.0.0       |
 | nginx   | 1.20.1      |
+| jdk     | 1.8         |
 
-### Open Port
+### Occupied port
 
-| Reception                                    | Port |
-| -------------------------------------------- | ---- |
-| FlyFishWeb Port(Nginx static resource proxy) | 8089 |
-| FlyFishCodeServer(Online editor)Port         | 8081 |
-| FlyFishServer(Primary backend service)Port   | 7001 |
+| Reception                                             | Port  |
+| ----------------------------------------------------- | ----- |
+| FlyFishWeb Port(Nginx static resource proxy)          | 8089  |
+| FlyFishCodeServer(Online editor)Port                  | 8081  |
+| FlyFishServer(Primary backend service)Port            | 7001  |
+| FlyfishDataServer(Data source management service)Port | 18532 |
 
 ### Deployment Process
 
@@ -81,6 +84,8 @@ https://gitee.com/CloudWise/fly-fish
 ```bash
 # CentOS 7.5/7.6  x86-64
 # Root account is required
+# Flyfish can be installed in any directory with permission
+# The installation directory specified here is /data/app/
 mkdir -p /data/app/
 cd /data/app/
 
@@ -93,13 +98,6 @@ bash flyfish.sh install
 
 # One click unload
 bash flyfish.sh uninstall
-
-# One click Update
-# FlyFish-2.1.1 Upgrade to FlyFish-2.1.2
-git checkout main
-git pull origin main
-
-bash flyfish.sh update
 ```
 
 ## Upgrade Process
@@ -127,6 +125,7 @@ $ git pull
 - Newly added complex data processing
 
 ## Components
+
 [FlyFishComponents](https://github.com/CloudWise-OpenSource/FlyFishComponents)
 
 ## Contributor list
