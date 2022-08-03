@@ -173,31 +173,6 @@ const AppProjectManage = observer((props) => {
   const searchContent = [
     {
       components: (
-        <Select
-          id='queryType'
-          key='queryType'
-          allowClear
-          style={{ width: '160px' }}
-          placeholder={intl.formatMessage({
-            id: 'pages.dataSearch.pleaseSelectTypePlaceholder',
-            defaultValue: '请选择查询类型',
-          })}
-        >
-          {dataSearchTypeEnums.map((dataSearchTypeEnum) => {
-            return (
-              <Select.Option
-                key={dataSearchTypeEnum.id}
-                value={dataSearchTypeEnum.id}
-              >
-                <FormattedMessage {...dataSearchTypeEnum.label} />
-              </Select.Option>
-            );
-          })}
-        </Select>
-      ),
-    },
-    {
-      components: (
         <Input
           id='queryName'
           key='queryName'
