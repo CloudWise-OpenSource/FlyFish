@@ -15,7 +15,7 @@ module.exports = appInfo => {
   const dataBaseDir = path.join(__dirname, '../../../appData');
   // 日志目录 eg:  /data/logs
   const logsBaseDir = path.join(__dirname, '../../logs');
-  
+
   const serverIp = '127.0.0.1';
   const serverPort = 7001;
 
@@ -71,7 +71,7 @@ module.exports = appInfo => {
     '/users/login',
     '/users/register',
 
-    '/applications/:id',
+    /applications\/info\/\w{24}/,
   ];
 
   // 同步用户url
@@ -117,6 +117,9 @@ module.exports = appInfo => {
   };
 
   config.services = {
+    web: {
+      baseURL: 'http://127.0.0.1:8089',
+    },
     chrome: {
       host: '127.0.0.1',
       port: chromePort,

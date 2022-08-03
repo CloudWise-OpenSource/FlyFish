@@ -81,6 +81,7 @@ module.exports = app => {
 
   // 置于最后，莫动！！
   router.get('/applications/:id', controller.application.getInfo);
+  router.get('/applications/info/:id', controller.application.getInfo);
 
   router.get('/common/version-info', controller.common.getVersionInfo);
   router.get('/chrome/screenshot', controller.chrome.screenshot);
