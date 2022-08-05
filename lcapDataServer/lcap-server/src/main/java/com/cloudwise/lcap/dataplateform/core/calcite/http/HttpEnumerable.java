@@ -134,7 +134,7 @@ public class HttpEnumerable extends AbstractEnumerable<Object[]> {
                 String fieldName = (String) field.get("fieldName");
                 String fieldType = (String) field.get("fieldType");
                 collect.put(fieldName, sort, fieldType);
-                collect2.put(sort,fieldName);
+                collect2.put(sort, fieldName);
             }
 
 
@@ -150,7 +150,6 @@ public class HttpEnumerable extends AbstractEnumerable<Object[]> {
             for (Map<String, Object> field : fields) {
                 int sort = (int) field.get("sort");
                 Object jsonpath = field.get("jsonpath");
-                String fieldType = (String)field.get("fieldType");
                 if (null != jsonpath) {
                     try {
                         //对其中一个字段进行jsonpath解析,将当前这个字段的解析结果 作为解析类型
@@ -158,8 +157,6 @@ public class HttpEnumerable extends AbstractEnumerable<Object[]> {
                         if (null == transferType && null != transferFieldData) {
                             transferType = transferFieldData;
                         }
-                        Class javaClassByName = getJavaClassByName(fieldType);
-                        transferFieldData = getValue(javaClassByName,transferFieldData.toString());
                         fieldsData.put(sort, transferFieldData);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -187,29 +184,36 @@ public class HttpEnumerable extends AbstractEnumerable<Object[]> {
                     int fieldSort = 0;
                     Object[] rowData = new Object[fieldsSize];
                     for (Integer sort : sorts) {
-                        String fieldName = collect2.get(sort);
-                        String fieldType = collect.get(fieldName, sort);
-
-                        Object[] columnData = ((net.minidev.json.JSONArray) fieldsData.get(sort)).toArray();
+                        Object fieldData = null;
+                        Object o = fieldsData.get(sort);
+                        if (o instanceof Collection) {
+                            Object[] columnData = ((net.minidev.json.JSONArray) o).toArray();
+                            fieldData = columnData[rowNum];
+                        } else {
+                            fieldData = o;
+                        }
                         //需要将 fieldData 转换为 fieldType 需要的类型
-                        Object fieldData = columnData[rowNum];
-                        if (null == fieldData){
-                            rowData[fieldSort++] = null;
-                        }else {
-                            Class javaClassByName = getJavaClassByName(fieldType);
-                            rowData[fieldSort++] = getValue(javaClassByName,fieldData.toString());
+                        int i = fieldSort++;
+                        if (null != fieldData) {
+                            String fieldName = collect2.get(sort);
+                            String fieldType = collect.get(fieldName, sort);
+                            try {
+                                Class javaClassByName = getJavaClassByName(fieldType);
+                                rowData[i] = getValue(javaClassByName, fieldData.toString());
+                            } catch (Exception e) {
+                                log.error("数据fieldData:" + fieldData + " 转换类型:" + fieldType + " 异常");
+                            }
                         }
                     }
                     totalRowData.add(rowData);
                 }
             }
         } catch (Exception e) {
-            log.error("http返回值数据解析异常");
+            log.error("http返回值数据解析异常" + e);
             throw new BizException("http返回值数据解析异常");
         }
         return totalRowData;
     }
-
 
 
 }

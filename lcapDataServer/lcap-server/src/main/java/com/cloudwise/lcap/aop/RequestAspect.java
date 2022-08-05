@@ -99,12 +99,6 @@ public class RequestAspect {
         log.info("<=============================");
         log.info("Request method:{}, url:{}, param:{}", method, url, bodyStr);
 
-        String cookieValue = CookieUtils.getCookieValue(request, cookieName);
-        if (StringUtils.isEmpty(cookieValue)){
-            log.error("本地获取cookie为空，cookieName=aops-sessionId不存在");
-            throw new UnAuthorizedException();
-        }
-
         Object response = point.proceed();
         int status = 0;
         HttpServletResponse response1 = attributes.getResponse();
