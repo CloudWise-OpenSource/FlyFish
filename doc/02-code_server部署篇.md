@@ -12,7 +12,7 @@
 # 进入 code-server 目录
 cd /data/app/FlyFish/lcapCodeServer/
 
-# 修改 bind-addr 为 0.0.0.0 外网访问
+# 修改 bind-addr 为 0.0.0.0:8081 外网访问
 vim config.yaml
 
 ```
