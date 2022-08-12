@@ -12,55 +12,36 @@
 
 飞鱼（FlyFish）是一个数据可视化编码平台。通过简易的方式快速创建数据模型，通过拖拉拽的形式，快速生成一套数据可视化解决方案。
 
-## 在线地址
+| ![IT监控设施概览](./doc/images/IT监控设施概览.gif) | ![基础监控](./doc/images/基础监控.gif) |
+| -------------------------------------------------- | -------------------------------------- |
 
-- [https://flyfish-demo.opscloudwise.com:23368/](https://flyfish-demo.opscloudwise.com:23368/)
+## FlyFish 功能概览
 
-## 国内镜像
-
-- [gitee.com/CloudWise/fly-fish](https://gitee.com/CloudWise/fly-fish)
-
-## 背景知识
-
-### 历史培训
-
-- [飞鱼平台讲解](http://docs.aiops.cloudwise.com/zh/flyfish)
-- [组件开发讲解](http://docs.aiops.cloudwise.com/zh/flyfish/component/develop.html)
-
-### 相关培训
-
-- [官方文档](http://docs.aiops.cloudwise.com/zh/flyfish)
-- [架构及目录](http://docs.aiops.cloudwise.com/zh/flyfish/design/design2_1.html)
-- [用户快速上手](http://docs.aiops.cloudwise.com/zh/flyfish/getting-started/)
-- [开发快速上手](http://docs.aiops.cloudwise.com/zh/flyfish/component/basic.html)
-- [AIOps 社区](https://www.cloudwise.ai/#/datalaker/dashboard)
-
-## 功能示例
+- 项目管理：项目用于代表具体的业务需求场景，是多个应用、组件的集合。
+- 应用开发：支持开发大屏应用，可开发单页面或是多页面路由的大屏应用。
+- 组件开发：组件为最小粒度的项目基础，通过创建和开发组件拼凑出最终的可视化大屏展示。
+- 模板库：可将开发完成的应用/组件分别上传到对应的模板库中，可在已有模板的基础上快速创建新的项目。
+- 数据源管理：可接入 MySQL、Http 等多个数据库数据生成对应数据源，供创建项目时组件对数据进行调用。 
+- 数据查询：支持根据数据表进行 SQL 查询，精准定位数据源中具体数据并封装保存，也可将查询到的数据重新组合，供组件直接调用。 
 
 | ![产品功能示例1](./doc/images/产品功能示例1.gif) | ![产品功能示例2](./doc/images/产品功能示例2.gif) |
 | ------------------------------------------------ | ------------------------------------------------ |
 
-## 大屏案例
+## FlyFish 模版中心
 
-| ![IT监控设施概览](./doc/images/IT监控设施概览.gif) | ![基础监控](./doc/images/基础监控.gif) |
-| -------------------------------------------------- | -------------------------------------- |
+- **[模版中心](https://www.cloudwise.ai/flyFishComponents.html)**
+- **[源码下载](https://github.com/CloudWise-OpenSource/FlyFishComponents)**
 
-## 安装说明
+<img src="./doc/images/组件模版.gif" width="550px"/>
 
-### 分支说明
+## 快速上手
 
-| 分支 | 说明   |
-| ---- | ------ |
-| main | 主分支 |
+**国内镜像**：https://gitee.com/CloudWise/fly-fish
 
-### 环境依赖
+**Demo环境地址**：https://flyfish-demo.opscloudwise.com:23368
 
-| 环境    | 说明    |
-| ------- | ------- |
-| node    | 14.19.3 |
-| mongodb | 4.0.0   |
-| nginx   | 1.20.1  |
-| jdk     | 1.8     |
+
+## 本地部署
 
 ### 占用端口
 
@@ -109,29 +90,15 @@ $ git checkout main
 $ git pull
 ```
 
-## Roadmap
+## 学习资料
 
-> FlyFish 2022 Roadmap
+- **[技术文档](http://docs.aiops.cloudwise.com/zh/flyfish)**
+- **[教学视频](http://docs.aiops.cloudwise.com/zh/flyfish/video-course/P1.html)**
+- **[官方论坛](http://bbs.aiops.cloudwise.com/t/FlyFish)**
 
-### 数据源
+ ## 参与贡献
+ 您可以点击阅读 **[FlyFish 贡献指南](https://github.com/CloudWise-OpenSource/FlyFish/discussions/140)** 参与贡献，同时由衷感谢那些为 FlyFish 做出贡献的开发者，无论是 issue 问题、文档翻译、代码贡献，FlyFish 的发展离不开你的支持
 
-- 增加数据源管理
-- 对接 MySQL、Http 等数据存储数据源
-- 支持对数据源进行模型建表
-
-### 数据处理
-
-- 支持根据数据表进行 SQL 查询
-- 支持查询的可视化
-- 新增数据处理
-
-## 组件库
-
-[FlyFish 组件库](https://github.com/CloudWise-OpenSource/FlyFishComponents)
-
-## 贡献者名单
-
-感谢那些为 FlyFish 做出贡献的开发者，无论是 issue 问题、文档翻译、代码贡献，FlyFish 的发展离不开你的支持
 | | | |
 | :--------| :---------| :-------- |
 | [maxDwq](https://github.com/maxDwq)| [jincheny](https://github.com/jincheny) | [Neeke](https://github.com/Neeke) |
@@ -140,13 +107,8 @@ $ git pull
 | [aiwhj](https://github.com/aiwhj) | [zengqiu](https://github.com/zengqiu) | [Rise.Hao（郝玉鹏)](https://github.com/RiseHao1029) |
 | [Markuuuu](https://github.com/Markuuuu) | [郝少聪](https://github.com/laocong) | |
 
-## 如何参与贡献
 
-[FlyFish 体验官招募计划](https://github.com/CloudWise-OpenSource/FlyFish/issues/131)
-
-[FlyFish 组件激励计划](https://github.com/CloudWise-OpenSource/FlyFishComponents/issues/7)
-
-## 欢迎加入
+## 开发者社群
 
 _获取更多关于 FlyFish 的技术资料，或加入 FlyFish 开发者交流群，可扫描下方二维码咨询。_
 
