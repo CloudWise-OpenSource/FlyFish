@@ -15,7 +15,7 @@ window.DATAVI_ENV = (function() {
 
   return {
     debug: true,
-    useHttpProxy: true,
+    useHttpProxy: false,
     apiDomain,
     componentsDir: 'www/components',
     apiSuccessCode: 200,
