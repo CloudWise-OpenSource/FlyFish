@@ -1,0 +1,24 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "soulferryman",
+      "name": "soulferryman",
+      "avatar_url": "https://avatars.githubusercontent.com/u/21328793?v=4",
+      "profile": "https://github.com/soulferryman",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "FlyFish",
+  "projectOwner": "CloudWise-OpenSource",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}
