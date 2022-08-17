@@ -22,6 +22,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "xiaohu12685",
+      "name": "tiger wang",
+      "avatar_url": "https://avatars.githubusercontent.com/u/30620913?v=4",
+      "profile": "https://blog.csdn.net/xiaohu12685",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,
