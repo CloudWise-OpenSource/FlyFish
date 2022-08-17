@@ -76,6 +76,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "imjaden",
+      "name": "Jaden.Li",
+      "avatar_url": "https://avatars.githubusercontent.com/u/68473857?v=4",
+      "profile": "https://github.com/imjaden",
+      "contributions": [
+        "example"
+      ]
     }
   ],
   "contributorsPerLine": 7,
