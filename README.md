@@ -127,7 +127,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   <tr>
     <td align="center"><a href="https://github.com/soulferryman"><img src="https://avatars.githubusercontent.com/u/21328793?v=4?s=100" width="100px;" alt=""/><br /><sub><b>soulferryman</b></sub></a><br /><a href="https://github.com/CloudWise-OpenSource/FlyFish/commits?author=soulferryman" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/YouYe"><img src="https://avatars.githubusercontent.com/u/17558799?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Cary Zhou</b></sub></a><br /><a href="https://github.com/CloudWise-OpenSource/FlyFish/commits?author=YouYe" title="Code">💻</a></td>
-    <td align="center"><a href="https://blog.csdn.net/xiaohu12685"><img src="https://avatars.githubusercontent.com/u/30620913?v=4?s=100" width="100px;" alt=""/><br /><sub><b>tiger wang</b></sub></a><br /><a href="#design-xiaohu12685" title="Design">🎨</a> <a href="https://github.com/CloudWise-OpenSource/FlyFish/commits?author=xiaohu12685" title="Code">💻</a> <a href="#question-xiaohu12685" title="Answering Questions">💬</a></td>
+    <td align="center"><a href="https://blog.csdn.net/xiaohu12685"><img src="https://avatars.githubusercontent.com/u/30620913?v=4?s=100" width="100px;" alt=""/><br /><sub><b>tiger wang</b></sub></a><br /><a href="#design-xiaohu12685" title="Design">🎨</a> <a href="https://github.com/CloudWise-OpenSource/FlyFish/commits?author=xiaohu12685" title="Code">💻</a> <a href="#question-xiaohu12685" title="Answering Questions">💬</a> <a href="#fundingFinding-xiaohu12685" title="Funding Finding">🔍</a></td>
   </tr>
 </table>
 
