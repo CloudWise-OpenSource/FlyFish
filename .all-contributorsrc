@@ -40,6 +40,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "Neeke",
+      "name": "Neeke Gao",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1913308?v=4",
+      "profile": "http://www.cloudwise.com",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,
