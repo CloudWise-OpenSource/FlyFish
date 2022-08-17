@@ -112,6 +112,15 @@
       "contributions": [
         "audio"
       ]
+    },
+    {
+      "login": "Rosso-Wang",
+      "name": "Rosso Wang",
+      "avatar_url": "https://avatars.githubusercontent.com/u/59380115?v=4",
+      "profile": "https://github.com/Rosso-Wang",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
