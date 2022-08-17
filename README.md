@@ -127,7 +127,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   <tr>
     <td align="center"><a href="https://github.com/soulferryman"><img src="https://avatars.githubusercontent.com/u/21328793?v=4?s=100" width="100px;" alt=""/><br /><sub><b>soulferryman</b></sub></a><br /><a href="https://github.com/CloudWise-OpenSource/FlyFish/commits?author=soulferryman" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/YouYe"><img src="https://avatars.githubusercontent.com/u/17558799?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Cary Zhou</b></sub></a><br /><a href="https://github.com/CloudWise-OpenSource/FlyFish/commits?author=YouYe" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/jincheny"><img src="https://avatars.githubusercontent.com/u/54785820?v=4?s=100" width="100px;" alt=""/><br /><sub><b>jincheny</b></sub></a><br /><a href="#blog-jincheny" title="Blogposts">📝</a></td>
+    <td align="center"><a href="https://github.com/jincheny"><img src="https://avatars.githubusercontent.com/u/54785820?v=4?s=100" width="100px;" alt=""/><br /><sub><b>jincheny</b></sub></a><br /><a href="#blog-jincheny" title="Blogposts">📝</a> <a href="https://github.com/CloudWise-OpenSource/FlyFish/commits?author=jincheny" title="Documentation">📖</a></td>
   </tr>
 </table>
 
