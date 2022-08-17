@@ -99,7 +99,7 @@ $ git pull
 - **[官方论坛](http://bbs.aiops.cloudwise.com/t/FlyFish)**
 
  ## 参与贡献
- 您可以点击阅读 **[FlyFish 贡献指南](https://github.com/CloudWise-OpenSource/FlyFish/discussions/140)** 参与贡献，同时由衷感谢那些为 FlyFish 做出贡献的开发者，无论是 issue 问题、文档翻译、代码贡献，FlyFish 的发展离不开你的支持
+ 点击阅读 **[FlyFish 贡献指南](https://github.com/CloudWise-OpenSource/FlyFish/discussions/140)** 参与贡献，同时由衷感谢那些为 FlyFish 做出贡献的开发者，无论是 issue 问题、文档翻译、代码贡献，FlyFish 的发展离不开你的支持
 
 
 ## Contributors ✨
