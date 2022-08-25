@@ -140,7 +140,6 @@ deploy_flyfish_web() {
 
 deploy_flyfish_server() {
 
-  sed -i "s|PRO_PATH|${PROJECT_PATH}|g" ${PROJECT_PATH}/lcapServer/config/config.development.js
   sed -i "s|PRO_PATH|${PROJECT_PATH}|g" ${PROJECT_PATH}/lcapServer/lib/chrome-linux/fonts/fonts.conf
 
   cd ${PROJECT_PATH}/lcapServer/lib/chrome-linux/
