@@ -8,7 +8,7 @@ const path = require('path');
  */
 module.exports = appInfo => {
   // 静态目录 eg:  /data/app/lcapWeb
-  const staticDir = 'PRO_PATH/lcapWeb/lcapWeb';
+  const staticDir = path.join(__dirname, '../../lcapWeb/lcapWeb');
   // 组件开发目录, 默认www, 配置staticDir使用，eg: /data/app/lcapWeb/www
   const commonDirPath = 'www';
   // 数据目录 eg:  /data/appData
@@ -80,7 +80,7 @@ module.exports = appInfo => {
     logsDir: `${logsBaseDir}/${appInfo.name}`,
     commonDirPath,
 
-    applicationPath: commonDirPath ? `${commonDirPath}/applications` : 'applications',
+    applicationPath: 'applications',
     appTplPath: commonDirPath ? `${commonDirPath}/application_tpl` : 'application_tpl',
     appBuildPath: commonDirPath ? `${commonDirPath}/application_build` : 'application_build',
     defaultApplicationCoverPath: commonDirPath ? `/${commonDirPath}/application_tpl/public/cover.jpeg` : '/application_tpl/public/cover.jpeg',
