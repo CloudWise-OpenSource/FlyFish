@@ -9,6 +9,18 @@ import { successCode } from "@/config/global";
 import { toJS } from '@chaoswise/cw-mobx';
 
 import _ from "lodash";
+
+const schemaTypeEnums = {
+  MySQL: 'mysql',
+  Postgres: 'postgresql',
+  '达梦': 'dm',
+  MariaDB: 'mariadb',
+  SqlServer: 'sqlserver',
+  Oracle: 'oracle',
+  Clickhouse: 'clickhouse',
+  HTTP: 'HTTP'
+};
+
 export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
     function EditProjectModal({ form, activeData = {}, changeData, saveData, type, dataUsability, ref1 }) {
         const { getFieldDecorator } = form;
@@ -40,7 +52,8 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
                 if (!err) {
                     let sendData = {
                         datasourceName: values.datasourceName,
-                        schemaType: type,
+                        schemaType: schemaTypeEnums[type],
+                        // schemaType: type,
                         connectData: JSON.stringify(values)
                     };
                     setConnectState(true);
@@ -70,7 +83,8 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
                             datasourceId: projectData.datasourceId,
                             datasourceName: values.datasourceName,
                             modelName: values.modelName,
-                            schemaType: type,
+                            schemaType: schemaTypeEnums[type],
+                            // schemaType: type,
                             schemaName: values.schemaName,
                             connectData: JSON.stringify(values)
                         };
@@ -99,7 +113,8 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
                     } else {
                         let sendData = {};
                         sendData = {
-                            schemaType: type,
+                            // schemaType: type,
+                            schemaType: schemaTypeEnums[type],
                             connectData: JSON.stringify(values)
                         };
                         setSaveLoading(true);
@@ -132,7 +147,18 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
         };
         //服务自动拆分数据库
         const serversChange = (e) => {
-            let value = e.target.value;
+          let value = e.target.value;
+          if (type === 'SqlServer') {
+            if (value && value.split('?').length > 0) {
+              let endValue = value.split('?')[0].split(':').pop();
+              if (endValue && endValue.split(';DatabaseName=').length > 1) {
+                  let last = endValue.split(';DatabaseName=').pop();
+                  form.setFieldsValue({
+                      schemaName: last
+                  });
+              }
+            }
+          } else {
             if (value && value.split('?').length > 0) {
                 let endValue = value.split('?')[0].split(':').pop();
                 if (endValue && endValue.split('/').length > 1) {
@@ -142,6 +168,7 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
                     });
                 }
             }
+          }
         };
         return (
             <Form
@@ -187,7 +214,7 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
                             )}
                         </Form.Item>
                         {
-                            !['File', 'MySQL', 'Postgres'].includes(type) && <Form.Item label="连接地址" name={"servers"}>
+                            !['File', 'MySQL', 'Postgres', 'MariaDB', 'SqlServer', '达梦', 'Oracle', 'Clickhouse'].includes(type) && <Form.Item label="连接地址" name={"servers"}>
                                 {getFieldDecorator("servers", {
                                     initialValue: projectData?.servers,
                                     rules: [
@@ -208,7 +235,7 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
                             </Form.Item>
                         }
                         {
-                            type == enums.mysql && <Form.Item label="连接地址" name={"servers"}>
+                            (type == enums.mysql || type === enums.mariadb || type === enums.dm || type === enums.clickhouse) && <Form.Item label="连接地址" name={"servers"}>
                                 {getFieldDecorator("servers", {
                                     initialValue: projectData?.servers,
                                     rules: [
@@ -252,6 +279,28 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
                             </Form.Item>
                         }
                         {
+                            (type === enums.sqlserver || type === enums.oracle) && <Form.Item label="连接地址" name={"servers"}>
+                                {getFieldDecorator("servers", {
+                                    initialValue: projectData?.servers,
+                                    rules: [
+                                        {
+                                            required: true,
+                                            message:
+                                                intl.formatMessage({
+                                                    id: "common.pleaseInput",
+                                                    defaultValue: "请输入",
+                                                }) + "连接地址",
+                                        },
+                                    ],
+                                })(
+                                    <Input
+                                        onChange={serversChange}
+                                        placeholder={ type === enums.sqlserver ? 'jdbc:sqlserver://localhost:1433;DatabaseName=wrySelectCourse3' : 'jdbc:oracle:thin:@localhost:1521/DatabaseName'}
+                                    />
+                                )}
+                            </Form.Item>
+                        }
+                        {
                             type != enums.http && <Form.Item label="数据库名称" >
                                 {getFieldDecorator("schemaName", {
                                     initialValue: projectData?.schemaName,
@@ -275,7 +324,7 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
                                     ],
                                 })(
                                     <Input
-                                        disabled={['Postgres', 'MySQL'].includes(type)}
+                                        disabled={['Postgres', 'MySQL', 'MariaDB', 'SqlServer', '达梦', 'Oracle', 'Clickhouse'].includes(type)}
                                         placeholder={
                                             intl.formatMessage({
                                                 id: "common.pleaseInput",
@@ -287,7 +336,8 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
                             </Form.Item>
                         }
                         {
-                            type == 'Postgres' && <Form.Item label="Schema名称" >
+                            (type == 'Postgres' || type === 'SqlServer' || type == 'Oracle') && <Form.Item label="Schema名称" >
+                            {/* (type == 'Postgres') && <Form.Item label="Schema名称" > */}
                                 {getFieldDecorator("modelName", {
                                     initialValue: projectData?.modelName,
                                     rules: [
@@ -362,7 +412,7 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
                             </>
                         }
                         {
-                            ['MySQL', 'Postgres', 'MongoDB'].includes(type) && <Form.Item label="用户名" >
+                            ['MySQL', 'Postgres', 'MongoDB', 'MariaDB', 'SqlServer', '达梦', 'Oracle', 'Clickhouse'].includes(type) && <Form.Item label="用户名" >
                                 {getFieldDecorator("username", {
                                     initialValue: projectData?.username || '',
                                 })(
@@ -378,7 +428,7 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
                             </Form.Item>
                         }
                         {
-                            ['MySQL', 'Postgres', 'Redis', 'MongoDB'].includes(type) && <Form.Item label="密码" >
+                            ['MySQL', 'Postgres', 'Redis', 'MongoDB', 'MariaDB', 'SqlServer', '达梦', 'Oracle', 'Clickhouse'].includes(type) && <Form.Item label="密码" >
                                 {getFieldDecorator("password", {
                                     initialValue: projectData?.password || '',
                                 })(
