@@ -8,6 +8,7 @@ import com.cloudwise.lcap.common.exception.SqlExecException;
 import com.cloudwise.lcap.dataplateform.core.model.ExecuteBean;
 import com.cloudwise.lcap.dataplateform.core.query.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -51,10 +52,17 @@ public class QueryExecute {
             throw new ParameterException("参数taskId缺失");
         }
         String schemaType = params.getSchemaType();
+        if(StringUtils.isBlank(schemaType)){
+            log.error("参数schemaType缺失");
+            throw new ParameterException("参数schemaType缺失");
+        }
         FutureTask<Map<String,Object>> task = null;
         switch (schemaType.toLowerCase()){
             case MYSQL:
-                task = new FutureTask<>(() -> MySqlQueryProxy.query(params));
+            case POSTGRES:
+            case ORACLE:
+            case CLICKHOUSE:
+                task = new FutureTask<>(() -> JDBCQueryProxy.query(params,schemaType));
                 break;
             case HTTP:
                 task = new FutureTask<>(() -> HttpQueryProxy.query(params));

@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 import static com.cloudwise.lcap.common.contants.Constant.*;
 
+
 @Slf4j
 public class DataSourceUtils {
     /**
@@ -35,7 +36,10 @@ public class DataSourceUtils {
 
         switch (schemaType.toLowerCase()) {
             case MYSQL:
-                return MySqlQueryProxy.available(servers,username,password);
+            case POSTGRES:
+            case ORACLE:
+            case CLICKHOUSE:
+                return JDBCQueryProxy.available(servers,username,password,schemaType);
             case HTTP:
                 return DatasourceStatus.builder().available(true).build();
             default:
@@ -57,7 +61,10 @@ public class DataSourceUtils {
 
         switch (schemaType.toLowerCase()) {
             case MYSQL:
-                return MySqlQueryProxy.getTableList(dataSourceConfig);
+            case POSTGRES:
+            case ORACLE:
+            case CLICKHOUSE:
+                return JDBCQueryProxy.getTableList(dataSourceConfig,schemaType);
             case HTTP:
                 List<DataTableDto> returnData = new ArrayList<>();
                 List<DataTable> tables1 = dataSourceConfig.getTables();
@@ -88,7 +95,10 @@ public class DataSourceUtils {
         List<DataTable> tables = config.getTables();
         switch (schemaType.toLowerCase()) {
             case MYSQL:
-                return MySqlQueryProxy.getTableDetail(config, tableName, dataTableDto);
+            case POSTGRES:
+            case ORACLE:
+            case CLICKHOUSE:
+                return JDBCQueryProxy.getTableDetail(config, tableName, dataTableDto,schemaType);
             case HTTP:
                 if (CollectionUtil.isNotEmpty(tables)) {
                     Optional<DataTable> first = tables.stream().filter(table -> table.getTableName().equalsIgnoreCase(tableName)).findFirst();

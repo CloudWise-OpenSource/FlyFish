@@ -18,15 +18,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.cloudwise.lcap.common.contants.Constant.MYSQL_DRIVER;
+import static com.cloudwise.lcap.common.contants.Constant.*;
 import static com.cloudwise.lcap.common.enums.ResultCode.DATA_SOURCE_CONNECT_PARAM_ERROR;
 import static com.cloudwise.lcap.common.enums.ResultCode.DATA_SOURCE_CONNECT_PARAM_NOT_FOUND;
 
 @Slf4j
-public class MySqlQueryProxy {
+public class JDBCQueryProxy {
 
 
-    public static JSONObject query(ExecuteBean params) {
+    public static JSONObject query(ExecuteBean params,String type) {
         JSONObject result = new JSONObject();
         Connection connection = null;
         Statement statement = null;
@@ -35,12 +35,12 @@ public class MySqlQueryProxy {
         Long taskId = params.getTaskId();
         JSONObject connectData = params.getConnectData();
         String servers = connectData.getStr("servers");
-        validateUrl(servers);
+        validateUrl(servers,type);
         String username = connectData.getStr("username");
         String password = connectData.getStr("password");
         try {
             log.info("==============数据查询==============");
-            DruidDataSource dataSource = getDataSource();
+            DruidDataSource dataSource = getDataSource(type);
             dataSource.setUrl(servers);
             dataSource.setUsername(username);
             dataSource.setPassword(password);
@@ -54,8 +54,8 @@ public class MySqlQueryProxy {
             log.info("taskId:{},sql:", taskId, sql);
             log.info("==============数据查询结束==============");
         } catch (Exception e) {
-            log.error("mysql数据查询执行失败" + e);
-            throw new SqlExecException("mysql数据查询执行失败");
+            log.error(type+"数据查询执行失败" + e);
+            throw new SqlExecException(type+"数据查询执行失败");
         } finally {
             if (resultSet != null) {
                 try {
@@ -98,7 +98,7 @@ public class MySqlQueryProxy {
      * @param dataSourceConfig
      * @return
      */
-    public static List<DataTableDto> getTableList(DataSourceConfig dataSourceConfig) {
+    public static List<DataTableDto> getTableList(DataSourceConfig dataSourceConfig,String type) {
         Connection connection = null;
         JSONObject connectData = new JSONObject(dataSourceConfig.getConnectData());
         String schemaName = dataSourceConfig.getSchemaName();
@@ -106,17 +106,26 @@ public class MySqlQueryProxy {
         String datasourceId = dataSourceConfig.getDatasourceId();
         String datasourceName = dataSourceConfig.getDatasourceName();
         String servers = connectData.getStr("servers");
-        validateUrl(servers);
+        validateUrl(servers,type);
         String username = connectData.getStr("username");
         String password = connectData.getStr("password");
         try {
-            DruidDataSource dataSource = getDataSource();
+            DruidDataSource dataSource = getDataSource(type);
             dataSource.setUrl(servers);
             dataSource.setUsername(username);
             dataSource.setPassword(password);
             connection = dataSource.getConnection();
             DatabaseMetaData metaData = connection.getMetaData();
-            ResultSet tables1 = metaData.getTables(null, schemaName, null, new String[]{"TABLE"});
+            ResultSet tables1 = null;
+            if(type.equalsIgnoreCase(POSTGRES) ){
+                String modelName = connectData.getStr("modelName");
+                tables1 = metaData.getTables(schemaName, modelName, null, new String[]{"TABLE"});
+            }else if(type.equalsIgnoreCase(ORACLE)){
+                String modelName = connectData.getStr("modelName");
+                tables1 = metaData.getTables(null, modelName == null?null:modelName.toUpperCase(), null, new String[]{"TABLE"});
+            }else {
+                tables1 = metaData.getTables(null, schemaName, null, new String[]{"TABLE"});
+            }
             List<Map<String,Object>> tables = DataUtils.getResult2(tables1);
 
             List<DataTableDto> dataTables = new ArrayList<>();
@@ -129,8 +138,8 @@ public class MySqlQueryProxy {
             }
             return dataTables;
         } catch (Exception e) {
-            log.error("mysql获取数据表元数据失败" + e);
-            throw new SqlExecException("mysql获取数据表元数据失败");
+            log.error(type+"获取数据表元数据失败" + e);
+            throw new SqlExecException(type+"获取数据表元数据失败");
         } finally {
             if (connection != null) {
                 try {
@@ -151,24 +160,37 @@ public class MySqlQueryProxy {
      * @param dataSourceConfig
      * @return
      */
-    public static DataTableDto getTableDetail(DataSourceConfig dataSourceConfig, String tableName, DataTableDto dataTableDto) {
+    public static DataTableDto getTableDetail(DataSourceConfig dataSourceConfig, String tableName, DataTableDto dataTableDto,String type) {
         Connection connection = null;
         Statement statement = null;
         ResultSet resultSet = null;
         JSONObject connectData = new JSONObject(dataSourceConfig.getConnectData());
         String schemaName = dataSourceConfig.getSchemaName();
         String servers = connectData.getStr("servers");
-        validateUrl(servers);
+        validateUrl(servers,type);
         String username = connectData.getStr("username");
         String password = connectData.getStr("password");
         try {
-            DruidDataSource dataSource = getDataSource();
+            DruidDataSource dataSource = getDataSource(type);
             dataSource.setUrl(servers);
             dataSource.setUsername(username);
             dataSource.setPassword(password);
             connection = dataSource.getConnection();
             DatabaseMetaData metaData = connection.getMetaData();
-            resultSet = metaData.getColumns(schemaName, schemaName, tableName, "%");
+            if(type.equalsIgnoreCase(POSTGRES) ){
+                String modelName = connectData.getStr("modelName");
+                resultSet = metaData.getColumns(schemaName, modelName, tableName, "%");
+                schemaName = modelName;
+            }else if(type.equalsIgnoreCase(ORACLE)){
+                String modelName = connectData.getStr("modelName");
+                modelName = modelName == null?null:modelName.toUpperCase();
+                schemaName = modelName;
+                tableName = tableName.toUpperCase();
+                resultSet = metaData.getColumns(null, modelName , tableName, "%");
+            }else {
+                resultSet = metaData.getColumns(null, schemaName, tableName, "%");
+            }
+
             List<Map<String,Object>> fieldMeta = DataUtils.getResult2(resultSet);
 
             JSONObject fields = new JSONObject();
@@ -178,20 +200,27 @@ public class MySqlQueryProxy {
                 fields.put(fieldName, fieldType);
             }
             dataTableDto.setFields(fields);
-
-            String exampleSql = "select * from " + schemaName + "." + tableName + " limit 10";
+            if(StringUtils.isBlank(schemaName)){
+                schemaName = "default";
+            }
+            String exampleSql = "";
+            if(type.equalsIgnoreCase(ORACLE)){
+                exampleSql = "select *  from (select * from " + schemaName + "." + tableName + ") where ROWNUM <= 10";
+            }else{
+                exampleSql = "select * from " + schemaName + "." + tableName + " limit 10";
+            }
             statement = connection.createStatement();
             resultSet = statement.executeQuery(exampleSql);
             List<Map<String, Object>> exampleData = DataUtils.getResult(resultSet);
             dataTableDto.setExampleData(exampleData);
         } catch (Exception e) {
-            log.error("mysql获取数据表结构失败" + e);
+            log.error(type+"获取数据表结构失败" + e);
             if (e instanceof BaseException) {
                 throw new BaseException(e);
             }else if (e.getCause() instanceof BaseException){
                 throw (BaseException)e.getCause();
             }
-            throw new SqlExecException("mysql获取数据表结构失败");
+            throw new SqlExecException(type+"获取数据表结构失败");
         } finally {
             if (resultSet != null) {
                 try {
@@ -228,12 +257,12 @@ public class MySqlQueryProxy {
     }
 
 
-    public static DatasourceStatus available(String servers,String username,String password) {
+    public static DatasourceStatus available(String servers,String username,String password,String type) {
         DatasourceStatus datasourceStatus = DatasourceStatus.builder().available(true).build();
         Connection connection = null;
-        validateUrl(servers);
+        validateUrl(servers,type);
         try {
-            DruidDataSource dataSource = getDataSource();
+            DruidDataSource dataSource = getDataSource(type);
             dataSource.setUrl(servers);
             dataSource.setUsername(username);
             dataSource.setPassword(password);
@@ -257,22 +286,40 @@ public class MySqlQueryProxy {
     }
 
 
-    private static void validateUrl(String url) {
+    private static void validateUrl(String url,String type) {
         if (StringUtils.isEmpty(url)) {
             log.error("数据源连接地址缺失");
             throw new ParameterException(DATA_SOURCE_CONNECT_PARAM_NOT_FOUND);
         }
-        if (!url.startsWith("jdbc") || !url.contains("mysql")) {
+        if (!url.startsWith("jdbc") || !url.contains(type)) {
             log.error("数据源连接信息错误");
             throw new ParameterException(DATA_SOURCE_CONNECT_PARAM_ERROR);
         }
     }
 
 
-    private static DruidDataSource getDataSource() {
+    private static DruidDataSource getDataSource(String type) {
         DruidDataSource dataSource = new DruidDataSource();
-
-        dataSource.setDriverClassName(MYSQL_DRIVER);
+        if(StringUtils.isBlank(type)){
+            log.error("数据库类型（type）不能为空");
+            throw new ParameterException(DATA_SOURCE_CONNECT_PARAM_ERROR);
+        }
+        switch (type.toLowerCase()) {
+            case MYSQL:
+                dataSource.setDriverClassName(MYSQL_DRIVER);
+                break;
+            case POSTGRES:
+                dataSource.setDriverClassName(POSTGRES_DRIVER);
+                break;
+            case ORACLE:
+                dataSource.setDriverClassName(ORACLE_DRIVER);
+                break;
+            case CLICKHOUSE:
+                dataSource.setDriverClassName(CLICKHOUSE_DRIVER);
+                break;
+            default:
+                break;
+        }
         //        dataSource.setInitialSize(10);
 //        dataSource.setMaxActive(100);
 //        dataSource.setMinIdle(10);
@@ -295,7 +342,7 @@ public class MySqlQueryProxy {
         // 失败后重连的次数
         dataSource.setConnectionErrorRetryAttempts(2);
         //等待 2000 毫秒
-        dataSource.setMaxWait(1000);
+        dataSource.setMaxWait(10000);
         dataSource.addConnectionProperty("remarks", "true");
         dataSource.addConnectionProperty("useInformationSchema", "true");
         return dataSource;
