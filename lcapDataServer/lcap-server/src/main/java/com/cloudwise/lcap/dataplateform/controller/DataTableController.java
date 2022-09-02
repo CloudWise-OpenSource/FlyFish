@@ -3,6 +3,7 @@ package com.cloudwise.lcap.dataplateform.controller;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.json.JSONObject;
 import com.cloudwise.lcap.common.PageResult;
+import com.cloudwise.lcap.common.contants.Constant;
 import com.cloudwise.lcap.common.exception.ParameterException;
 import com.cloudwise.lcap.common.utils.JsonUtils;
 import com.cloudwise.lcap.common.utils.SnowFlakeUtil;
@@ -182,9 +183,16 @@ public class DataTableController {
                 total = maxScanTotal;
             }
         }
-
         int startLimit = (pageNo - 1) * pageSize;
-        String dataSql = String.format("select * from ( " + sql + ") as t limit %s,%s", startLimit, pageSize);
+        int endLimit = pageNo*pageSize;
+        String dataSql = "";
+        if(Constant.ORACLE.equalsIgnoreCase(config.getSchemaType())){
+            dataSql = String.format("select * from (select t.*, ROWNUM rn from ( " + sql + ") as t where ROWNUM <= %s ) where rn > %s", endLimit,startLimit);
+        }else if(Constant.POSTGRES.equalsIgnoreCase(config.getSchemaType())){
+            dataSql = String.format("select * from ( " + sql + ") as t limit %s offset %s", pageSize,startLimit);
+        }else{
+            dataSql = String.format("select * from ( " + sql + ") as t limit %s,%s", startLimit,pageSize);
+        }
         params.setSql(dataSql);
 
         List<Map<String, Object>> data = QueryExecute.execute(params);
