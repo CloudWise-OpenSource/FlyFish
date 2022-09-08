@@ -163,6 +163,9 @@ deploy_flyfish_server() {
   cd ${PROJECT_PATH}/lcapWeb/lcapWeb/www/components
   npm install
 
+  echo "修改大屏应用开发环境配置:"
+  sed -i "s|CW_LOCAL_IP|$local_ip|g" ${PROJECT_PATH}/lcapWeb/www/web/screen/config/env.js
+
   sed -i "s|PRO_PATH|${PROJECT_PATH}|g" ${PROJECT_PATH}/lcapDataServer/lcap-server/src/main/resources/application.properties
   sed -i "s|PRO_PATH|${PROJECT_PATH}|g" ${PROJECT_PATH}/lcapDataServer/lcap-server/target/classes/application.properties
   echo "lcapDataServer部署："

@@ -8,6 +8,7 @@
 
 [![img](https://camo.githubusercontent.com/b90fbf522edfb28cd12154150fae08fd89d4be956e644f327f369df43ef33bf0/68747470733a2f2f62616467656e2e6e65742f6769746875622f7072732f436c6f7564576973652d4f70656e536f757263652f466c7946697368)](https://github.com/CloudWise-OpenSource/FlyFish/pulls) [![img](https://camo.githubusercontent.com/4bf17723fd9a7438e40dda0d0f05c3ff85df8450605fbec58cf4643bb044ca49/68747470733a2f2f62616467656e2e6e65742f6769746875622f6c6963656e73652f436c6f7564576973652d4f70656e536f757263652f466c7946697368)](https://github.com/CloudWise-OpenSource/FlyFish/blob/main/LICENSE) [![img](https://camo.githubusercontent.com/1fb3e7fec903937186ee550f90f558bdf63575dc171251276c3335ff863d13cc/68747470733a2f2f62616467656e2e6e65742f6769746875622f72656c656173652f436c6f7564576973652d4f70656e536f757263652f466c7946697368)](https://github.com/CloudWise-OpenSource/FlyFish/releases)<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-13-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ## 见码如面
@@ -23,8 +24,8 @@
 - 应用开发：支持开发大屏应用，可开发单页面或是多页面路由的大屏应用。
 - 组件开发：组件为最小粒度的项目基础，通过创建和开发组件拼凑出最终的可视化大屏展示。
 - 模板库：可将开发完成的应用/组件分别上传到对应的模板库中，可在已有模板的基础上快速创建新的项目。
-- 数据源管理：可接入 MySQL、Http 等多个数据库数据生成对应数据源，供创建项目时组件对数据进行调用。 
-- 数据查询：支持根据数据表进行 SQL 查询，精准定位数据源中具体数据并封装保存，也可将查询到的数据重新组合，供组件直接调用。 
+- 数据源管理：可接入 MySQL、Http 等多个数据库数据生成对应数据源，供创建项目时组件对数据进行调用。
+- 数据查询：支持根据数据表进行 SQL 查询，精准定位数据源中具体数据并封装保存，也可将查询到的数据重新组合，供组件直接调用。
 
 | ![产品功能示例1](./doc/images/产品功能示例1.gif) | ![产品功能示例2](./doc/images/产品功能示例2.gif) |
 | ------------------------------------------------ | ------------------------------------------------ |
@@ -40,8 +41,7 @@
 
 **国内镜像**：https://gitee.com/CloudWise/fly-fish
 
-**Demo环境地址**：https://flyfish-demo.opscloudwise.com:23368
-
+**Demo 环境地址**：https://flyfish-demo.opscloudwise.com:23368
 
 ## 本地部署
 
@@ -77,6 +77,7 @@ or
 git clone -b main https://gitee.com/CloudWise/fly-fish.git FlyFish
 
 cd /data/app/FlyFish
+# 一键安装
 bash flyfish.sh install
 
 # 一键卸载
@@ -98,9 +99,9 @@ $ git pull
 - **[教学视频](http://docs.aiops.cloudwise.com/zh/flyfish/video-course/P1.html)**
 - **[官方论坛](http://bbs.aiops.cloudwise.com/t/FlyFish)**
 
- ## 参与贡献
- 点击阅读 **[FlyFish 贡献指南](https://github.com/CloudWise-OpenSource/FlyFish/discussions/140)** 参与贡献，同时由衷感谢那些为 FlyFish 做出贡献的开发者，无论是 issue 问题、文档翻译、代码贡献，FlyFish 的发展离不开你的支持
+## 参与贡献
 
+点击阅读 **[FlyFish 贡献指南](https://github.com/CloudWise-OpenSource/FlyFish/discussions/140)** 参与贡献，同时由衷感谢那些为 FlyFish 做出贡献的开发者，无论是 issue 问题、文档翻译、代码贡献，FlyFish 的发展离不开你的支持
 
 ## Contributors ✨
 
