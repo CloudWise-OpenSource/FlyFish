@@ -8,11 +8,16 @@ public class Constant {
 
     //jdbc
     public static final String MYSQL = "mysql";
-
+    public static final String CLICKHOUSE = "clickhouse";
+    public static final String POSTGRES = "postgresql";
+    public static final String ORACLE = "oracle";
     public static final String HTTP = "http";
 
     //驱动信息
     public static final String MYSQL_DRIVER = "com.mysql.jdbc.Driver";
+    public static final String POSTGRES_DRIVER = "org.postgresql.Driver";
+    public static final String ORACLE_DRIVER = "oracle.jdbc.OracleDriver";
+    public static final String CLICKHOUSE_DRIVER = "com.clickhouse.jdbc.ClickHouseDriver";
 
     //组件打包参数 组件源码
     public static final String COMPONENT_SOURCE_COMPILED = "componentSource";

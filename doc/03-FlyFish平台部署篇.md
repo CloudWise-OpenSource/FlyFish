@@ -15,11 +15,9 @@ npm config set registry https://registry.npmmirror.com
 1. 前端源码打包
 
 ```bash
-# lcapWeb 目录
-cd lcapWeb
-
-# 安装依赖
-npm install
+# lcapWeb 安装依赖
+# FlyFish 目录下执行
+cd lcapWeb && npm install
 
 # 打包
 npm run build
@@ -99,6 +97,8 @@ server {
 
   # lcapWeb
   location / {
+    # PRO_PATH 替换成 FlyFish 项目路径
+    # 例如： data/app/FlyFish/lcapWeb/lcapWeb/;
     root PRO_PATH/lcapWeb/lcapWeb/;
     index index.html index.htm;
   }
@@ -113,13 +113,15 @@ server {
 
   # 静态资源代理
   location /lcapWww/ {
+    # PRO_PATH 替换成 FlyFish 项目路径
+    # 例如： data/app/FlyFish/lcapWeb/lcapWeb/www/;
     alias PRO_PATH/lcapWeb/lcapWeb/www/;
   }
 
   # lcapServer 反向代理
   location ^~ /api/ {
     proxy_pass http://0.0.0.0:7001/;
-    # ip 替换成当前主机 ip
+    # IP 替换成当前主机 IP
     proxy_cookie_domain 0.0.0.0 IP;
   }
 
@@ -147,21 +149,22 @@ http://ip:8089
 1. 安装依赖
 
 ```bash
-### 安装主服务依赖
-cd lcapServer/
-npm install
+# 安装主服务依赖
+# FlyFish 目录下执行
+cd lcapServer/ && npm install
 
-### 安装初始化脚本依赖
-cd lcapServer/changelog
-npm install
+# 安装初始化脚本依赖
+# FlyFish 目录下执行
+cd lcapServer/changelog && npm install
+
 ```
 
 2. 初始化数据库
 
 ```bash
 # 初始化数据库
-cd lcapServer/changelog
-NODE_ENV=development node scripts/initDatabase.js
+# FlyFish 目录下执行
+cd lcapServer/changelog && NODE_ENV=development node scripts/initDatabase.js
 
 # 提示以下内容意味初始化成功
 # init menu success
@@ -175,8 +178,9 @@ NODE_ENV=development node scripts/initDatabase.js
 
 ```bash
 # 修改后端配置
-cd lcapServer
-vim ./config/config.development.js
+# 无特殊需求，使用默认配置即可。
+# FlyFish 目录下执行
+cd lcapServer && vim ./config/config.development.js
 
 staticDir -> 静态目录 eg:  /data/app/lcapWeb
 commonDirPath -> 组件开发目录, 默认www, 配置staticDir使用，eg: /data/app/lcapWeb/lacpWeb/www
@@ -213,14 +217,15 @@ chromePort -> chrome无头浏览器port eg: 9222
 3. 解压缩略图依赖
 
 ```bash
-cd lcapServer/lib/chrome-linux
+# 以下命令在 FlyFish 下执行
+cd lcapServer/lib/chrome-linux && unzip chrome-core.zip
 
-unzip chrome-core.zip
 ```
 
 4. 启动服务
 
 ```bash
+# 以下命令在 FlyFish/lcapServer 下执行
 # 启动后端服务
 npm run development
 
@@ -232,12 +237,9 @@ npm run stop
 5. 组件开发环境配置
 
 ```bash
-# 以下命令在 lcapWww 下执行
+# 以下命令在 FlyFish 下执行
 # 进入组件开发目录
-cd lcapWeb/lcapWeb/www/components
-
-# 安装依赖
-npm install
+cd lcapWeb/lcapWeb/www/components && npm install
 
 ```
 
@@ -247,31 +249,32 @@ npm install
 
 ```bash
 # 服务打包
-cd ./lcapDataServer && mvn clean package -Dmaven.test.skip=true -Dmaven.gitcommitid.skip=true -am -pl lcap-server
 # 生成 lcapDataServer-${version}-${datetime}-${git_commit_id}.tar.gz 安装包
-
-cd ./lcap-server/target
+# FlyFish下执行
+cd ./lcapDataServer && mvn clean package -Dmaven.test.skip=true -Dmaven.gitcommitid.skip=true -am -pl lcap-server
 
 # 解压部署包
-tar -zxvf lcapDataServer-\$\{git.build.version\}-\$\{git.commit.time\}-\$\{git.commit.id.abbrev\}.tar.gz
+# FlyFish/lcapDataServer 目录下执行
+tar -zxvf ./lcap-server/target/lcapDataServer-\$\{git.build.version\}-\$\{git.commit.time\}-\$\{git.commit.id.abbrev\}.tar.gz
 
 # 解压后生成的核心文件目录如下：
-[root@host233 app]# cd ./lcapDataServer
-[root@host233 lcapDataServer]# ll
-总用量 32
-drwxrwxr-x  2 kid kid    56 7月  18 21:31 bin
-drwxrwxr-x  3 kid kid   107 7月  18 21:41 conf
-drwxrwxr-x  2 kid kid 12288 7月  18 21:25 lib
+cd ./lcap-server/target/lcapDataServer
+ll
+
+# 总用量 32
+# drwxrwxr-x  2 kid kid    56 7月  18 21:31 bin
+# drwxrwxr-x  3 kid kid   107 7月  18 21:41 conf
+# drwxrwxr-x  2 kid kid 12288 7月  18 21:25 lib
 ```
 
 2. 修改服务配置文件
 
 ```bash
 # 进入服务解压目录，执行以下命令
+# 在 FlyFish/lcapDataServer/lcap-server/target/lcapDataServer 目录下执行
 vim ./conf/application.properties
 
 # 修改以下配置项
-
 # 应用/组件导入导出相关配置，导入导出时需要用到web端的应用/组件源码,所以请设置对应的路径
 file.basepath=/data/app/FlyFish/lcapWeb/www
 application_basepath=/data/app/FlyFish/lcapWeb/lcapWeb/www/applications
@@ -304,14 +307,16 @@ spring.servlet.multipart.max-request-size=1024MB
 ./bin/lcapDataServer stop
 
 # 查看日志验证服务是否启动
-tail -200f /data/logs/lcapDataServer/lcap-dataserver.info.log
+# 在以下目录下执行
+# FlyFish/lcapDataServer/lcap-server/target/lcapDataServer
+tail -200f ./logs/lcapDataServer/lcap-dataserver.info.log
 ```
 
 ### 三、验证
 
 > 防火墙要开放对应端口，默认 code-server:8081、前端: 8089、lcapServer: 7001、lcapDataServer：8099、mongodb:27017
 
-访问：http:ip:8089 注册、登录、开发组件大屏。
+访问：http:ip:8089 注册、登录、开发组件大屏，推荐您使用最新版本Chrome浏览器访问飞鱼平台。
 
 - 初始账号：admin
 - 密码：utq#SpV!

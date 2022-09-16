@@ -3,6 +3,7 @@ package com.cloudwise.lcap.dataplateform.controller;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.json.JSONObject;
 import com.cloudwise.lcap.common.PageResult;
+import com.cloudwise.lcap.common.contants.Constant;
 import com.cloudwise.lcap.common.exception.ParameterException;
 import com.cloudwise.lcap.common.utils.JsonUtils;
 import com.cloudwise.lcap.common.utils.SnowFlakeUtil;
@@ -170,6 +171,13 @@ public class DataTableController {
         params.setTables(config.getTables());
 
         String sql = params.getSql();
+        if(Constant.ORACLE.equalsIgnoreCase(config.getSchemaType()) || Constant.POSTGRES.equalsIgnoreCase(config.getSchemaType())){
+            sql = sql.replace("`","");
+            String modelName = params.getConnectData().getStr("modelName");
+            if(sql.contains(params.getSchemaName())){
+                sql = sql.replace(params.getSchemaName(),modelName);
+            }
+        }
         String pageSql = "select count(1) as total from ( " + sql + ") t";
         Integer pageNo = params.getPageNo();
         Integer pageSize = params.getPageSize();
@@ -182,9 +190,16 @@ public class DataTableController {
                 total = maxScanTotal;
             }
         }
-
         int startLimit = (pageNo - 1) * pageSize;
-        String dataSql = String.format("select * from ( " + sql + ") as t limit %s,%s", startLimit, pageSize);
+        int endLimit = pageNo*pageSize;
+        String dataSql = "";
+        if(Constant.ORACLE.equalsIgnoreCase(config.getSchemaType())){
+            dataSql = String.format("select * from (select t.*, ROWNUM rn from ( " + sql + ") t where ROWNUM <= %s ) where rn > %s", endLimit,startLimit);
+        }else if(Constant.POSTGRES.equalsIgnoreCase(config.getSchemaType())){
+            dataSql = String.format("select * from ( " + sql + ") as t limit %s offset %s", pageSize,startLimit);
+        }else{
+            dataSql = String.format("select * from ( " + sql + ") as t limit %s,%s", startLimit,pageSize);
+        }
         params.setSql(dataSql);
 
         List<Map<String, Object>> data = QueryExecute.execute(params);

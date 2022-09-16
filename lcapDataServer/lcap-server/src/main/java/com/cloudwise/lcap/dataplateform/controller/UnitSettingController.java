@@ -3,6 +3,7 @@ package com.cloudwise.lcap.dataplateform.controller;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.json.JSONObject;
 import com.cloudwise.lcap.common.PageResult;
+import com.cloudwise.lcap.common.contants.Constant;
 import com.cloudwise.lcap.common.enums.ResultCode;
 import com.cloudwise.lcap.common.exception.BizException;
 import com.cloudwise.lcap.common.exception.ParameterException;
@@ -272,6 +273,15 @@ public class UnitSettingController {
                     .tables(config.getTables())
                     .build();
             try {
+                String sql = params.getSql();
+                if(Constant.ORACLE.equalsIgnoreCase(config.getSchemaType()) || Constant.POSTGRES.equalsIgnoreCase(config.getSchemaType())){
+                    sql = sql.replace("`","");
+                    String modelName = params.getConnectData().getStr("modelName");
+                    if(sql.contains(params.getSchemaName())){
+                        sql = sql.replace(params.getSchemaName(),modelName);
+                    }
+                }
+                params.setSql(sql);
                 return QueryExecute.execute(params);
             } catch (Exception e) {
                 log.error("调用链执行异常," + e.getMessage());

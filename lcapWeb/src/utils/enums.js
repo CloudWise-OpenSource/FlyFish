@@ -1,6 +1,11 @@
-let dataTypeEnums = 
+let dataTypeEnums =
 {
-    mysql:'MySQL',
+    mysql: 'MySQL',
+    clickhouse: 'Clickhouse',
+    mariadb: 'MariaDB',
+    sqlserver: 'SqlServer',
+    dm: '达梦',
+    oracle:'Oracle',
     mongodb:'MongoDB',
     redis:'Redis',
     postgres:'Postgres',
@@ -30,4 +35,3 @@ let dataTypeEnums =
 //     }
 // ];
 export default dataTypeEnums;
-  

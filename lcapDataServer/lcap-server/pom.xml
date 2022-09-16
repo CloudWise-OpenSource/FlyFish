@@ -21,9 +21,6 @@
         <dynamic-datasource.version>3.5.0</dynamic-datasource.version>
         <beetl.version>3.9.3.RELEASE</beetl.version>
         <spring-context.version>5.3.14</spring-context.version>
-        <mysql.jdbc.version>8.0.13</mysql.jdbc.version>
-        <oracle.jdbc.version>21.1.0.0</oracle.jdbc.version>
-        <clickhouse.jdbc.version>0.3.2</clickhouse.jdbc.version>
         <json-path.version>2.4.0</json-path.version>
         <calcite.version>1.30.0</calcite.version>
         <elasticsearch.version>7.4.2</elasticsearch.version>
@@ -107,6 +104,21 @@
             <scope>runtime</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ru.yandex.clickhouse</groupId>
+            <artifactId>clickhouse-jdbc</artifactId>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.oracle.database.jdbc</groupId>
+            <artifactId>ojdbc8</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.ibeetl</groupId>
