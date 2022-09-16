@@ -58,7 +58,7 @@
 
 > 推荐使用 doc 目录内 flyfish dcoker 部署文档，后续有关部署流程、学习资料、FAQ 等统一放置 doc 目录中管理。
 
- [Flyfish docker镜像使用指南](./doc/Flyfish docker镜像使用指南.md)
+ [Flyfish docker镜像使用指南](doc/Flyfish_docker镜像使用指南.md)
 
 > 手动安装步骤：
 
