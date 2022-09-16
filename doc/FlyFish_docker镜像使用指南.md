@@ -3,7 +3,7 @@
 > **该镜像只支持x86的类unix系统**
 
 * 机器上安装docker和docker-compose
-* 下载Flyfish [docker-compose.yaml](https://objects.githubusercontent.com/github-production-release-asset-2e65be/414829493/10d6c8dd-3515-4baa-8261-e032b30eb295?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20220916%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20220916T063824Z&X-Amz-Expires=300&X-Amz-Signature=ca8c922fd9adaaf37478637c109694576731bac8e594de3ff16c7efa6f99c9ff&X-Amz-SignedHeaders=host&actor_id=17558799&key_id=0&repo_id=414829493&response-content-disposition=attachment%3B%20filename%3Ddocker-compose.yaml&response-content-type=application%2Foctet-stream)文件，并放置到单独的文件夹中
+* 下载Flyfish [docker-compose.yaml](https://github.com/CloudWise-OpenSource/FlyFish/releases/download/FlyFish-2.2.0/docker-compose.yaml)文件，并放置到单独的文件夹中
 * 在docker-compose.yaml所在的文件夹执行
 
 ```shell
