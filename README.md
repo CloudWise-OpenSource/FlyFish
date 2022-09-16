@@ -56,7 +56,11 @@
 
 ### 部署流程
 
-> 推荐使用 doc 目录内 flyfish 部署文档，后续有关部署流程、学习资料、FAQ 等统一放置 doc 目录中管理。
+> 推荐使用 doc 目录内 flyfish dcoker 部署文档，后续有关部署流程、学习资料、FAQ 等统一放置 doc 目录中管理。
+
+- [FlyFish docker 镜像使用指南](doc/FlyFish_docker镜像使用指南.md)
+
+> 手动安装步骤：
 
 - [01-基础环境准备篇](./doc/01-基础环境准备篇.md)
 - [02-code_server 部署篇](./doc/02-code_server部署篇.md)
