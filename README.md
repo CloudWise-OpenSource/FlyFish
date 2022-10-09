@@ -41,7 +41,7 @@
 
 **国内镜像**：https://gitee.com/CloudWise/fly-fish
 
-**Demo 环境地址**：https://flyfish-demo.opscloudwise.com:23368
+**Demo 环境地址**：http://flyfish-demo.cloudwise.com
 
 ## 本地部署
 
