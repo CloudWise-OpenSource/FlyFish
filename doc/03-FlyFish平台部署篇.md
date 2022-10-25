@@ -324,9 +324,9 @@ tail -200f ./logs/lcapDataServer/lcap-dataserver.info.log
 
 ### 三、验证
 
-> 防火墙要开放对应端口，默认 code-server:8081、前端: 8089、lcapServer: 7001、lcapDataServer：18532、mongodb:27017
+> 防火墙（安全组）开放 8089 端口。
 
-访问：http:ip:8089 注册、登录、开发组件大屏，推荐您使用最新版本Chrome浏览器访问飞鱼平台。
+访问：http:ip:8089 注册、登录、开发组件大屏，推荐您使用最新版本 Chrome 浏览器访问飞鱼平台。
 
 - 初始账号：admin
 - 密码：utq#SpV!
