@@ -7,7 +7,7 @@
 # 飞鱼（FlyFish）
 
 [![img](https://camo.githubusercontent.com/b90fbf522edfb28cd12154150fae08fd89d4be956e644f327f369df43ef33bf0/68747470733a2f2f62616467656e2e6e65742f6769746875622f7072732f436c6f7564576973652d4f70656e536f757263652f466c7946697368)](https://github.com/CloudWise-OpenSource/FlyFish/pulls) [![img](https://camo.githubusercontent.com/4bf17723fd9a7438e40dda0d0f05c3ff85df8450605fbec58cf4643bb044ca49/68747470733a2f2f62616467656e2e6e65742f6769746875622f6c6963656e73652f436c6f7564576973652d4f70656e536f757263652f466c7946697368)](https://github.com/CloudWise-OpenSource/FlyFish/blob/main/LICENSE) [![img](https://camo.githubusercontent.com/1fb3e7fec903937186ee550f90f558bdf63575dc171251276c3335ff863d13cc/68747470733a2f2f62616467656e2e6e65742f6769746875622f72656c656173652f436c6f7564576973652d4f70656e536f757263652f466c7946697368)](https://github.com/CloudWise-OpenSource/FlyFish/releases)<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-16-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-17-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ## 见码如面
@@ -136,6 +136,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <tr>
       <td align="center"><a href="https://github.com/Rosso-Wang"><img src="https://avatars.githubusercontent.com/u/59380115?v=4?s=100" width="100px;" alt="Rosso Wang"/><br /><sub><b>Rosso Wang</b></sub></a><br /><a href="https://github.com/CloudWise-OpenSource/FlyFish/commits?author=Rosso-Wang" title="Documentation">📖</a></td>
       <td align="center"><a href="https://github.com/ljy-life"><img src="https://avatars.githubusercontent.com/u/49783112?v=4?s=100" width="100px;" alt="余生"/><br /><sub><b>余生</b></sub></a><br /><a href="https://github.com/CloudWise-OpenSource/FlyFish/commits?author=ljy-life" title="Code">💻</a></td>
+      <td align="center"><a href="https://github.com/lich-y"><img src="https://avatars.githubusercontent.com/u/51944841?v=4?s=100" width="100px;" alt="Edward.Li"/><br /><sub><b>Edward.Li</b></sub></a><br /><a href="https://github.com/CloudWise-OpenSource/FlyFish/commits?author=lich-y" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
