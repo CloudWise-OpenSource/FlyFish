@@ -20,7 +20,7 @@ window.DATAVI_ENV = (function() {
     componentsDir: 'www/components',
     apiSuccessCode: 200,
 
-    yapiAddress: 'http://${CW_LOCAL_IP}:${CW_LOCAL_PORT}/lcapWeb/index.html#/api',
+    yapiAddress: 'http://CW_LOCAL_IP:8089/lcapWeb/index.html#/api',
 
     screenAPI: {
       // 大屏展示和编辑用到的API
@@ -31,9 +31,9 @@ window.DATAVI_ENV = (function() {
       getModelList: '/applications/getModelList', // 获取模型列表
       getModelData: '/applications/getModelData', // 获取模型数据
       getScreenComponentList: '/applications/components/list',
-      getDataSearchData: 'http://${CW_LOCAL_IP}:${CW_LOCAL_PORT}/lcap-data-server/api/dataplateform/unit/query', // 获取数据查询数据
-      getDataSearch: 'http://${CW_LOCAL_IP}:${CW_LOCAL_PORT}/lcap-data-server/api/dataplateform/unit/findAll',
-      httpProxy: 'http://${CW_LOCAL_IP}:${CW_LOCAL_PORT}/lcap-data-server/api/dataplateform/apiProxy', // http代理服务
+      getDataSearchData: 'http://CW_LOCAL_IP:8089/lcap-data-server/api/dataplateform/unit/query', // 获取数据查询数据
+      getDataSearch: 'http://CW_LOCAL_IP:8089/lcap-data-server/api/dataplateform/unit/findAll',
+      httpProxy: 'http://CW_LOCAL_IP:8089/lcap-data-server/api/dataplateform/apiProxy', // http代理服务
     },
   };
 }());

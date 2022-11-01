@@ -21,6 +21,11 @@ const schemaTypeEnums = {
   HTTP: 'HTTP'
 };
 
+const placeholderEnums = {
+  mysql: 'jdbc:mysql://10.2.2.254:18103/cw_douc?createDatabaseIfNotExist=true',
+  clickhouse: 'jdbc:clickhouse://10.2.2.254.148:8123/default',
+};
+
 export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
     function EditProjectModal({ form, activeData = {}, changeData, saveData, type, dataUsability, ref1 }) {
         const { getFieldDecorator } = form;
@@ -251,7 +256,7 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
                                 })(
                                     <Input
                                         onChange={serversChange}
-                                        placeholder='jdbc:mysql://10.2.2.254:18103/cw_douc?createDatabaseIfNotExist=true'
+                                        placeholder={placeholderEnums[type] || 'jdbc:mysql://10.2.2.254:18103/cw_douc?createDatabaseIfNotExist=true'}
                                     />
                                 )}
                             </Form.Item>
