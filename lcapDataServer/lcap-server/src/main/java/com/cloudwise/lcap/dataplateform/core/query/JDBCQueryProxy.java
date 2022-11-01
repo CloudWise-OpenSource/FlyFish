@@ -206,7 +206,9 @@ public class JDBCQueryProxy {
             String exampleSql = "";
             if(type.equalsIgnoreCase(ORACLE)){
                 exampleSql = "select *  from (select * from " + schemaName + "." + tableName + ") where ROWNUM <= 10";
-            }else{
+            }else if(type.equalsIgnoreCase(SQLSERVER)){
+                exampleSql = "select top 10 * from " + schemaName + "." + tableName ;
+            } else{
                 exampleSql = "select * from " + schemaName + "." + tableName + " limit 10";
             }
             statement = connection.createStatement();
@@ -316,6 +318,16 @@ public class JDBCQueryProxy {
                 break;
             case CLICKHOUSE:
                 dataSource.setDriverClassName(CLICKHOUSE_DRIVER);
+                break;
+            case SQLSERVER:
+                dataSource.setDriverClassName(SQL_SERVER_DRIVER);
+                dataSource.setValidationQuery("select 1");
+                break;
+            case DAMENG:
+                dataSource.setDriverClassName(DAMENG_DRIVER);
+                break;
+            case MARIA:
+                dataSource.setDriverClassName(MARIA_DRIVER);
                 break;
             default:
                 break;

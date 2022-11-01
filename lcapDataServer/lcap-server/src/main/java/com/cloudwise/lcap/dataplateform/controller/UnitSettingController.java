@@ -280,6 +280,8 @@ public class UnitSettingController {
                     if(sql.contains(params.getSchemaName())){
                         sql = sql.replace(params.getSchemaName(),modelName);
                     }
+                } else if(Constant.DAMENG.equalsIgnoreCase(config.getSchemaType())){
+                    sql = sql.replace("`","");
                 }
                 params.setSql(sql);
                 return QueryExecute.execute(params);

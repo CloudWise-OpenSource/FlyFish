@@ -178,6 +178,9 @@ public class DataTableController {
                 sql = sql.replace(params.getSchemaName(),modelName);
             }
         }
+        if(Constant.DAMENG.equalsIgnoreCase(config.getSchemaType())){
+            sql = sql.replace("`","");
+        }
         String pageSql = "select count(1) as total from ( " + sql + ") t";
         Integer pageNo = params.getPageNo();
         Integer pageSize = params.getPageSize();
@@ -197,7 +200,9 @@ public class DataTableController {
             dataSql = String.format("select * from (select t.*, ROWNUM rn from ( " + sql + ") t where ROWNUM <= %s ) where rn > %s", endLimit,startLimit);
         }else if(Constant.POSTGRES.equalsIgnoreCase(config.getSchemaType())){
             dataSql = String.format("select * from ( " + sql + ") as t limit %s offset %s", pageSize,startLimit);
-        }else{
+        }else if(Constant.SQLSERVER.equalsIgnoreCase(config.getSchemaType())){
+            dataSql = String.format("select * from ( " + sql + ") as t offset %s row fetch next %s row only ", startLimit,pageSize);
+        } else{
             dataSql = String.format("select * from ( " + sql + ") as t limit %s,%s", startLimit,pageSize);
         }
         params.setSql(dataSql);
