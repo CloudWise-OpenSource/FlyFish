@@ -37,8 +37,7 @@ export default Form.create({ name: 'FORM_IN_PROJECT_MODAL' })(
     const { activeData } = mainStore;
     const [type, setType] = useState(); // 加载状态
 
-    // const TypeArr = ['MySQL','HTTP', 'MariaDB', 'SqlServer','达梦','Oracle', 'Clickhouse', 'Postgres'];
-    const TypeArr = ['MySQL', 'HTTP', 'Oracle', 'Clickhouse', 'Postgres'];
+    const TypeArr = ['MySQL','HTTP', 'MariaDB', 'SqlServer','达梦','Oracle', 'Clickhouse', 'Postgres'];
     const NOMRL = useRef(); //jsonedit实例
     useEffect(() => {
       // 编辑页挂载
