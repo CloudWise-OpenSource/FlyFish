@@ -27,6 +27,7 @@ npm run build
 2. 修改前端配置
 
 ```bash
+# FlyFish 目录下执行
 # 修改配置
 vim lcapWeb/lcapWeb/conf/env-config.js
 
@@ -55,7 +56,16 @@ componentSplitApiPrefix: '/api'
 
 ```
 
-3. nginx 部署前端
+3. 修改大屏应用开发配置
+
+```bash
+# FlyFish 目录下执行
+# CW_LOCAL_IP 修改为 当前主机IP
+vim ./lcapWeb/lcapWeb/www/web/screen/config/env.js
+
+```
+
+4. nginx 部署前端
 
 ```bash
 # 以下命令要在根目录下执行
@@ -66,14 +76,14 @@ nginx 配置文件位置检查
 nginx: the configuration file /usr/local/nginx/conf/nginx.conf syntax is ok
 nginx: configuration file /usr/local/nginx/conf/nginx.conf test is successful
 
-touch /etc/nginx/conf.d/FlyFish-2.1.0.conf
+touch /etc/nginx/conf.d/flyfish.conf
 or
-touch /usr/local/nginx/conf/conf.d/FlyFish-2.1.0.conf
+touch /usr/local/nginx/conf/conf.d/flyfish.conf
 
 # 添加配置
-vim /etc/nginx/conf.d/FlyFish-2.1.0.conf
+vim /etc/nginx/conf.d/flyfish.conf
 or
-vim /usr/local/nginx/conf/conf.d/FlyFish-2.1.0.conf
+vim /usr/local/nginx/conf/conf.d/flyfish.conf
 
 # 复制并修改以下配置到 flyfish.conf
 map $http_upgrade $connection_upgrade {
@@ -314,9 +324,9 @@ tail -200f ./logs/lcapDataServer/lcap-dataserver.info.log
 
 ### 三、验证
 
-> 防火墙要开放对应端口，默认 code-server:8081、前端: 8089、lcapServer: 7001、lcapDataServer：8099、mongodb:27017
+> 防火墙（安全组）开放 8089 端口。
 
-访问：http:ip:8089 注册、登录、开发组件大屏，推荐您使用最新版本Chrome浏览器访问飞鱼平台。
+访问：http:ip:8089 注册、登录、开发组件大屏，推荐您使用最新版本 Chrome 浏览器访问飞鱼平台。
 
 - 初始账号：admin
 - 密码：utq#SpV!

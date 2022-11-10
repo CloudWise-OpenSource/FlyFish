@@ -91,24 +91,10 @@ function init_system() {
   systemctl enable nginx
   systemctl start nginx
 
-  echo "start install maven"
-  wget https://mirrors.tuna.tsinghua.edu.cn/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz --no-check-certificate
-  mkdir -p /usr/local
-  tar -zxvf apache-maven-3.6.3-bin.tar.gz -C /usr/local
-  echo "export M2_HOME=/usr/local/apache-maven-3.6.3" >>/etc/profile
-  echo 'export PATH=$PATH:$M2_HOME/bin' >>/etc/profile
-  source /etc/profile
-
-  cp /usr/local/apache-maven-3.6.3/conf/settings.xml /usr/local/apache-maven-3.6.3/conf/settings_bak.xml
-  rm -rf /usr/local/apache-maven-3.6.3/conf/settings.xml
-  cp ${PROJECT_PATH}/shell_tpl/settings.xml /usr/local/apache-maven-3.6.3/conf/
-  
-  echo "start install jdk"
-  yum install java-1.8.0-openjdk.x86_64 java-1.8.0-openjdk-devel.x86_64 -y
-  echo 'export JAVA_HOME=/usr/lib/jvm/jre-1.8.0-openjdk-1.8.0.342.b07-1.el7_9.x86_64' >>/etc/profile
-  echo 'export JRE_HOME=$JAVA_HOME/jre' >>/etc/profile
-  echo 'export PATH=$PATH:$JAVA_HOME/bin:$JRE_HOME/bin' >>/etc/profile
-  source /etc/profile
+  echo "start install jdk maven"
+  wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo -O /etc/yum.repos.d/epel-apache-maven.repo
+  yum -y install apache-maven
+  cp ${PROJECT_PATH}/shell_tpl/settings.xml /etc/maven
 
   echo "初始化环境结束。"
 }
@@ -164,7 +150,7 @@ deploy_flyfish_server() {
   npm install
 
   echo "修改大屏应用开发环境配置:"
-  sed -i "s|CW_LOCAL_IP|$local_ip|g" ${PROJECT_PATH}/lcapWeb/www/web/screen/config/env.js
+  sed -i "s|CW_LOCAL_IP|$local_ip|g" ${PROJECT_PATH}/lcapWeb/lcapWeb/www/web/screen/config/env.js
 
   sed -i "s|PRO_PATH|${PROJECT_PATH}|g" ${PROJECT_PATH}/lcapDataServer/lcap-server/src/main/resources/application.properties
   sed -i "s|PRO_PATH|${PROJECT_PATH}|g" ${PROJECT_PATH}/lcapDataServer/lcap-server/target/classes/application.properties
@@ -263,9 +249,7 @@ remove_system() {
   echo "start uninstall maven && jdk"
   yum remove -y maven
   yum -y remove java-1.8.0-openjdk.x86_64 java-1.8.0-openjdk-devel.x86_64 tzdata-java.noarch
-  sed -i '/M2_HOME/d' /etc/profile
-  sed -i '/JAVA_HOME/d' /etc/profile
-  sed -i '/JRE_HOME/d' /etc/profile
+  rm -rf /etc/yum.repos.d/epel-apache-maven.repo
 
   echo "基础环境移除完毕。"
 }

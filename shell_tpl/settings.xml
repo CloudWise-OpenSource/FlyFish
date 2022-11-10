@@ -145,10 +145,10 @@ under the License.
    |-->
   <mirrors>
     <mirror>
-      <id>aliyunmaven</id>
-      <mirrorOf>*</mirrorOf>
-      <name>阿里云公共仓库</name>
-      <url>https://maven.aliyun.com/repository/public</url>
+      <id>nexus-aliyun</id>
+      <mirrorOf>central</mirrorOf>
+      <name>Nexus aliyun</name>
+      <url>http://maven.aliyun.com/nexus/content/groups/public</url>
     </mirror>
     <!-- mirror
      | Specifies a repository mirror site to use instead of a given repository. The repository that

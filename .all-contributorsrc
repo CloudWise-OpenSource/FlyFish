@@ -41,7 +41,7 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/54785820?v=4",
       "profile": "https://github.com/jincheny",
       "contributions": [
-        "blog",
+        "blog"
       ]
     },
     {
@@ -142,6 +142,24 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "ljy-life",
+      "name": "余生",
+      "avatar_url": "https://avatars.githubusercontent.com/u/49783112?v=4",
+      "profile": "https://github.com/ljy-life",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "lich-y",
+      "name": "Edward.Li",
+      "avatar_url": "https://avatars.githubusercontent.com/u/51944841?v=4",
+      "profile": "https://github.com/lich-y",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
@@ -149,5 +167,6 @@
   "projectOwner": "CloudWise-OpenSource",
   "repoType": "github",
   "repoHost": "https://github.com",
-  "skipCi": true
+  "skipCi": true,
+  "commitConvention": "angular"
 }
