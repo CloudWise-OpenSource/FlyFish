@@ -24,8 +24,6 @@ import static com.cloudwise.lcap.common.enums.ResultCode.DATA_SOURCE_CONNECT_PAR
 
 @Slf4j
 public class JDBCQueryProxy {
-
-
     public static JSONObject query(ExecuteBean params,String type) {
         JSONObject result = new JSONObject();
         Connection connection = null;
@@ -117,7 +115,7 @@ public class JDBCQueryProxy {
             connection = dataSource.getConnection();
             DatabaseMetaData metaData = connection.getMetaData();
             ResultSet tables1 = null;
-            if(type.equalsIgnoreCase(POSTGRES) ){
+            if(type.equalsIgnoreCase(POSTGRES) || type.equalsIgnoreCase(SQLSERVER)){
                 String modelName = connectData.getStr("modelName");
                 tables1 = metaData.getTables(schemaName, modelName, null, new String[]{"TABLE"});
             }else if(type.equalsIgnoreCase(ORACLE)){
@@ -177,7 +175,7 @@ public class JDBCQueryProxy {
             dataSource.setPassword(password);
             connection = dataSource.getConnection();
             DatabaseMetaData metaData = connection.getMetaData();
-            if(type.equalsIgnoreCase(POSTGRES) ){
+            if(type.equalsIgnoreCase(POSTGRES) || type.equalsIgnoreCase(SQLSERVER)){
                 String modelName = connectData.getStr("modelName");
                 resultSet = metaData.getColumns(schemaName, modelName, tableName, "%");
                 schemaName = modelName;

@@ -28,6 +28,9 @@
         <hutool.version>5.7.20</hutool.version>
         <commons-lang3>3.10</commons-lang3>
         <jackson.version>2.11.4</jackson.version>
+        <mariadb.jdbc.version>2.7.3</mariadb.jdbc.version>
+        <mssql.version>9.2.1.jre8</mssql.version>
+        <dameng.jdbc.version>8.1.1.193</dameng.jdbc.version>
         <dynamic-datasource.version>3.5.0</dynamic-datasource.version>
         <beetl.version>3.9.3.RELEASE</beetl.version>
         <spring-context.version>5.3.14</spring-context.version>
@@ -158,6 +161,24 @@
                 <groupId>com.oracle.database.jdbc</groupId>
                 <artifactId>ojdbc8</artifactId>
                 <version>${oracle.jdbc.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.microsoft.sqlserver</groupId>
+                <artifactId>mssql-jdbc</artifactId>
+                <version>${mssql.version}</version>
+            </dependency>
+            <!--            mariadb-->
+            <dependency>
+                <groupId>org.mariadb.jdbc</groupId>
+                <artifactId>mariadb-java-client</artifactId>
+                <version>${mariadb.jdbc.version}</version>
+            </dependency>
+            <!--            dameng-->
+            <dependency>
+                <groupId>com.dameng</groupId>
+                <artifactId>DmJdbcDriver18</artifactId>
+                <version>${dameng.jdbc.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>

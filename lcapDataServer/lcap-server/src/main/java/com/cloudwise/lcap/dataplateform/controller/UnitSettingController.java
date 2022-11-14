@@ -274,7 +274,7 @@ public class UnitSettingController {
                     .build();
             try {
                 String sql = params.getSql();
-                if(Constant.ORACLE.equalsIgnoreCase(config.getSchemaType()) || Constant.POSTGRES.equalsIgnoreCase(config.getSchemaType())){
+                if(Constant.ORACLE.equalsIgnoreCase(config.getSchemaType()) || Constant.POSTGRES.equalsIgnoreCase(config.getSchemaType()) || Constant.SQLSERVER.equalsIgnoreCase(config.getSchemaType())){
                     sql = sql.replace("`","");
                     String modelName = params.getConnectData().getStr("modelName");
                     if(sql.contains(params.getSchemaName())){
