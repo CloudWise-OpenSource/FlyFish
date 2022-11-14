@@ -1,0 +1,16 @@
+{
+  "singleQuote": true,
+  "printWidth": 120,
+  "arrowParens": "always",
+  "tabWidth": 2,
+  "endOfLine": "lf",
+  "overrides": [
+    {
+      "files": ".prettierrc",
+      "options": {
+        "parser": "json"
+      }
+    }
+  ],
+  "semi": true
+}
