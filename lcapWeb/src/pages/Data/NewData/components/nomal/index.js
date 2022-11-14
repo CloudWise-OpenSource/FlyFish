@@ -21,8 +21,9 @@ const schemaTypeEnums = {
 
 const placeholderEnums = {
   MySQL: 'jdbc:mysql://10.2.2.254:18103/cw_douc?createDatabaseIfNotExist=true',
+  MariaDB: 'jdbc:mariadb://10.2.2.254.148:3306/mariadbff',
   Clickhouse: 'jdbc:clickhouse://10.2.2.254.148:8123/default',
-  达梦: 'jdbc:dm://10.2.2.254.148:8123/cw',
+  达梦: 'jdbc:dm://10.2.2.254.148:5238/cw',
 };
 
 export default Form.create({ name: 'FORM_IN_PROJECT_MODAL' })(
