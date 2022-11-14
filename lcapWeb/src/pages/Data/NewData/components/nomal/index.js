@@ -22,6 +22,7 @@ const schemaTypeEnums = {
 const placeholderEnums = {
   MySQL: 'jdbc:mysql://10.2.2.254:18103/cw_douc?createDatabaseIfNotExist=true',
   Clickhouse: 'jdbc:clickhouse://10.2.2.254.148:8123/default',
+  达梦: 'jdbc:dm://10.2.2.254.148:8123/cw',
 };
 
 export default Form.create({ name: 'FORM_IN_PROJECT_MODAL' })(
@@ -40,9 +41,6 @@ export default Form.create({ name: 'FORM_IN_PROJECT_MODAL' })(
     const [saveLoading, setSaveLoading] = useState(false); //loading
     const history = useHistory();
     const intl = useIntl();
-
-    console.log('type', type);
-    console.log('placeholderEnums[type]', placeholderEnums[type]);
 
     useEffect(() => {
       // 编辑页挂载
@@ -269,7 +267,7 @@ export default Form.create({ name: 'FORM_IN_PROJECT_MODAL' })(
                     onChange={serversChange}
                     placeholder={
                       placeholderEnums[type] ||
-                      'jdbc:mysql://10.2.2.254:18103/cw_douc?createDatabaseIfNotExist=true'
+                      'jdbc:mysql://10.2.2.254:18103/cw_douc?createDatabaseIfNotExist=true11'
                     }
                   />
                 )}
