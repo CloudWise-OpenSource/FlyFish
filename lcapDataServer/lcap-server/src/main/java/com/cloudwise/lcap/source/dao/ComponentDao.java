@@ -168,6 +168,10 @@ public class ComponentDao {
         return mongoTemplate.find(query, Component.class);
     }
 
+    public List<Component> findByNames(List<String> names) {
+        Query query = new Query(Criteria.where("name").in(names).and("status").is("valid"));
+        return mongoTemplate.find(query, Component.class);
+    }
     /**
      * 根据name(去掉id)获取组件信息
      */

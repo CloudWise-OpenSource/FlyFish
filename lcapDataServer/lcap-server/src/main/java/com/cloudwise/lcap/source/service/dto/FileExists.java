@@ -1,4 +1,4 @@
-package com.cloudwise.lcap.source.response;
+package com.cloudwise.lcap.source.service.dto;
 
 import lombok.*;
 
@@ -9,7 +9,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class ResourceFileResponse implements Serializable {
+public class FileExists implements Serializable {
 
     private Boolean exist = false;
     private String fileName;

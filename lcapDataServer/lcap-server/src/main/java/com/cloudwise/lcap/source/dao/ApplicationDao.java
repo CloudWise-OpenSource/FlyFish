@@ -135,6 +135,11 @@ public class ApplicationDao {
         return mongoTemplate.findOne(query, Application.class);
     }
 
+    public List<Application> findByNames(List<String> names){
+        Query query = new Query(Criteria.where("name").in(names).and("status").is("valid"));
+        return mongoTemplate.find(query, Application.class);
+    }
+
     /**
      * 根据name(去掉id)获取应用信息
      */

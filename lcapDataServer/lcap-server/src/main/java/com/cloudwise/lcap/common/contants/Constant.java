@@ -31,6 +31,21 @@ public class Constant {
     public static final String COMPILED_SOURCE_DEPEND = "componentRelease";
     //组件打包参数node依赖模块
     public static final String COMPILED_SOURCE_COMPILED_WITH_DEPEND = "componentNodeModules";
+
+    public static final String APPLICATIONS = "/applications";
+
+    public static final String COMPONENTS = "/components";
+
+    public static final String COMPONENT_RELEASE = "/release";
+
+    public static final String V_CURRENT = "/v-current";
+
+    public static final String V_CURRENT_SRC = "/src";
+    public static final String V_CURRENT_DEPENDED = "/node_modules";
+
+    public static final String RELEASE_MAIN = "/release/main.js";
+
+    public static final String RELEASE_SETTING = "/release/setting.js";
     //导入类型 组件或应用
     public static final String APPLICATION = "application";
     public static final String COMPONENT = "component";

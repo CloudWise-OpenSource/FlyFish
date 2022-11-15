@@ -66,10 +66,4 @@ public class Component {
     @Field("allow_data_search")
     private Integer allowDataSearch;
 
-    //// 文件最后一次更新时间
-    private Date lastChangeTime;
-
-    private Boolean isUpdate;
-
-    private String version;
 }

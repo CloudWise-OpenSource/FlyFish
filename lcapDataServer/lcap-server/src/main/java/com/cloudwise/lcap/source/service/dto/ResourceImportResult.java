@@ -1,4 +1,4 @@
-package com.cloudwise.lcap.source.dto;
+package com.cloudwise.lcap.source.service.dto;
 
 import lombok.*;
 

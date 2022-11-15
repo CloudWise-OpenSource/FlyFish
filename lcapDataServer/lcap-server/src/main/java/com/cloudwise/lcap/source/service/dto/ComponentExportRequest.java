@@ -1,4 +1,4 @@
-package com.cloudwise.lcap.source.request;
+package com.cloudwise.lcap.source.service.dto;
 
 import lombok.*;
 import lombok.experimental.Accessors;
@@ -16,5 +16,4 @@ import java.util.Set;
 public class ComponentExportRequest implements Serializable {
 
     private Set<String> ids;
-    private List<String> componentExportType;
 }

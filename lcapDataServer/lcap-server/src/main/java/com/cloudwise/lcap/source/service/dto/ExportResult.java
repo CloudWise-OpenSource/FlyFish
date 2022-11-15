@@ -1,4 +1,4 @@
-package com.cloudwise.lcap.source.response;
+package com.cloudwise.lcap.source.service.dto;
 
 
 import lombok.*;
@@ -10,7 +10,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class ExportResourceResponse implements Serializable {
+public class ExportResult implements Serializable {
 
     private String name;
     private Long size;

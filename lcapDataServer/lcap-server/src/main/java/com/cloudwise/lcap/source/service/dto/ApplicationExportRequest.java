@@ -1,8 +1,10 @@
-package com.cloudwise.lcap.source.request;
+package com.cloudwise.lcap.source.service.dto;
 
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -13,6 +15,4 @@ import java.util.List;
 public class ApplicationExportRequest implements Serializable {
 
     private List<String> ids;
-    private String applicationExportType;
-    private List<String> componentExportType;
 }
