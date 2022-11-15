@@ -140,7 +140,7 @@ module.exports = {
           ],
         },
         {
-          icon: 'pie-chart',
+          icon: 'yonghuguanli',
           name: '用户管理',
           path: '/user',
           component: '@/pages/User',
