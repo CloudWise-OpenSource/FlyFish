@@ -13,18 +13,11 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 public class Manifest implements Serializable {
-
+    private String type;
     private String applicationExportType;
     private List<String> componentExportType;
 
-    private String time;
-    private String creator;
-
-    private String type;
-    private String developStatus;
-    private String version;
-
     private List<ApplicationDto> applicationList;
     private List<ComponentDto> componentList;
-
+    private String time;
 }

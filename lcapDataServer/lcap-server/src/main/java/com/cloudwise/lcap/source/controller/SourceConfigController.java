@@ -47,13 +47,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.cloudwise.lcap.common.contants.Constant.APPLICATION;
-import static com.cloudwise.lcap.common.contants.Constant.COMPONENT;
+import static com.cloudwise.lcap.common.contants.Constant.*;
 
 /**
  * 组件/应用导入导出
@@ -76,6 +76,11 @@ public class SourceConfigController {
     private String upload_tmp_basepath;
     @Value("${config_filename}")
     private String config_filename;
+    /**
+     * 原始文件基础路径
+     */
+    @Value("${file.basepath}")
+    private String fileBasepath;
     @Autowired
     private ExportResourceService exportResourceService;
     @Autowired
@@ -96,7 +101,10 @@ public class SourceConfigController {
     @PostMapping("/export/components")
     public BaseResponse<ExportResult> exportComponents(HttpServletRequest requests, HttpServletResponse response, @RequestBody ComponentExportRequest request) {
         String folder = down_tmp_basepath + File.separator + COMPONENT + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-        exportResourceService.exportComponents(request.getIds(), folder);
+        Manifest manifest = Manifest.builder().type(COMPONENT).time(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                        .componentExportType(Collections.singletonList(COMPILED_RELEASE_SOURCE)).build();
+        exportResourceService.exportComponents(request.getIds(), folder,manifest);
+        FileUtils.writeJson(folder, config_filename, new JSONObject(JsonUtils.toJSONString(manifest)));
         File zipFile = ZipUtil.zip(folder);
 
         //下载压缩包A.zip
@@ -155,11 +163,23 @@ public class SourceConfigController {
         }).collect(Collectors.toList());
 
         Set<String> componentIds = exportResourceService.getComponentIds(applicationDtoList);
-        //导出组件和应用
-        // 应用信息
-        exportResourceService.exportApplication(applicationDtoList, folder);
-        exportResourceService.exportComponents(componentIds, folder);
 
+        Manifest manifest = Manifest.builder().type(APPLICATION).time(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                .applicationExportType(APP_AND_COMPONENT).componentExportType(Collections.singletonList(COMPILED_RELEASE_SOURCE))
+                .applicationList(applicationDtoList).build();
+       for (ApplicationDto app : applicationDtoList) {
+            String applicationId = app.getId();
+            // 应用cover基础路径 /applications/6209cd83ce4fee178aa18f77/*
+            String appBasePath = fileBasepath + APPLICATIONS + File.separator + applicationId;
+            File appBaseCoverPath = new File(appBasePath);
+            if (!appBaseCoverPath.exists() || Objects.requireNonNull(Objects.requireNonNull(appBaseCoverPath.listFiles())).length == 0) {
+                continue;
+            }
+            FileUtils.copyFolder(appBasePath, null, folder + APPLICATIONS);
+        }
+        exportResourceService.exportComponents(componentIds, folder,manifest);
+
+        FileUtils.writeJson(folder, config_filename, new JSONObject(JsonUtils.toJSONString(manifest)));
         //打包临时文件夹A
         log.info("temp file path is {}.", folder);
         File zipFile = ZipUtil.zip(folder);
@@ -171,11 +191,8 @@ public class SourceConfigController {
         response.setHeader("Content-disposition", "attachment;filename=" + downFileName);
         response.setContentLength((int) zipFile.length());
 
-        log.info("Start downloading the compressed package, and file name is {}, and size is {}", downFileName, new File(downFileName).length());
-
-        long st = System.currentTimeMillis();
         try {
-            InputStream inStream = new FileInputStream(zipFile);
+            InputStream inStream = Files.newInputStream(zipFile.toPath());
             byte[] b = new byte[1024];
             int len;
             while ((len = inStream.read(b)) > 0) {
@@ -185,7 +202,6 @@ public class SourceConfigController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        log.info("Compressed package download complete. and cost time is {}.", (System.currentTimeMillis() - st));
         ExportResult result = new ExportResult();
         result.setName(downFileName);
         result.setSize(new File(downFileName).length());

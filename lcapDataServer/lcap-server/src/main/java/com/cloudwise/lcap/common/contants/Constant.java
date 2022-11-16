@@ -28,7 +28,7 @@ public class Constant {
     //组件打包参数 组件源码
     public static final String COMPONENT_SOURCE_COMPILED = "componentSource";
     //组件打包参数 组件安装包(必选的)
-    public static final String COMPILED_SOURCE_DEPEND = "componentRelease";
+    public static final String COMPILED_RELEASE_SOURCE = "componentRelease";
     //组件打包参数node依赖模块
     public static final String COMPILED_SOURCE_COMPILED_WITH_DEPEND = "componentNodeModules";
 
