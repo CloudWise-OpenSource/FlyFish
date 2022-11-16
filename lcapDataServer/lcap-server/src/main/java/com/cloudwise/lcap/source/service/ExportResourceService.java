@@ -78,7 +78,7 @@ public class ExportResourceService {
                 }
                 String recentVersion = getComponentNewestVersion(component.getVersions());
                 if (StringUtils.isEmpty(recentVersion)) {
-                    log.error("组件最新版本不存在");
+                    log.error("组件最新版本不存在,versions:{}",component.getVersions());
                     throw new BaseException("组件无版本信息，导出资源失败!");
                 }
                 componentRecentVersion.put(componentId, recentVersion);
@@ -102,8 +102,8 @@ public class ExportResourceService {
             for (String componentId : ids) {
                 String recentVersion = componentRecentVersion.get(componentId);
                 // 最新版本目录 只需要release目录
-                String componentFilePath = fileBasepath + COMPONENTS + File.separator + componentId + File.separator + recentVersion;
-                String filePath = folder + COMPONENTS + File.separator + componentId;
+                String componentFilePath = fileBasepath + COMPONENTS + File.separator + componentId + File.separator + recentVersion + COMPONENT_RELEASE;
+                String filePath = folder + COMPONENTS + File.separator + componentId + File.separator + recentVersion;
                 log.info("导出组件:{} 的最新版本release文件:{} 到:{}", componentId, componentFilePath, filePath);
                 FileUtils.copyFolder(componentFilePath, null, filePath);
             }

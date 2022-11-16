@@ -1,5 +1,6 @@
 package com.cloudwise.lcap.common.utils;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.io.IORuntimeException;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.json.JSONObject;
@@ -210,17 +211,31 @@ public class FileUtils {
         }
     }
 
-    public static void copyFolder(String sourceFolder,String[] excludePath , String destFolder) {
-        if (null != excludePath && excludePath.length > 0){
+    /**
+     * 复制文件到目标文件夹。
+     * 如果源是文件，则将文件复制到目标文件夹下
+     * 如果源是文件夹，则将源文件夹的最后一级拼接到目标文件夹，然后继续迭代源文件夹，直到源是文件
+     * @param sourceFolder 源文件或文件夹
+     * @param excludePath 在源文件夹中需要被排除的文件
+     * @param destFolder 目标文件夹，将被复制到的文件夹
+     */
+    public static void copyFolder(String sourceFolder, List<String> excludePath, String destFolder) {
+        String fileName = sourceFolder.substring(sourceFolder.lastIndexOf("/") + 1);
+        if (fileName.startsWith(".")) {
+            log.info(".文件忽略" + sourceFolder);
+            return;
+        } else if (CollectionUtil.isNotEmpty(excludePath)) {
             for (String path : excludePath) {
-                if (path.equalsIgnoreCase(sourceFolder)){
+                String subPath = path.substring(path.lastIndexOf("/") + 1);
+                if (subPath.equalsIgnoreCase(sourceFolder) ||path.equalsIgnoreCase(sourceFolder) || fileName.equalsIgnoreCase(path)) {
+                    log.info("copy文件排除path:{}",path);
                     return;
                 }
             }
         }
         File file = new File(sourceFolder);
         if (!file.exists()) {
-            log.error("源文件夹:{}不存在",sourceFolder);
+            log.error("源文件夹:{}不存在", sourceFolder);
         }
         File destFile = new File(destFolder);
         if (!destFile.exists()) {
@@ -253,15 +268,12 @@ public class FileUtils {
                 }
             }
         } else if (file.isDirectory()) {
-            File file2 = new File(destFolder);
-            if (!file2.exists()){
-                file2.mkdirs();
-            }
+            File file2 = new File(destFolder + File.separator + file.getName());
             file2.mkdirs();
             //是文件夹，先创建同名文件夹
             File[] files = file.listFiles();
             for (File file1 : files) {
-                if (!file1.getName().equals(excludePath)){
+                if (!file1.getName().equals(excludePath)) {
                     copyFolder(file1.getAbsolutePath(), excludePath, file2.getAbsolutePath());
                 }
             }

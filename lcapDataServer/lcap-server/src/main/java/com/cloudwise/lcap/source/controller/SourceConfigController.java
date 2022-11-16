@@ -87,16 +87,8 @@ public class SourceConfigController {
     private ComponentDao componentDao;
     @Autowired
     private ApplicationDao applicationDao;
-    @Autowired
-    private MongoTemplate mongoTemplate;
     /**
      * 导出组件
-     *
-     * @param response
-     * @param request: {
-     *                 "componentIds": ["61b0595c27668b16b44fd858", "61b08520e99031169fa33059", "61b082ecf7580b16bb15a5ed"], // 组件id
-     *                 "componentExportType": [""] // 导出类型 componentSource  componentRelease  componentNodeModules
-     *                 }
      */
     @PostMapping("/export/components")
     public BaseResponse<ExportResult> exportComponents(HttpServletRequest requests, HttpServletResponse response, @RequestBody ComponentExportRequest request) {
@@ -115,9 +107,8 @@ public class SourceConfigController {
         response.setHeader("Content-disposition", "attachment;filename=" + downFileName);
         response.setContentLength((int) zipFile.length());
 
-        long st = System.currentTimeMillis();
         try {
-            InputStream inStream = new FileInputStream(zipFile);
+            InputStream inStream = Files.newInputStream(zipFile.toPath());
             byte[] b = new byte[1024];
             int len;
             while ((len = inStream.read(b)) > 0) {
@@ -127,7 +118,6 @@ public class SourceConfigController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        log.info("Compressed package download complete. and cost time is {}.", (System.currentTimeMillis() - st));
         ExportResult result = new ExportResult();
         result.setName(downFileName);
         result.setSize(new File(downFileName).length());
@@ -171,8 +161,9 @@ public class SourceConfigController {
             String applicationId = app.getId();
             // 应用cover基础路径 /applications/6209cd83ce4fee178aa18f77/*
             String appBasePath = fileBasepath + APPLICATIONS + File.separator + applicationId;
-            File appBaseCoverPath = new File(appBasePath);
-            if (!appBaseCoverPath.exists() || Objects.requireNonNull(Objects.requireNonNull(appBaseCoverPath.listFiles())).length == 0) {
+            log.info("appBasePath:{}",appBasePath);
+            log.info("destFolder:{}",folder + APPLICATIONS);
+            if (!new File(appBasePath).exists()) {
                 continue;
             }
             FileUtils.copyFolder(appBasePath, null, folder + APPLICATIONS);
@@ -187,7 +178,6 @@ public class SourceConfigController {
         response.reset();
         response.setContentType("application/octet-stream;charset=utf-8");
         String downFileName = FileUtils.getFileName(requests.getHeader("user-agent"), zipFile.getName());
-        log.error("file name is {}.", downFileName);
         response.setHeader("Content-disposition", "attachment;filename=" + downFileName);
         response.setContentLength((int) zipFile.length());
 
