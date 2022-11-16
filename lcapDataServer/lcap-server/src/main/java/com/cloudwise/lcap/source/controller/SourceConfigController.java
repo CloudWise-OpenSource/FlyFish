@@ -297,7 +297,13 @@ public class SourceConfigController {
         if (Constant.APPLICATION.equalsIgnoreCase(importType) && CollectionUtils.isNotEmpty(request.getApplications())) {
             importResourceServer.importApplications(key, manifest, request.getApplications(),result);
         } else if (COMPONENT.equalsIgnoreCase(importType) && CollectionUtils.isNotEmpty(request.getComponents())) {
-            importResourceServer.importComponents(key, manifest, request.getComponents(), result);
+            //导入组件
+            List<ComponentDto> componentList = request.getComponents();
+            Map<String,ObjectId> idMap = new HashMap<>();
+            for (ComponentDto dto : componentList) {
+                idMap.put(dto.getId(), ObjectId.get());
+            }
+            importResourceServer.importComponents(key, manifest, componentList,idMap, result);
         }
         // 记录配置导入结果
         ImportResult importResult = new ImportResult();
