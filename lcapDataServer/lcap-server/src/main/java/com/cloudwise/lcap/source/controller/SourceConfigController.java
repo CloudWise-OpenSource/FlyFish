@@ -154,7 +154,7 @@ public class SourceConfigController {
             log.info("appBasePath:{}",appBasePath);
             log.info("destFolder:{}",folder + APPLICATIONS);
             if (!new File(appBasePath).exists()) {
-                continue;
+                FileUtil.mkdir(appBasePath);
             }
             FileUtils.copyFolder(appBasePath, null, folder + APPLICATIONS);
         }

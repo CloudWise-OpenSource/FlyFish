@@ -78,7 +78,6 @@ public class ImportResourceServer {
         //导入应用和组件
         Map<String, ComponentDto> componentDtoMap = new HashMap<>();
         Map<String, ObjectId> idMap = new HashMap<>();
-        Project project = mongoTemplate.findOne(new Query(Criteria.where("from").is("lcap-init")), Project.class);
         for (ApplicationDto application : applications) {
             Application app = mongoTemplate.findOne(new Query(Criteria.where("name").is(application.getName())), Application.class);
             if (app == null) {
@@ -124,7 +123,7 @@ public class ImportResourceServer {
             app.setStatus("valid");
             app.setPages(pages);
             app.setName(application.getName());
-            app.setProjectId(project.getId().toHexString());
+            app.setProjectId(application.getProjectId());
             app.setIsFromDocc(false);
             app.setIsFromDoma(false);
             app.setType(application.getType());
