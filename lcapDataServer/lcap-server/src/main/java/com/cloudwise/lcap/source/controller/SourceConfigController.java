@@ -1,10 +1,8 @@
 package com.cloudwise.lcap.source.controller;
 
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ZipUtil;
 import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
 import com.cloudwise.lcap.common.BaseResponse;
 import com.cloudwise.lcap.common.contants.Constant;
 import com.cloudwise.lcap.common.exception.BaseException;
@@ -20,13 +18,10 @@ import com.cloudwise.lcap.source.dto.ComponentDto;
 import com.cloudwise.lcap.source.model.Application;
 import com.cloudwise.lcap.source.model.Component;
 import com.cloudwise.lcap.source.model.ImportResult;
-import com.cloudwise.lcap.source.model.Project;
 import com.cloudwise.lcap.source.service.ConfigFileParseService;
 import com.cloudwise.lcap.source.service.ExportResourceService;
 import com.cloudwise.lcap.source.service.ImportResourceServer;
 import com.cloudwise.lcap.source.service.dto.*;
-import com.google.common.collect.HashMultiset;
-import com.google.common.collect.Multiset;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -34,9 +29,6 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -76,11 +68,9 @@ public class SourceConfigController {
     private String upload_tmp_basepath;
     @Value("${config_filename}")
     private String config_filename;
-    /**
-     * 原始文件基础路径
-     */
-    @Value("${file.basepath}")
-    private String fileBasepath;
+
+    @Value("${application_basepath}")
+    private String application_basepath;
     @Autowired
     private ExportResourceService exportResourceService;
     @Autowired
@@ -160,7 +150,7 @@ public class SourceConfigController {
        for (ApplicationDto app : applicationDtoList) {
             String applicationId = app.getId();
             // 应用cover基础路径 /applications/6209cd83ce4fee178aa18f77/*
-            String appBasePath = fileBasepath + APPLICATIONS + File.separator + applicationId;
+            String appBasePath = application_basepath + File.separator + applicationId;
             log.info("appBasePath:{}",appBasePath);
             log.info("destFolder:{}",folder + APPLICATIONS);
             if (!new File(appBasePath).exists()) {

@@ -1,61 +1,38 @@
 package com.cloudwise.lcap.source.service;
 
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.ZipUtil;
 import cn.hutool.json.JSONObject;
-import com.cloudwise.lcap.common.BaseResponse;
 import com.cloudwise.lcap.common.exception.BaseException;
-import com.cloudwise.lcap.common.exception.BizException;
 import com.cloudwise.lcap.common.exception.ResourceNotFoundException;
 import com.cloudwise.lcap.common.utils.Assert;
 import com.cloudwise.lcap.common.utils.FileUtils;
-import com.cloudwise.lcap.common.utils.JsonUtils;
-import com.cloudwise.lcap.source.dao.*;
+import com.cloudwise.lcap.source.dao.ComponentDao;
 import com.cloudwise.lcap.source.dto.ApplicationDto;
 import com.cloudwise.lcap.source.dto.ComponentDto;
-import com.cloudwise.lcap.source.model.Application;
 import com.cloudwise.lcap.source.model.Component;
-import com.cloudwise.lcap.source.model.ComponentCategory;
-import com.cloudwise.lcap.source.model.Project;
-import com.cloudwise.lcap.source.service.dto.ApplicationExportRequest;
-import com.cloudwise.lcap.source.service.dto.ComponentExportRequest;
-import com.cloudwise.lcap.source.service.dto.ExportResult;
 import com.cloudwise.lcap.source.service.dto.Manifest;
-import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.beetl.core.util.ArraySet;
-import org.bson.types.ObjectId;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.cloudwise.lcap.common.contants.Constant.*;
-import static com.cloudwise.lcap.common.contants.Constant.APPLICATIONS;
+import static com.cloudwise.lcap.common.contants.Constant.COMPONENTS;
+import static com.cloudwise.lcap.common.contants.Constant.COMPONENT_RELEASE;
 
 @Slf4j
 @Service
 public class ExportResourceService {
-    /**
-     * 原始文件基础路径
-     */
-    @Value("${file.basepath}")
-    private String fileBasepath;
 
-
+    @Value("${component_basepath}")
+    private String component_basepath;
     @Autowired
     private ComponentDao componentDao;
 
@@ -83,7 +60,7 @@ public class ExportResourceService {
                 }
                 componentRecentVersion.put(componentId, recentVersion);
                 //根据导出类型判断 是否存在 /{recentVersion}/release
-                String componentFilePath = fileBasepath + COMPONENTS + File.separator + componentId + File.separator + recentVersion + COMPONENT_RELEASE;
+                String componentFilePath = component_basepath + File.separator + componentId + File.separator + recentVersion + COMPONENT_RELEASE;
                 if (!new File(componentFilePath).exists()) {
                     log.error("组件:{} 版本:{} 不存在", component.getName(), componentFilePath);
                     componentsName.add(component.getName() + File.separator + recentVersion + COMPONENT_RELEASE);
@@ -102,7 +79,7 @@ public class ExportResourceService {
             for (String componentId : ids) {
                 String recentVersion = componentRecentVersion.get(componentId);
                 // 最新版本目录 只需要release目录
-                String componentFilePath = fileBasepath + COMPONENTS + File.separator + componentId + File.separator + recentVersion + COMPONENT_RELEASE;
+                String componentFilePath = component_basepath + File.separator + componentId + File.separator + recentVersion + COMPONENT_RELEASE;
                 String filePath = folder + COMPONENTS + File.separator + componentId + File.separator + recentVersion;
                 log.info("导出组件:{} 的最新版本release文件:{} 到:{}", componentId, componentFilePath, filePath);
                 FileUtils.copyFolder(componentFilePath, null, filePath);
