@@ -38,7 +38,5 @@ public class Project {
     private String updater;
     @Field("from")
     private String from;
-    @Field("accountId")
-    private String accountId;
 
 }

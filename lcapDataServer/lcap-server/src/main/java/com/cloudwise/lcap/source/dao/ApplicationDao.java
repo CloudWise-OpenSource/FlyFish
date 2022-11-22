@@ -35,10 +35,6 @@ public class ApplicationDao {
         Update update = new Update();
         update.set("update_time",new Date());
 
-        if (StringUtils.isNotEmpty(application.getAccountId())){
-            update.set("account_id",application.getAccountId());
-        }
-
         if (CollectionUtil.isNotEmpty(application.getTags())){
             update.set("tags",application.getTags());
         }

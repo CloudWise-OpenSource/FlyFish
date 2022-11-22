@@ -20,9 +20,6 @@ public class Application {
     @Field("_id")
     private ObjectId id;
 
-    @Field("account_id")
-    private String accountId;
-
     // 标签
     @Field("tags")
     private List<String> tags;

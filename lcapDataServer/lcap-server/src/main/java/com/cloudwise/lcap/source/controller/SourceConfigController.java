@@ -29,6 +29,9 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -77,6 +80,8 @@ public class SourceConfigController {
     private ComponentDao componentDao;
     @Autowired
     private ApplicationDao applicationDao;
+    @Autowired
+    private MongoTemplate mongoTemplate;
     /**
      * 导出组件
      */
@@ -151,8 +156,6 @@ public class SourceConfigController {
             String applicationId = app.getId();
             // 应用cover基础路径 /applications/6209cd83ce4fee178aa18f77/*
             String appBasePath = application_basepath + File.separator + applicationId;
-            log.info("appBasePath:{}",appBasePath);
-            log.info("destFolder:{}",folder + APPLICATIONS);
             if (!new File(appBasePath).exists()) {
                 FileUtil.mkdir(appBasePath);
             }
@@ -282,7 +285,9 @@ public class SourceConfigController {
     public ResourceImportResult importResources(@RequestBody ResourceImportRequest request) {
         String importType = request.getImportType();
         String key = request.getKey();
-        ResourceImportResult result = new ResourceImportResult();
+        ResourceImportResult result = ResourceImportResult.builder().componentImportSuccess(new ArrayList<>())
+                .applicationImportSuccess(new ArrayList<>()).componentImportFailed(new ArrayList<>())
+                .applicationImportFailed(new ArrayList<>()).build();
         String configFilePath = upload_tmp_basepath + File.separator + key + File.separator + config_filename;
         if (!new File(configFilePath).exists()) {
             log.error("导入的压缩包中配置文件不存在");
@@ -294,12 +299,25 @@ public class SourceConfigController {
             importResourceServer.importApplications(key, manifest, request.getApplications(),result);
         } else if (COMPONENT.equalsIgnoreCase(importType) && CollectionUtils.isNotEmpty(request.getComponents())) {
             //导入组件
-            List<ComponentDto> componentList = request.getComponents();
-            Map<String,ObjectId> idMap = new HashMap<>();
-            for (ComponentDto dto : componentList) {
-                idMap.put(dto.getId(), ObjectId.get());
+            List<ComponentDto> components = request.getComponents();
+            Map<String,Component> idMap = new HashMap<>();
+
+            if (CollectionUtils.isNotEmpty(components)) {
+                Set<String> componentNames = components.stream().map(ComponentDto::getName).collect(Collectors.toSet());
+                List<Component> componentList = mongoTemplate.find(new Query(Criteria.where("name").in(componentNames)), Component.class);
+                Map<String, Component> collect1 = componentList.stream().collect(Collectors.toMap(Component::getName, o -> o));
+                for (ComponentDto dto : components) {
+                    Component component = collect1.get(dto.getName());
+                    if (null == component) {
+                        component = new Component();
+                        component.setId(new ObjectId());
+                    }
+                    idMap.put(dto.getId(), component);
+                }
             }
-            importResourceServer.importComponents(key, manifest, componentList,idMap, result);
+            Map<String, String> originComponentIdAndVersionMap = manifest.getComponentList().stream().collect(Collectors.toMap(ComponentDto::getId, ComponentDto::getVersion));
+
+            importResourceServer.importComponents(key,originComponentIdAndVersionMap, components,idMap, result);
         }
         // 记录配置导入结果
         ImportResult importResult = new ImportResult();

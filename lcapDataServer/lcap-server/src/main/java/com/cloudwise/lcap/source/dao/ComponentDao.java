@@ -26,15 +26,9 @@ public class ComponentDao {
     }
 
     public void upsert(Component component) {
-        ObjectId id = component.getId();
-        Query query = new Query(Criteria.where("_id").is(id));
+        Query query = new Query(Criteria.where("_id").is(component.getId()));
         Update update = new Update();
         update.set("update_time",new Date());
-
-        if (StringUtils.isNotEmpty(component.getAccountId())){
-            update.set("account_id",component.getAccountId());
-        }
-
         if (StringUtils.isNotBlank(component.getCreator())) {
             update.set("creator",component.getCreator());
         }
@@ -54,6 +48,12 @@ public class ComponentDao {
         if (CollectionUtil.isNotEmpty(component.getProjects())){
             update.set("projects",component.getProjects());
         }
+        if (CollectionUtil.isNotEmpty(component.getTags())){
+            update.set("tags",component.getTags());
+        }
+        if (CollectionUtil.isNotEmpty(component.getApplications())){
+            update.set("applications",component.getApplications());
+        }
 
         if (StringUtils.isNotBlank(component.getCategory())){
             update.set("category",component.getCategory());
@@ -62,12 +62,6 @@ public class ComponentDao {
             update.set("sub_category",component.getSubCategory());
         }
 
-        if (CollectionUtil.isNotEmpty(component.getTags())){
-            update.set("tags",component.getTags());
-        }
-        if (CollectionUtil.isNotEmpty(component.getApplications())){
-            update.set("applications",component.getApplications());
-        }
         if (StringUtils.isNotBlank(component.getCover())){
             update.set("cover",component.getCover());
         }
@@ -85,7 +79,12 @@ public class ComponentDao {
         if (null != component.getIsLib()){
             update.set("is_lib",component.getIsLib());
         }
-
+        if (null != component.getVersions()){
+            update.set("versions",component.getVersions());
+        }
+        if (null != component.getAutomatic_cover()){
+            update.set("automatic_cover",component.getAutomatic_cover());
+        }
         mongoTemplate.upsert(query, update, Component.class);
     }
 
@@ -130,7 +129,6 @@ public class ComponentDao {
         if (CollectionUtil.isNotEmpty(component.getVersions())){
             update.set("versions",component.getVersions());
         }
-
         if (StringUtils.isNotBlank(component.getType())){
             update.set("type",component.getType());
         }

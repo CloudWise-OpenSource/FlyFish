@@ -2,6 +2,7 @@ package com.cloudwise.lcap.source.service;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.cloudwise.lcap.common.exception.BaseException;
 import com.cloudwise.lcap.common.exception.ResourceNotFoundException;
 import com.cloudwise.lcap.common.utils.Assert;
@@ -75,7 +76,6 @@ public class ExportResourceService {
                 throw new BaseException("组件" + componentsName + "资源包不存在，导出资源失败!");
             }
 
-            log.info("");
             for (String componentId : ids) {
                 String recentVersion = componentRecentVersion.get(componentId);
                 // 最新版本目录 只需要release目录
@@ -93,15 +93,17 @@ public class ExportResourceService {
     public Set<String> getComponentIds(List<ApplicationDto> applications) {
         Set<String> ids = new ArraySet<>();
         for (ApplicationDto application : applications) {
-            List<JSONObject> pages = application.getPages();
-            if (CollectionUtil.isNotEmpty(pages)) {
-                for (JSONObject page : pages) {
-                    List<JSONObject> components = page.getBeanList("components", JSONObject.class);
-                    if (CollectionUtil.isNotEmpty(components)) {
-                        for (JSONObject object1 : components) {
-                            String componentId = object1.getStr("type");
-                            if (!"PageLink".equalsIgnoreCase(componentId)){
-                                ids.add(object1.getStr("type"));
+            if (StringUtils.isNotBlank(application.getPages())){
+                List<JSONObject> pages = JSONUtil.toList(application.getPages(), JSONObject.class);
+                if (CollectionUtil.isNotEmpty(pages)) {
+                    for (JSONObject page : pages) {
+                        List<JSONObject> components = page.getBeanList("components", JSONObject.class);
+                        if (CollectionUtil.isNotEmpty(components)) {
+                            for (JSONObject object1 : components) {
+                                String componentId = object1.getStr("type");
+                                if (!"PageLink".equalsIgnoreCase(componentId)){
+                                    ids.add(object1.getStr("type"));
+                                }
                             }
                         }
                     }

@@ -18,9 +18,6 @@ public class User {
     @Field("_id")
     private ObjectId id;
 
-    @Field("douc_user_id")
-    private String doucUserId;
-
     @Field("email")
     private String email;
 
@@ -41,9 +38,6 @@ public class User {
 
     @Field("username")
     private String username;
-
-    @Field("old_user_id")
-    private Integer oldUserId;
 
     @Field("create_time")
     private Date createTime;

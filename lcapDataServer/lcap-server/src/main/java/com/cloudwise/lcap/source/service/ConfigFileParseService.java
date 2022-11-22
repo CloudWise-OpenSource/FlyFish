@@ -1,7 +1,6 @@
 package com.cloudwise.lcap.source.service;
 
 import cn.hutool.json.JSONObject;
-import com.cloudwise.lcap.common.BaseResponse;
 import com.cloudwise.lcap.common.exception.BaseException;
 import com.cloudwise.lcap.common.utils.FileUtils;
 import com.cloudwise.lcap.common.utils.JsonUtils;
@@ -26,7 +25,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.cloudwise.lcap.common.contants.Constant.APPLICATION;
@@ -74,45 +74,40 @@ public class ConfigFileParseService {
             //为了兼容5.6(转换为mysql后组件id都变化了)，需要根据名字进行判断是新增还是更新
             List<Application> applicationList = applicationDao.findByNames(applicationNames);
             List<String> collect = applicationList.stream().map(Application::getName).collect(Collectors.toList());
-            Map<String, Application> applicationMap = applicationList.stream().collect(Collectors.toMap(o->o.getName(),o->o));
+            Map<String, Application> applicationMap = applicationList.stream().collect(Collectors.toMap(Application::getName, o->o));
 
-            // 获取组件为新增还是修改
-            for (ApplicationDto dto : applications) {
-                if (collect.contains(dto.getName())) {
-                    dto.setUpdate(true);
-                    Application app = applicationMap.get(dto.getName());
-                    dto.setProjectId(app.getProjectId());
+            for (ApplicationDto applicationDto : applications) {
+                if (collect.contains(applicationDto.getName())) {
+                    applicationDto.setUpdate(true);
+                    Application app = applicationMap.get(applicationDto.getName());
+                    applicationDto.setProjectId(app.getProjectId());
                     Project project = projectDao.findByProjectId(new ObjectId(app.getProjectId()));
                     if (null != project) {
-                        dto.setProjectName(project.getName());
+                        applicationDto.setProjectName(project.getName());
                     }
-                } else {
-                    // 新建 查询project from is lcap-init
-                    Project project = projectDao.findByInitProject();
-                    if (null != project) {
-                        dto.setProjectId(project.getId().toHexString());
-                        dto.setProjectName(project.getName());
-                    }
+                }else {
+                    applicationDto.setProjectId(null);
+                    applicationDto.setProjectName(null);
                 }
 
                 // 应用下存在组件，需要获取组件费否为更新
-                List<ComponentDto> components = dto.getComponents();
+                List<ComponentDto> components = applicationDto.getComponents();
                 if (CollectionUtils.isNotEmpty(components)) {
-                    List<String> componentIds = components.stream().map(ComponentDto::getId).collect(Collectors.toList());
-                    List<Component> cpList = componentDao.findByIds(componentIds);
-                    Map<String, Component> collect1 = cpList.stream().collect(Collectors.toMap(o -> o.getId().toHexString(), o -> o));
-                    for (ComponentDto t : components) {
-                        Component cp = collect1.get(t.getId());
+                    List<String> componentNames = components.stream().map(ComponentDto::getName).collect(Collectors.toList());
+                    List<Component> cpList = componentDao.findByNames(componentNames);
+                    Map<String, Component> componentMap = cpList.stream().collect(Collectors.toMap(Component::getName, o -> o));
+                    for (ComponentDto dto : components) {
+                        Component cp = componentMap.get(dto.getName());
                         if (null != cp) {
-                            t.setUpdate(true);
+                            dto.setUpdate(true);
                             String category = cp.getCategory();
                             String subCategory = cp.getSubCategory();
-                            t.setCategory(category);
-                            t.setSubCategory(subCategory);
-                            t.setCategoryName(this.getSubCategoryName(category, subCategory));
-                            t.setType(cp.getType());
-                            t.setProjects(cp.getProjects());
-                            t.setProjectsName(this.getProjectName(cp.getProjects()));
+                            dto.setCategory(category);
+                            dto.setSubCategory(subCategory);
+                            dto.setCategoryName(this.getSubCategoryName(category, subCategory));
+                            dto.setType(cp.getType());
+                            dto.setProjects(cp.getProjects());
+                            dto.setProjectsName(this.getProjectName(cp.getProjects()));
                         }
                     }
                 }
@@ -125,7 +120,7 @@ public class ConfigFileParseService {
             List<String> componentNames = components.stream().map(ComponentDto::getName).collect(Collectors.toList());
             //为了兼容5.6(转换为mysql后组件id都变化了)，需要根据名字进行判断是新增还是更新
             List<Component> componentList = componentDao.findByNames(componentNames);
-            Map<String, Component> componentMap = componentList.stream().collect(Collectors.toMap(o->o.getName(),o->o));
+            Map<String, Component> componentMap = componentList.stream().collect(Collectors.toMap(Component::getName, o->o));
 
             for (ComponentDto dto : components) {
                 if (componentMap.containsKey(dto.getName())) {

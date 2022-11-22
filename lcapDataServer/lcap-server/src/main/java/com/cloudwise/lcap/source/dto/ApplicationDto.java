@@ -2,7 +2,6 @@ package com.cloudwise.lcap.source.dto;
 
 import cn.hutool.json.JSONObject;
 import lombok.*;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.Date;
 import java.util.List;
@@ -15,7 +14,6 @@ import java.util.List;
 public class ApplicationDto {
 
     private String id;
-    private String accountId;
 
     // 标签
     private List<String> tags;
@@ -23,7 +21,7 @@ public class ApplicationDto {
     // 封面 不再存储，就在www/applications/cover.jpeg
     private String cover;
     private String status;
-    private List<JSONObject> pages;
+    private String pages;
     private String name;
     private String projectId;
     private String projectName;

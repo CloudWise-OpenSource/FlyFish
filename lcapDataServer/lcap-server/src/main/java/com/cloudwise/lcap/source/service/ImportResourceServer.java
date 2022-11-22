@@ -10,16 +10,14 @@ import com.cloudwise.lcap.common.utils.JsonUtils;
 import com.cloudwise.lcap.source.dao.*;
 import com.cloudwise.lcap.source.dto.ApplicationDto;
 import com.cloudwise.lcap.source.dto.ComponentDto;
-import com.cloudwise.lcap.source.model.Application;
-import com.cloudwise.lcap.source.model.Component;
-import com.cloudwise.lcap.source.model.ImportResult;
-import com.cloudwise.lcap.source.model.Project;
+import com.cloudwise.lcap.source.model.*;
 import com.cloudwise.lcap.source.service.dto.Manifest;
 import com.cloudwise.lcap.source.service.dto.ResourceImportResult;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +28,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -47,6 +46,8 @@ public class ImportResourceServer {
     private String component_basepath;
     @Value("${application_basepath}")
     private String application_baseapth;
+    @Value("${www_relative_path}")
+    private String www_relative_path;
 
     /**
      * 组件压缩文件包上传时的临时目录
@@ -60,12 +61,11 @@ public class ImportResourceServer {
     private MongoTemplate mongoTemplate;
 
     /**
-     *
      * @param key
-     * @param manifest 配置文件
+     * @param manifest     配置文件
      * @param applications 用户前端传递的参数
      */
-    public void importApplications(String key, Manifest manifest, List<ApplicationDto> applications,ResourceImportResult importResult){
+    public void importApplications(String key, Manifest manifest, List<ApplicationDto> applications, ResourceImportResult importResult) {
         //导入应用
         // 1.优先校验前端传递给后端的应用名称是否存在重复
         List<String> collect = applications.stream().map(ApplicationDto::getName).collect(Collectors.toList());
@@ -74,10 +74,11 @@ public class ImportResourceServer {
         if (CollectionUtils.isNotEmpty(lists)) {
             throw new BaseException("应用名称" + lists + "存在重复!");
         }
-
-        //导入应用和组件
+        //组件信息，用户在前端页面可能勾选导入部分组件
         Map<String, ComponentDto> componentDtoMap = new HashMap<>();
-        Map<String, ObjectId> idMap = new HashMap<>();
+        //导入应用和组件
+        User adminUser = mongoTemplate.findOne(new Query(Criteria.where("username").is("admin")), User.class);
+        Map<String,Component> idMap = new HashMap<>();
         for (ApplicationDto application : applications) {
             Application app = mongoTemplate.findOne(new Query(Criteria.where("name").is(application.getName())), Application.class);
             if (app == null) {
@@ -85,43 +86,43 @@ public class ImportResourceServer {
                 app.setId(ObjectId.get());
             }
             List<ComponentDto> components = application.getComponents();
-            if (CollectionUtils.isNotEmpty(components)){
+            if (CollectionUtils.isNotEmpty(components)) {
                 Set<String> componentNames = components.stream().map(ComponentDto::getName).collect(Collectors.toSet());
                 List<Component> componentList = mongoTemplate.find(new Query(Criteria.where("name").in(componentNames)), Component.class);
                 Map<String, Component> collect1 = componentList.stream().collect(Collectors.toMap(Component::getName, o -> o));
                 for (ComponentDto dto : components) {
                     Component component = collect1.get(dto.getName());
                     if (null == component) {
-                        idMap.put(dto.getId(), new ObjectId());
-                    }else {
-                        idMap.put(dto.getId(), component.getId());
+                        component = new Component();
+                        component.setId(new ObjectId());
                     }
+                    idMap.put(dto.getId(), component);
                     componentDtoMap.putIfAbsent(dto.getId(), dto);
                 }
             }
 
-            List<JSONObject> pages = application.getPages();
-            if (CollectionUtils.isNotEmpty(pages)) {
+            if (StringUtils.isNotEmpty(application.getPages())) {
+                List<JSONObject> pages = JSONUtil.toList(application.getPages(), JSONObject.class);
                 for (JSONObject page : pages) {
                     List<JSONObject> pageComponents = page.getBeanList("components", JSONObject.class);
                     for (JSONObject pageComponent : pageComponents) {
                         String componentId = pageComponent.getStr("type");
                         //组件修改id为对应的ObjectId
-                        if (componentDtoMap.containsKey(componentId)){
+                        if (componentDtoMap.containsKey(componentId)) {
                             //优先使用用户设置的版本号
-                            pageComponent.put("version",componentDtoMap.get(componentId).getVersion());
-                            pageComponent.put("type", idMap.get(componentId).toHexString());
+                            pageComponent.put("version", componentDtoMap.get(componentId).getVersion());
+                            pageComponent.put("type", idMap.get(componentId).getId().toHexString());
                         }
                     }
                     page.put("components", pageComponents);
                 }
-                application.setPages(pages);
+                application.setPages(JSONUtil.toJsonStr(pages));
             }
 
             app.setDevelopStatus("doing");
             app.setCover(application.getCover());
             app.setStatus("valid");
-            app.setPages(pages);
+            app.setPages(JSONUtil.toList(application.getPages(), JSONObject.class));
             app.setName(application.getName());
             app.setProjectId(application.getProjectId());
             app.setIsFromDocc(false);
@@ -129,8 +130,9 @@ public class ImportResourceServer {
             app.setType(application.getType());
             app.setIsLib(application.getIsLib());
             app.setIsRecommend(false);
-            app.setAccountId("110");
-            app.setCreator("110");
+            app.setCreator(adminUser.getId().toHexString());
+            app.setUpdater(adminUser.getId().toHexString());
+            app.setCreateTime(new Date());
             app.setUpdateTime(new Date());
             mongoTemplate.save(app);
 
@@ -141,10 +143,26 @@ public class ImportResourceServer {
             }
             importResult.getApplicationImportSuccess().add(application.getName());
         }
-        importComponents(key, manifest, componentDtoMap.values(),idMap, importResult);
+        Map<String,String> originComponentIdAndVersionMap = new HashMap<>();
+        List<ApplicationDto> applicationList = manifest.getApplicationList();
+        for (ApplicationDto applicationDto : applicationList) {
+            if (CollectionUtils.isNotEmpty(applicationDto.getComponents())){
+                List<ComponentDto> components = applicationDto.getComponents();
+                originComponentIdAndVersionMap.putAll(components.stream().collect(Collectors.toMap(ComponentDto::getId,ComponentDto::getVersion)));
+            }
+        }
+        importComponents(key,originComponentIdAndVersionMap, componentDtoMap.values(), idMap, importResult);
     }
 
-    public void importComponents(String key, Manifest manifest, Collection<ComponentDto> componentDtoList,Map<String, ObjectId> idMap, ResourceImportResult importResult) {
+    /**
+     *
+     * @param key 导入的包的key,据此获取导入的组件源码等文件
+     * @param originComponentIdAndVersionMap 原始组件的id和版本,导出时的版本号(在导入时可能会修改版本号,导致和原始版本号不一致，此时在配置文件setting.js/main.js中需要修改为正确的版本号)
+     * @param componentDtoList 待导入的组件列表
+     * @param idMap 组件id映射 (5.6版本切换为mysql存储,组件id生成规则等不同于5.5的mongo)
+     * @param importResult
+     */
+    public void importComponents(String key, Map<String, String> originComponentIdAndVersionMap,Collection<ComponentDto> componentDtoList, Map<String, Component> idMap, ResourceImportResult importResult) {
         // 校验应用名称是否存在重复
         if (CollectionUtils.isEmpty(componentDtoList)) {
             log.error("导入组件时组件列表为空");
@@ -158,19 +176,17 @@ public class ImportResourceServer {
             }
         }
         //原始的组件版本
-        Map<String, String> originComponentIdAndVersionMap = manifest.getComponentList().stream().collect(Collectors.toMap(ComponentDto::getId, ComponentDto::getVersion));
-
-        Set<String> componentNames = componentDtoList.stream().map(ComponentDto::getName).collect(Collectors.toSet());
-        List<Component> componentList = mongoTemplate.find(new Query(Criteria.where("name").in(componentNames)), Component.class);
-        Map<String, Component> collect1 = componentList.stream().collect(Collectors.toMap(Component::getName, o -> o));
+        User adminUser = mongoTemplate.findOne(new Query(Criteria.where("username").is("admin")), User.class);
+        boolean isUpdate = false;
         for (ComponentDto originComponent : componentDtoList) {
             String userVersion = originComponent.getVersion();
-            String originVersion = originComponentIdAndVersionMap.get(originComponent.getId());
+            String originId = originComponent.getId();
+            String originVersion = originComponentIdAndVersionMap.get(originId);
+            log.info("originId:{},userVersion:{},userVersion:{}",originId,userVersion,originVersion);
             //用户手动设置的版本号
-            String componentId = idMap.get(originComponent.getId()).toString();
-            originComponent.setId(componentId);
-            Component component = collect1.get(originComponent.getName());
-            if (null != component){
+            Component component = idMap.get(originId);
+            ObjectId objectId = component.getId();
+            if (StringUtils.isNotBlank(component.getName())) {
                 // 获取新平台中组件的版本 versions
                 List<JSONObject> versions = component.getVersions();
                 if (CollectionUtils.isEmpty(versions)) {
@@ -179,50 +195,45 @@ public class ImportResourceServer {
                 List<String> componentHistoryVersion = versions.stream().map(obj -> obj.getStr("no")).collect(Collectors.toList());
                 if (!componentHistoryVersion.contains(userVersion)) {
                     // 类似于新增 将新增的版本添加到versions中
-                    JSONObject jsonObjects = new JSONObject().set("no",userVersion).set("time",new Date()).set("status","valid").set("desc",userVersion);
+                    JSONObject jsonObjects = new JSONObject().set("no", userVersion).set("time", new Date()).set("status", "valid").set("desc", userVersion);
                     versions.add(jsonObjects);
                 }
-                originComponent.setVersions(versions);
-                originComponent.setName(component.getName());
-                originComponent.setType(component.getType());
-                originComponent.setProjects(component.getProjects());
-                originComponent.setCategory(component.getCategory());
-                originComponent.setSubCategory(component.getSubCategory());
-                originComponent.setAllowDataSearch(component.getAllowDataSearch());
-                originComponent.setFrom(component.getFrom());
-                originComponent.setIsLib(component.getIsLib());
-                originComponent.setDesc(component.getDesc());
-                originComponent.setUpdater(component.getCreator());
+                component.setVersions(versions);
+                isUpdate = true;
             } else {
                 //组件为新增
-                JSONObject jsonObjects = new JSONObject().set("no",userVersion).set("time",new Date()).set("status","valid").set("desc",userVersion);
-                originComponent.setVersions(Collections.singletonList(jsonObjects));
+                JSONObject version = new JSONObject().set("no", userVersion).set("time", new Date()).set("status", "valid").set("desc", userVersion);
+                component.setVersions(Collections.singletonList(version));
             }
-            originComponent.setUpdateTime(new Date());
-            originComponent.setUpdateTime(new Date());
-            originComponent.setDevelopStatus("online");
-            originComponent.setStatus("valid");
-            //读取组件信息，导入到新环境的表
-            Component comp = new Component();
-            comp.setId(new ObjectId(originComponent.getId()));
-            comp.setIsLib(originComponent.getIsLib());
-            BeanUtils.copyProperties(originComponent, comp);
-            componentDao.insert(comp);
+            //先复制对应的版本，因为牵涉到修改最新版的版本名称
+            String sourceFolder = upload_tmp_basepath + File.separator + key + COMPONENTS + File.separator + originId + File.separator + originVersion;
+            String destFolder = component_basepath + File.separator + objectId.toHexString() + File.separator + userVersion;
+            String coverFile = getCover(destFolder);
+            if (null != coverFile) {
+                String cover = www_relative_path + COMPONENTS + File.separator + objectId.toHexString() + File.separator + userVersion + COMPONENT_RELEASE + coverFile;
+                log.info("objectId:{} cover:{}",objectId.toHexString(),cover);
+                originComponent.setCover(cover);
+            }
+            if (isUpdate){
+                componentDao.upsert(buildComponent(originComponent, component, adminUser));
+            }else {
+                componentDao.insert(buildComponent(originComponent, component, adminUser));
+            }
 
-            //用户修改了组件版本,则修改待导入文件中的版本信息
-            if (!originVersion.equalsIgnoreCase(userVersion)) {
+            //读取组件信息，导入到新环境的表
+            String releaseMain = upload_tmp_basepath + File.separator + key + COMPONENTS + File.separator + originId + File.separator + originVersion + RELEASE_MAIN;
+            String releaseSetting = upload_tmp_basepath + File.separator + key + COMPONENTS + File.separator + originId + File.separator + originVersion + RELEASE_SETTING;
+            if (originVersion.equalsIgnoreCase(userVersion)){
+                //用户修改了组件版本,则修改待导入文件中的版本信息
                 //导出的文件中的最新版本号
                 //替换new cover文件中的version标识
-                String releaseMain = upload_tmp_basepath + File.separator + key + COMPONENTS + File.separator + componentId + File.separator + originVersion + RELEASE_MAIN;
-                String releaseSetting = upload_tmp_basepath + File.separator + key + COMPONENTS + File.separator + componentId + File.separator + originVersion + RELEASE_SETTING;
-
                 FileUtils.autoReplace(releaseMain, originVersion, userVersion);
                 FileUtils.autoReplace(releaseSetting, originVersion, userVersion);
             }
+            //(5.6版本切换为mysql存储,组件id生成规则等不同于5.5的mongo)替换组件的id
+            FileUtils.autoReplace(releaseMain, originId, objectId.toHexString());
+            FileUtils.autoReplace(releaseSetting, originId, objectId.toHexString());
 
-            //先复制对应的版本，因为牵涉到修改最新版的版本名称
-            String destFolder = component_basepath + File.separator + componentId + File.separator + userVersion;
-            String sourceFolder = upload_tmp_basepath + File.separator + key + COMPONENTS + File.separator + componentId + File.separator + originVersion;
             log.info("新版本release从sourceFolder:{} 复制到destFolder:{}", sourceFolder, destFolder);
             File[] files = new File(sourceFolder).listFiles();
             if (files != null && files.length > 0) {
@@ -233,5 +244,76 @@ public class ImportResourceServer {
             }
             importResult.getComponentImportSuccess().add(component.getName());
         }
+    }
+
+
+    public String getCover(String sourceFolder) {
+        String coverFile = null;
+        File file = new File(sourceFolder + COMPONENT_RELEASE);
+        if (file.exists() && file.isDirectory()) {
+            File[] covers = file.listFiles(pathname -> pathname.isFile() && pathname.getName().startsWith("cover"));
+            if (null != covers && covers.length > 0) {
+                coverFile = File.separator + covers[0].getName();
+            }
+        }
+        return coverFile;
+    }
+
+    public static Component buildComponent(ComponentDto originComponent, Component component, User adminUser) {
+        List<String> projects = component.getProjects();
+        if (null == projects) {
+            projects = new ArrayList<>();
+        }
+        if (CollectionUtils.isNotEmpty(originComponent.getProjects())) {
+            projects.addAll(originComponent.getProjects());
+        }
+        component.setProjects(projects);
+
+        List<String> applications = component.getApplications();
+        if (null == applications) {
+            applications = new ArrayList<>();
+        }
+        if (CollectionUtils.isNotEmpty(originComponent.getApplications())) {
+            applications.addAll(originComponent.getApplications());
+        }
+        component.setApplications(applications);
+        component.setTags(new ArrayList<>());
+
+        component.setName(originComponent.getName());
+        component.setType(originComponent.getType());
+        component.setCover(originComponent.getCover());
+        component.setCategory(originComponent.getCategory());
+        component.setSubCategory(originComponent.getSubCategory());
+        component.setStatus(originComponent.getStatus());
+        component.setDevelopStatus(originComponent.getDevelopStatus());
+        component.setStatus("valid");
+        component.setDevelopStatus("online");
+        component.setAutomatic_cover(1);
+        component.setFrom(originComponent.getFrom());
+        component.setIsLib(originComponent.getIsLib());
+        component.setDesc(originComponent.getDesc());
+        component.setIsLib(originComponent.getIsLib());
+        component.setCreator(adminUser.getId().toHexString());
+        component.setUpdater(adminUser.getId().toHexString());
+        component.setCreateTme(new Date());
+        component.setUpdateTime(new Date());
+        return component;
+    }
+
+    public static void main(String[] args) {
+
+        String configFilePath = "/Users/yinqiqi/Downloads/application20221121182106/config_filename";
+        Manifest manifest = JsonUtils.parse(FileUtils.readJson(configFilePath), Manifest.class);
+
+        Map<String,String> originComponentIdAndVersionMap = new HashMap<>();
+        List<ApplicationDto> applicationList = manifest.getApplicationList();
+        for (ApplicationDto applicationDto : applicationList) {
+            if (CollectionUtils.isNotEmpty(applicationDto.getComponents())){
+                List<ComponentDto> components = applicationDto.getComponents();
+                originComponentIdAndVersionMap.putAll(components.stream().collect(Collectors.toMap(ComponentDto::getId,ComponentDto::getVersion)));
+            }
+        }
+
+        log.info("originComponentIdAndVersionMap:{}",originComponentIdAndVersionMap);
     }
 }

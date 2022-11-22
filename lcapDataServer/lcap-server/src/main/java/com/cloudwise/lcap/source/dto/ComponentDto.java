@@ -14,7 +14,6 @@ import java.util.List;
 @ToString
 public class ComponentDto {
     private String id;
-    private String accountId;
     private String name;
     private String type;
     private String version;
