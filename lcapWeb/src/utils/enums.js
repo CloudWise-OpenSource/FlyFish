@@ -8,6 +8,7 @@ const dataTypeEnums = {
   mongodb: 'MongoDB',
   redis: 'Redis',
   postgres: 'Postgres',
+  postgresql: 'Postgres',
   http: 'HTTP',
   file: 'File',
 };

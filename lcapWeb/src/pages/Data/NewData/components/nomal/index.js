@@ -221,8 +221,10 @@ export default Form.create({ name: 'FORM_IN_PROJECT_MODAL' })(function EditProje
               />
             )}
           </Form.Item>
-          {!['File', 'MySQL', 'Postgres', 'MariaDB', 'SqlServer', '达梦', 'Oracle', 'Clickhouse'].includes(type) && (
-            <Form.Item label="连接地址" name={'servers'}>
+          {!['File', 'MySQL', 'Postgres', 'postgresql', 'MariaDB', 'SqlServer', '达梦', 'Oracle', 'Clickhouse'].includes(
+            enums[type] || type
+          ) && (
+            <Form.Item label="连接地址" name="servers">
               {getFieldDecorator('servers', {
                 initialValue: projectData?.servers,
                 rules: [
@@ -238,7 +240,7 @@ export default Form.create({ name: 'FORM_IN_PROJECT_MODAL' })(function EditProje
               })(<Input placeholder="10.2.2.254:18103" />)}
             </Form.Item>
           )}
-          {(type === enums.mysql || type === enums.mariadb || type === enums.dm || type === enums.clickhouse) && (
+          {['MySQL', 'MariaDB', '达梦', 'Clickhouse'].includes(enums[type] || type) && (
             <Form.Item label="连接地址" name={'servers'}>
               {getFieldDecorator('servers', {
                 initialValue: projectData?.servers,
@@ -256,14 +258,15 @@ export default Form.create({ name: 'FORM_IN_PROJECT_MODAL' })(function EditProje
                 <Input
                   onChange={serversChange}
                   placeholder={
-                    placeholderEnums[type] || 'jdbc:mysql://10.2.2.254:18103/cw_douc?createDatabaseIfNotExist=true11'
+                    placeholderEnums[enums[type] || type] ||
+                    'jdbc:mysql://10.2.2.254:18103/cw_douc?createDatabaseIfNotExist=true11'
                   }
                 />
               )}
             </Form.Item>
           )}
-          {type === enums.postgres && (
-            <Form.Item label="连接地址" name={'servers'}>
+          {['Postgres', 'postgresql'].includes(enums[type] || type) && (
+            <Form.Item label="连接地址" name="servers">
               {getFieldDecorator('servers', {
                 initialValue: projectData?.servers,
                 rules: [
@@ -284,8 +287,8 @@ export default Form.create({ name: 'FORM_IN_PROJECT_MODAL' })(function EditProje
               )}
             </Form.Item>
           )}
-          {(type === enums.sqlserver || type === enums.oracle) && (
-            <Form.Item label="连接地址" name={'servers'}>
+          {['SqlServer', 'Oracle'].includes(enums[type] || type) && (
+            <Form.Item label="连接地址" name="servers">
               {getFieldDecorator('servers', {
                 initialValue: projectData?.servers,
                 rules: [
@@ -310,7 +313,7 @@ export default Form.create({ name: 'FORM_IN_PROJECT_MODAL' })(function EditProje
               )}
             </Form.Item>
           )}
-          {type !== enums.http && (
+          {(enums[type] || type) !== enums.http && (
             <Form.Item label="数据库名称">
               {getFieldDecorator('schemaName', {
                 initialValue: projectData?.schemaName,
@@ -334,8 +337,8 @@ export default Form.create({ name: 'FORM_IN_PROJECT_MODAL' })(function EditProje
                 ],
               })(
                 <Input
-                  disabled={['Postgres', 'MySQL', 'MariaDB', 'SqlServer', '达梦', 'Oracle', 'Clickhouse'].includes(
-                    type
+                  disabled={['postgresql', 'Postgres', 'MySQL', 'MariaDB', 'SqlServer', '达梦', 'Oracle', 'Clickhouse'].includes(
+                    enums[type] || type
                   )}
                   placeholder={
                     intl.formatMessage({
@@ -347,7 +350,7 @@ export default Form.create({ name: 'FORM_IN_PROJECT_MODAL' })(function EditProje
               )}
             </Form.Item>
           )}
-          {['Postgres', 'SqlServer', 'Oracle'].includes(enums[type] || type) && (
+          {['Postgres', 'SqlServer', 'Oracle'].includes(enums[type] || type || 'postgresql') && (
             <Form.Item label="Schema名称">
               {getFieldDecorator('modelName', {
                 initialValue: projectData?.modelName,
@@ -422,7 +425,7 @@ export default Form.create({ name: 'FORM_IN_PROJECT_MODAL' })(function EditProje
               </Form.Item>
             </>
           )}
-          {['MySQL', 'Postgres', 'MongoDB', 'MariaDB', 'SqlServer', '达梦', 'Oracle', 'Clickhouse'].includes(
+          {['MySQL', 'postgresql', 'Postgres', 'MongoDB', 'MariaDB', 'SqlServer', '达梦', 'Oracle', 'Clickhouse'].includes(
             enums[type] || type
           ) && (
             <Form.Item label="用户名">
@@ -440,7 +443,7 @@ export default Form.create({ name: 'FORM_IN_PROJECT_MODAL' })(function EditProje
               )}
             </Form.Item>
           )}
-          {['MySQL', 'Postgres', 'Redis', 'MongoDB', 'MariaDB', 'SqlServer', '达梦', 'Oracle', 'Clickhouse'].includes(
+          {['MySQL', 'postgresql', 'Postgres', 'Redis', 'MongoDB', 'MariaDB', 'SqlServer', '达梦', 'Oracle', 'Clickhouse'].includes(
             enums[type] || type
           ) && (
             <Form.Item label="密码">
