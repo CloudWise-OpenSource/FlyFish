@@ -17,6 +17,7 @@ import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.BeanUtils;
@@ -106,14 +107,24 @@ public class ImportResourceServer {
                 for (JSONObject page : pages) {
                     List<JSONObject> pageComponents = page.getBeanList("components", JSONObject.class);
                     for (JSONObject pageComponent : pageComponents) {
-                        String componentId = pageComponent.getStr("type");
                         //组件修改id为对应的ObjectId
-                        if (componentDtoMap.containsKey(componentId)) {
+                        if (pageComponent.containsKey("type") && componentDtoMap.containsKey(pageComponent.getStr("type"))) {
+                            String componentId = pageComponent.getStr("type");
                             //优先使用用户设置的版本号
                             pageComponent.put("version", componentDtoMap.get(componentId).getVersion());
                             pageComponent.put("type", idMap.get(componentId).getId().toHexString());
                         }
                     }
+                    //处理大屏背景图
+                    JSONObject options = page.getJSONObject("options");
+                    if (MapUtils.isNotEmpty(options) && options.containsKey("backgroundImage")){
+                        String backgroundImage = options.getStr("backgroundImage");
+                        if (StringUtils.isNotBlank(backgroundImage)){
+                            backgroundImage = www_relative_path + APPLICATIONS + File.separator + app.getId().toHexString() + backgroundImage.substring(backgroundImage.lastIndexOf("/"));
+                            options.put("backgroundImage",backgroundImage);
+                        }
+                    }
+                    page.put("options",options);
                     page.put("components", pageComponents);
                 }
                 application.setPages(JSONUtil.toJsonStr(pages));
@@ -138,8 +149,12 @@ public class ImportResourceServer {
 
             //导入应用文件
             String sourcePath = upload_tmp_basepath + File.separator + key + APPLICATIONS + File.separator + application.getId();
-            if (new File(sourcePath).exists()) {
-                FileUtils.copyFolder(sourcePath, null, application_baseapth);
+            File[] files = new File(sourcePath).listFiles();
+            if (files != null && files.length > 0) {
+                for (File file : files) {
+                    //2 将包复制到组件文件夹
+                    FileUtils.copyFolder(sourcePath + File.separator + file.getName(), null, application_baseapth + File.separator + app.getId().toHexString());
+                }
             }
             importResult.getApplicationImportSuccess().add(application.getName());
         }
@@ -206,7 +221,7 @@ public class ImportResourceServer {
                 component.setVersions(Collections.singletonList(version));
             }
             //先复制对应的版本，因为牵涉到修改最新版的版本名称
-            String sourceFolder = upload_tmp_basepath + File.separator + key + COMPONENTS + File.separator + originId + File.separator + originVersion;
+            String sourcePath = upload_tmp_basepath + File.separator + key + COMPONENTS + File.separator + originId + File.separator + originVersion;
             String destFolder = component_basepath + File.separator + objectId.toHexString() + File.separator + userVersion;
             String coverFile = getCover(destFolder);
             if (null != coverFile) {
@@ -233,13 +248,11 @@ public class ImportResourceServer {
             //(5.6版本切换为mysql存储,组件id生成规则等不同于5.5的mongo)替换组件的id
             FileUtils.autoReplace(releaseMain, originId, objectId.toHexString());
             FileUtils.autoReplace(releaseSetting, originId, objectId.toHexString());
-
-            log.info("新版本release从sourceFolder:{} 复制到destFolder:{}", sourceFolder, destFolder);
-            File[] files = new File(sourceFolder).listFiles();
+            File[] files = new File(sourcePath).listFiles();
             if (files != null && files.length > 0) {
                 for (File file : files) {
                     //2 将包复制到组件文件夹
-                    FileUtils.copyFolder(sourceFolder + File.separator + file.getName(), null, destFolder);
+                    FileUtils.copyFolder(sourcePath + File.separator + file.getName(), null, destFolder);
                 }
             }
             importResult.getComponentImportSuccess().add(component.getName());

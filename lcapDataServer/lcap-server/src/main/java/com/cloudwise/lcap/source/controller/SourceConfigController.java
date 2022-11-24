@@ -86,7 +86,7 @@ public class SourceConfigController {
      * 导出组件
      */
     @PostMapping("/export/components")
-    public BaseResponse<ExportResult> exportComponents(HttpServletRequest requests, HttpServletResponse response, @RequestBody ComponentExportRequest request) {
+    public ExportResult exportComponents(HttpServletRequest requests, HttpServletResponse response, @RequestBody ComponentExportRequest request) {
         String folder = down_tmp_basepath + File.separator + COMPONENT + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
         Manifest manifest = Manifest.builder().type(COMPONENT).time(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
                         .componentExportType(Collections.singletonList(COMPILED_RELEASE_SOURCE)).build();
@@ -116,7 +116,7 @@ public class SourceConfigController {
         ExportResult result = new ExportResult();
         result.setName(downFileName);
         result.setSize(new File(downFileName).length());
-        return BaseResponse.success(result);
+        return result;
     }
 
     /**
@@ -358,39 +358,6 @@ public class SourceConfigController {
             }
         }
         return BaseResponse.success(flag);
-    }
-
-    /**
-     * 数据导入：应用和组件
-     */
-    @GetMapping("/test/{id}")
-    public BaseResponse<ResourceImportResult> export(HttpServletRequest request, HttpServletResponse response, @PathVariable("id") String id) {
-        String folder = "/Users/edz/Documents/lcap/down_tmp_basepath/" + id;
-        //打包临时文件夹A
-        File zipFile = ZipUtil.zip(folder);
-
-        //下载压缩包A.zip
-        response.reset();
-        response.setContentType("application/octet-stream;charset=utf-8");
-        String downFileName = new String(zipFile.getName().getBytes(StandardCharsets.UTF_8));
-        response.setHeader("Content-disposition", "attachment;filename=" + downFileName);
-        response.setContentLength((int) zipFile.length());
-
-        try {
-            InputStream inStream = new FileInputStream(zipFile);
-            byte[] b = new byte[1024];
-            int len;
-            while ((len = inStream.read(b)) > 0) {
-                response.getOutputStream().write(b, 0, len);
-            }
-            inStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        ExportResult result = new ExportResult();
-        result.setName(downFileName);
-        result.setSize(new File(downFileName).length());
-        return BaseResponse.success(result);
     }
 
 }

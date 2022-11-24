@@ -12,10 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 public class FileUtils {
@@ -236,6 +233,7 @@ public class FileUtils {
         File file = new File(sourceFolder);
         if (!file.exists()) {
             log.error("源文件夹:{}不存在", sourceFolder);
+            return;
         }
         File destFile = new File(destFolder);
         if (!destFile.exists()) {
@@ -271,11 +269,8 @@ public class FileUtils {
             File file2 = new File(destFolder + File.separator + file.getName());
             file2.mkdirs();
             //是文件夹，先创建同名文件夹
-            File[] files = file.listFiles();
-            for (File file1 : files) {
-                if (!file1.getName().equals(excludePath)) {
-                    copyFolder(file1.getAbsolutePath(), excludePath, file2.getAbsolutePath());
-                }
+            for (File file1 : Objects.requireNonNull(file.listFiles())) {
+                copyFolder(file1.getAbsolutePath(), excludePath, file2.getAbsolutePath());
             }
         }
     }
