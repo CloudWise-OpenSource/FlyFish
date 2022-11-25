@@ -35,10 +35,6 @@ public class ApplicationDao {
         Update update = new Update();
         update.set("update_time",new Date());
 
-        if (StringUtils.isNotEmpty(application.getAccountId())){
-            update.set("account_id",application.getAccountId());
-        }
-
         if (CollectionUtil.isNotEmpty(application.getTags())){
             update.set("tags",application.getTags());
         }
@@ -133,6 +129,11 @@ public class ApplicationDao {
     public Application findByName(String name){
         Query query = new Query(Criteria.where("name").is(name).and("status").is("valid"));
         return mongoTemplate.findOne(query, Application.class);
+    }
+
+    public List<Application> findByNames(List<String> names){
+        Query query = new Query(Criteria.where("name").in(names).and("status").is("valid"));
+        return mongoTemplate.find(query, Application.class);
     }
 
     /**

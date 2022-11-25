@@ -36,6 +36,10 @@ module.exports = {
         "datavi-editor/templates": "dvEditorAdapter.templates",
         "data-vi/api": "dv.adapter",
         "data-vi/router": "dv.adapter.router",
+        'datavi-editor/antd': 'dvEditorAdapter.antd',
+        'datavi-editor/@ant-design/icons': 'dvEditorAdapter.antdIcons',
+        'datavi-editor/chartPanel': 'dvEditorAdapter.chartPanel',
+        'data-vi/echarts': 'dv.adapter.echarts',
     },
     // 指定模块目录名称
     resolve: {

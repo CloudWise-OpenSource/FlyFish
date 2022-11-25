@@ -62,9 +62,5 @@ public class DataSourceConfig {
      */
     @Field("updater")
     private String updater;
-    /**
-     * 租户id
-     */
-    @Field("accountId")
-    private String accountId;
+
 }

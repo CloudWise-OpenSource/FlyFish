@@ -171,12 +171,15 @@ public class DataTableController {
         params.setTables(config.getTables());
 
         String sql = params.getSql();
-        if(Constant.ORACLE.equalsIgnoreCase(config.getSchemaType()) || Constant.POSTGRES.equalsIgnoreCase(config.getSchemaType())){
+        if(Constant.ORACLE.equalsIgnoreCase(config.getSchemaType()) || Constant.SQLSERVER.equalsIgnoreCase(config.getSchemaType()) || Constant.POSTGRES.equalsIgnoreCase(config.getSchemaType())){
             sql = sql.replace("`","");
             String modelName = params.getConnectData().getStr("modelName");
             if(sql.contains(params.getSchemaName())){
                 sql = sql.replace(params.getSchemaName(),modelName);
             }
+        }
+        if(Constant.DAMENG.equalsIgnoreCase(config.getSchemaType())){
+            sql = sql.replace("`","");
         }
         String pageSql = "select count(1) as total from ( " + sql + ") t";
         Integer pageNo = params.getPageNo();
@@ -197,7 +200,9 @@ public class DataTableController {
             dataSql = String.format("select * from (select t.*, ROWNUM rn from ( " + sql + ") t where ROWNUM <= %s ) where rn > %s", endLimit,startLimit);
         }else if(Constant.POSTGRES.equalsIgnoreCase(config.getSchemaType())){
             dataSql = String.format("select * from ( " + sql + ") as t limit %s offset %s", pageSize,startLimit);
-        }else{
+        }else if(Constant.SQLSERVER.equalsIgnoreCase(config.getSchemaType())){
+            dataSql = String.format("select * from ( " + sql + ") as t order by 1 offset %s rows fetch next %s rows only ", startLimit,pageSize);
+        } else{
             dataSql = String.format("select * from ( " + sql + ") as t limit %s,%s", startLimit,pageSize);
         }
         params.setSql(dataSql);

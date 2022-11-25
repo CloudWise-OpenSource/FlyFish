@@ -62,6 +62,9 @@ public class QueryExecute {
             case POSTGRES:
             case ORACLE:
             case CLICKHOUSE:
+            case DAMENG:
+            case MARIA:
+            case SQLSERVER:
                 task = new FutureTask<>(() -> JDBCQueryProxy.query(params,schemaType));
                 break;
             case HTTP:

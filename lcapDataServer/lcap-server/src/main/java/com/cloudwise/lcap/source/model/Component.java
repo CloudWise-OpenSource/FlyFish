@@ -18,12 +18,6 @@ import java.util.List;
 public class Component {
     @Field("_id")
     private ObjectId id;
-    @Field("account_id")
-    private String accountId;
-    @Field("create_time")
-    private Date createTme;
-    @Field("update_time")
-    private Date updateTime;
     @Field("name")
     private String name;
     @Field("is_lib")
@@ -48,28 +42,32 @@ public class Component {
     private List<JSONObject> versions;
     @Field("cover")
     private String cover;
+    /**
+     * 是否自动生成封面图，0-否 1-是
+     */
+    @Field("automatic_cover")
+    private Integer automatic_cover;
 
-    @Field("creator")
-    private String creator;
-    @Field("updater")
-    private String updater;
-
-    // 组件开发状态 enum#COMPONENT_DEVELOP_STATU
+    /**
+     * 组件开发状态 doing-开发中 online-已上线
+      */
     @Field("develop_status")
     private String developStatus;
+    /**
+     * 组件状态 invalid=已删除(回收站中) valid=正常状态
+     */
     @Field("status")
     private String status;
 
     @Field("from")
     private String from;
+    @Field("creator")
+    private String creator;
+    @Field("updater")
+    private String updater;
+    @Field("create_time")
+    private Date createTme;
+    @Field("update_time")
+    private Date updateTime;
 
-    @Field("allow_data_search")
-    private Integer allowDataSearch;
-
-    //// 文件最后一次更新时间
-    private Date lastChangeTime;
-
-    private Boolean isUpdate;
-
-    private String version;
 }

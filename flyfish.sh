@@ -92,7 +92,7 @@ function init_system() {
   systemctl start nginx
 
   echo "start install jdk maven"
-  wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo -O /etc/yum.repos.d/epel-apache-maven.repo
+  wget --no-check-certificate https://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo -O /etc/yum.repos.d/epel-apache-maven.repo
   yum -y install apache-maven
   cp ${PROJECT_PATH}/shell_tpl/settings.xml /etc/maven
 

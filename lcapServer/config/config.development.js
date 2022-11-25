@@ -80,7 +80,7 @@ module.exports = appInfo => {
     logsDir: `${logsBaseDir}/${appInfo.name}`,
     commonDirPath,
 
-    applicationPath: 'applications',
+    applicationPath: commonDirPath ? `${commonDirPath}/applications` : 'applications',
     appTplPath: commonDirPath ? `${commonDirPath}/application_tpl` : 'application_tpl',
     appBuildPath: commonDirPath ? `${commonDirPath}/application_build` : 'application_build',
     defaultApplicationCoverPath: commonDirPath ? `/${commonDirPath}/application_tpl/public/cover.jpeg` : '/application_tpl/public/cover.jpeg',

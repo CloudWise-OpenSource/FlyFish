@@ -39,6 +39,9 @@ public class DataSourceUtils {
             case POSTGRES:
             case ORACLE:
             case CLICKHOUSE:
+            case DAMENG:
+            case MARIA:
+            case SQLSERVER:
                 return JDBCQueryProxy.available(servers,username,password,schemaType);
             case HTTP:
                 return DatasourceStatus.builder().available(true).build();
@@ -64,6 +67,9 @@ public class DataSourceUtils {
             case POSTGRES:
             case ORACLE:
             case CLICKHOUSE:
+            case DAMENG:
+            case MARIA:
+            case SQLSERVER:
                 return JDBCQueryProxy.getTableList(dataSourceConfig,schemaType);
             case HTTP:
                 List<DataTableDto> returnData = new ArrayList<>();
@@ -98,6 +104,9 @@ public class DataSourceUtils {
             case POSTGRES:
             case ORACLE:
             case CLICKHOUSE:
+            case DAMENG:
+            case MARIA:
+            case SQLSERVER:
                 return JDBCQueryProxy.getTableDetail(config, tableName, dataTableDto,schemaType);
             case HTTP:
                 if (CollectionUtil.isNotEmpty(tables)) {

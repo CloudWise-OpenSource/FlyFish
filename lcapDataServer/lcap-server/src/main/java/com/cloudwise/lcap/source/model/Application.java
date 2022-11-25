@@ -1,5 +1,6 @@
 package com.cloudwise.lcap.source.model;
 
+import cn.hutool.json.JSONObject;
 import lombok.*;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -19,9 +20,6 @@ public class Application {
     @Field("_id")
     private ObjectId id;
 
-    @Field("account_id")
-    private String accountId;
-
     // 标签
     @Field("tags")
     private List<String> tags;
@@ -35,12 +33,16 @@ public class Application {
     @Field("status")
     private String status;
     @Field("pages")
-    private List<Object> pages;
+    private List<JSONObject> pages;
     @Field("name")
     private String name;
     // 项目
     @Field("project_id")
     private String projectId;
+    @Field("is_from_doma")
+    private Boolean isFromDoma;
+    @Field("is_from_docc")
+    private Boolean isFromDocc;
     // 应用类型
     @Field("type")
     private String type;
