@@ -10,6 +10,18 @@ import DataTable from '../../../components/NewTable';
 import enums from '@/utils/enums.js';
 import { toJS } from '@chaoswise/cw-mobx';
 import { JSONEditor } from '@json-editor/json-editor';
+
+const schemaTypeEnums = {
+  MySQL: 'mysql',
+  Postgres: 'postgresql',
+  达梦: 'dm',
+  MariaDB: 'mariadb',
+  SqlServer: 'sqlserver',
+  Oracle: 'oracle',
+  Clickhouse: 'clickhouse',
+  HTTP: 'HTTP',
+};
+
 export default Form.create({ name: 'FORM_IN_PROJECT_MODAL' })(function EditProjectModal({
   form,
   activeData = {},
@@ -76,7 +88,7 @@ export default Form.create({ name: 'FORM_IN_PROJECT_MODAL' })(function EditProje
 
         let sendData = {
           datasourceName: values.datasourceName,
-          schemaType: type,
+          schemaType: (schemaTypeEnums[type] || type === 'dm' ? type : enums[type])?.toLowerCase(),
           connectData: JSON.stringify({
             ...values,
             url,
