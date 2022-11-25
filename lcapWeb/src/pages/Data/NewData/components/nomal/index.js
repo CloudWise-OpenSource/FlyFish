@@ -65,7 +65,7 @@ export default Form.create({ name: 'FORM_IN_PROJECT_MODAL' })(function EditProje
       if (!err) {
         let sendData = {
           datasourceName: values.datasourceName,
-          schemaType: schemaTypeEnums[type] || type === 'dm' ? type : enums[type]?.toLowerCase(),
+          schemaType: (schemaTypeEnums[type] || type === 'dm' ? type : enums[type])?.toLowerCase(),
           connectData: JSON.stringify(values),
         };
         setConnectState(true);
