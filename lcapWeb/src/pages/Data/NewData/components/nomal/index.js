@@ -35,8 +35,6 @@ export default Form.create({ name: 'FORM_IN_PROJECT_MODAL' })(function EditProje
   dataUsability,
   ref1,
 }) {
-  console.log('activeData编辑', activeData);
-  console.log('type', type);
   const { getFieldDecorator } = form;
   const [projectData, setProjectData] = useState(activeData); // 初始数据
   const [connectState, setConnectState] = useState(false); // 链接状态
@@ -67,7 +65,7 @@ export default Form.create({ name: 'FORM_IN_PROJECT_MODAL' })(function EditProje
       if (!err) {
         let sendData = {
           datasourceName: values.datasourceName,
-          schemaType: schemaTypeEnums[type],
+          schemaType: schemaTypeEnums[type] || type === 'dm' ? type : enums[type]?.toLowerCase(),
           connectData: JSON.stringify(values),
         };
         setConnectState(true);
@@ -94,7 +92,7 @@ export default Form.create({ name: 'FORM_IN_PROJECT_MODAL' })(function EditProje
             datasourceId: projectData.datasourceId,
             datasourceName: values.datasourceName,
             modelName: values.modelName,
-            schemaType: schemaTypeEnums[type],
+            schemaType: schemaTypeEnums[type] || type === 'dm' ? type : enums[type]?.toLowerCase(),
             schemaName: values.schemaName,
             connectData: JSON.stringify(values),
           };
@@ -221,9 +219,17 @@ export default Form.create({ name: 'FORM_IN_PROJECT_MODAL' })(function EditProje
               />
             )}
           </Form.Item>
-          {!['File', 'MySQL', 'Postgres', 'postgresql', 'MariaDB', 'SqlServer', '达梦', 'Oracle', 'Clickhouse'].includes(
-            enums[type] || type
-          ) && (
+          {![
+            'File',
+            'MySQL',
+            'Postgres',
+            'postgresql',
+            'MariaDB',
+            'SqlServer',
+            '达梦',
+            'Oracle',
+            'Clickhouse',
+          ].includes(enums[type] || type) && (
             <Form.Item label="连接地址" name="servers">
               {getFieldDecorator('servers', {
                 initialValue: projectData?.servers,
@@ -337,9 +343,16 @@ export default Form.create({ name: 'FORM_IN_PROJECT_MODAL' })(function EditProje
                 ],
               })(
                 <Input
-                  disabled={['postgresql', 'Postgres', 'MySQL', 'MariaDB', 'SqlServer', '达梦', 'Oracle', 'Clickhouse'].includes(
-                    enums[type] || type
-                  )}
+                  disabled={[
+                    'postgresql',
+                    'Postgres',
+                    'MySQL',
+                    'MariaDB',
+                    'SqlServer',
+                    '达梦',
+                    'Oracle',
+                    'Clickhouse',
+                  ].includes(enums[type] || type)}
                   placeholder={
                     intl.formatMessage({
                       id: 'common.pleaseInput',
@@ -425,9 +438,17 @@ export default Form.create({ name: 'FORM_IN_PROJECT_MODAL' })(function EditProje
               </Form.Item>
             </>
           )}
-          {['MySQL', 'postgresql', 'Postgres', 'MongoDB', 'MariaDB', 'SqlServer', '达梦', 'Oracle', 'Clickhouse'].includes(
-            enums[type] || type
-          ) && (
+          {[
+            'MySQL',
+            'postgresql',
+            'Postgres',
+            'MongoDB',
+            'MariaDB',
+            'SqlServer',
+            '达梦',
+            'Oracle',
+            'Clickhouse',
+          ].includes(enums[type] || type) && (
             <Form.Item label="用户名">
               {getFieldDecorator('username', {
                 initialValue: projectData?.username || '',
@@ -443,9 +464,18 @@ export default Form.create({ name: 'FORM_IN_PROJECT_MODAL' })(function EditProje
               )}
             </Form.Item>
           )}
-          {['MySQL', 'postgresql', 'Postgres', 'Redis', 'MongoDB', 'MariaDB', 'SqlServer', '达梦', 'Oracle', 'Clickhouse'].includes(
-            enums[type] || type
-          ) && (
+          {[
+            'MySQL',
+            'postgresql',
+            'Postgres',
+            'Redis',
+            'MongoDB',
+            'MariaDB',
+            'SqlServer',
+            '达梦',
+            'Oracle',
+            'Clickhouse',
+          ].includes(enums[type] || type) && (
             <Form.Item label="密码">
               {getFieldDecorator('password', {
                 initialValue: projectData?.password || '',
