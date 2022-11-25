@@ -7,7 +7,7 @@
 > **不支持ARM架构CPU，如M1芯片的Mac系统**
 
 - 机器上安装 docker 和 docker-compose
-- 下载 FlyFish [docker-compose.yaml](https://github.com/CloudWise-OpenSource/FlyFish/releases/download/FlyFish-2.2.1/docker-compose.yaml)文件，并放置到单独的文件夹中
+- 下载 FlyFish [docker-compose.yaml](https://github.com/CloudWise-OpenSource/FlyFish/releases/download/FlyFish-2.3.0/docker-compose.yaml)文件，并放置到单独的文件夹中
 - 在 docker-compose.yaml 所在的文件夹执行
 
 ```shell
