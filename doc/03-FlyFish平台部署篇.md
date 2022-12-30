@@ -31,12 +31,6 @@ npm run build
 # 修改配置
 vim lcapWeb/lcapWeb/conf/env-config.js
 
-# hostname 修改为当前主机IP
-hostname = IP
-# web部署端口
-fontPort = 8089
-# server端部署的端口
-backPort = ''
 # code-server访问静态资源时的路径前缀
 static_dir = '/data/app/FlyFish/lcapWeb/lcapWeb'
 # 静态资源的代理路径，与nginx配置要匹配
@@ -45,8 +39,6 @@ common_dir = 'www'
 apiDomain:'/api'
 # java服务api请求前缀，与nginx配置匹配
 javaApiDomain : '/lcap-data-server'
-# code-server部署端口
-code_port = 8081
 # 组件平台是否拆分，默认为false
 isSplitComponentModule: false
 # 是否独立部署api,默认为false
@@ -56,16 +48,7 @@ componentSplitApiPrefix: '/api'
 
 ```
 
-3. 修改大屏应用开发配置
-
-```bash
-# FlyFish 目录下执行
-# CW_LOCAL_IP 修改为 当前主机IP
-vim ./lcapWeb/lcapWeb/www/web/screen/config/env.js
-
-```
-
-4. nginx 部署前端
+3. nginx 部署前端
 
 ```bash
 # 以下命令要在根目录下执行
