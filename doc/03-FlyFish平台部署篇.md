@@ -33,18 +33,6 @@ vim lcapWeb/lcapWeb/conf/env-config.js
 
 # code-server访问静态资源时的路径前缀
 static_dir = '/data/app/FlyFish/lcapWeb/lcapWeb'
-# 静态资源的代理路径，与nginx配置要匹配
-common_dir = 'www'
-# api请求前缀，与nginx配置匹配
-apiDomain:'/api'
-# java服务api请求前缀，与nginx配置匹配
-javaApiDomain : '/lcap-data-server'
-# 组件平台是否拆分，默认为false
-isSplitComponentModule: false
-# 是否独立部署api,默认为false
-onlyApiModule: false
-# 组件平台接口api的前缀，在isSplitComponentModule为false时，与apiDomain保持一致
-componentSplitApiPrefix: '/api'
 
 ```
 
@@ -111,16 +99,18 @@ server {
     alias PRO_PATH/lcapWeb/lcapWeb/www/;
   }
 
+  # 静态资源代理
+  location /lcapWeb/ {
+    # PRO_PATH 替换成 FlyFish 项目路径
+    # 例如： data/app/FlyFish/lcapWeb/lcapWeb/www/;
+    alias PRO_PATH/lcapWeb/lcapWeb/;
+  }
+
   # lcapServer 反向代理
   location ^~ /api/ {
     proxy_pass http://0.0.0.0:7001/;
     # IP 替换成当前主机 IP
     proxy_cookie_domain 0.0.0.0 IP;
-  }
-
-  # lcapServer 反向代理
-  location ^~ /lcap-data-server/ {
-    proxy_pass http://0.0.0.0:18532/;
   }
 }
 
