@@ -3,22 +3,28 @@
  * @Author: zhangzhiyong
  * @Date: 2022-05-10 15:55:28
  * @LastEditors: zhangzhiyong
- * @LastEditTime: 2022-06-02 10:51:32
+ * @LastEditTime: 2022-10-18 15:22:09
  */
 import React from 'react';
 import ReactDOM from 'react-dom';
 
 import Root from './Root';
 import './assets/css/index.less';
+import './assets/css/iconfont/iconfont.less';
 // 引入 singleSpaReact
 import singleSpaReact from 'single-spa-react';
-
+import portalStore from './stores/portalStore';
 window.isInPortal = !!document.querySelector('#singlespa-container');
 
 const rootEle = document.getElementById('lcap-root');
 
 if (rootEle) {
   ReactDOM.render(<Root />, rootEle);
+}
+
+// 国际化配置
+if (!localStorage.getItem('language')) {
+  localStorage.setItem('language', 'zh');
 }
 
 /**
@@ -44,7 +50,12 @@ const reactLifecycles = singleSpaReact({
 export const bootstrap = [reactLifecycles.bootstrap];
 
 // 应用启动后的钩子
-export const mount = [reactLifecycles.mount];
+// export const mount = [reactLifecycles.mount];
+export function mount(props) {
+  console.log('传递进来的属性', props);
+  portalStore = props.layoutStore;
+  return reactLifecycles.mount(props);
+}
 
 // 应用卸载的钩子
 export const unmount = [

@@ -184,7 +184,7 @@ const AddComponent = observer((props)=>{
       {getFieldDecorator('desc', {
         initialValue:'',
         rules: []
-      })(<TextArea rows={4}/>)}
+      })(<TextArea maxLength={100} showCount={true}/>)}
     </Form.Item>
     <Row>
       <Col span={2} push={18}>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { AbreastLayout, SearchBar, Icon, Pagination, Select, Tooltip,Input, Button, message, Collapse } from "@chaoswise/ui";
+import { AbreastLayout, SearchBar, Icon, Pagination, Select, Tooltip, Input, Button, message, Collapse } from "@chaoswise/ui";
 import { observer, toJS } from "@chaoswise/cw-mobx";
 const { Panel } = Collapse;
 import store from "./model/index";
@@ -117,14 +117,17 @@ const ComponentDevelop = observer(({ ProgressId, projectName }) => {
     getTagsList();
   }, []);
   useEffect(() => {
-    Number(selectedData.category) ? getListData() : null;
-    Number(selectedData.category) ? getLibraryListData({}, true) : null;
+    if (selectedData) {
+      getListData()
+      getLibraryListData({}, true)
+    }
+
   }, [selectedData]);
   return < >
     <AbreastLayout
       type='leftOperationArea'
       showCollapsedBtn
-      SiderWidth={300}
+      SiderWidth={220}
       className={styles.abreastLayoutStyle}
       Siderbar={(
         <div className={styles.leftWrap}>

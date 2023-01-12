@@ -9,6 +9,7 @@ import { getProjectsService,getTagsService,addComponentService, getListDataServi
 import API from '../../../../../services/api/component';
 import { set, value } from '@chaoswise/utils';
 import globalStore from '@/stores/globalStore';
+import { componentCoverTypeMapping } from '../../../../../config/global';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -24,7 +25,6 @@ const AddFromSource = observer((props)=>{
   const [uploadId, setUploadId] = useState('');
   const [addloading, setAddloading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [uploadFileInfo, setUploadFileInfo] = useState();
   const [uploadFileList, setUploadFileList] = useState([]);
 
   const handleSubmit = (e)=>{
@@ -36,16 +36,17 @@ const AddFromSource = observer((props)=>{
         values.category = cateData.one;
         values.subCategory = cateData.two;
         values.desc=values.desc?values.desc:undefined;
-        values.automaticCover = 1
+        values.automaticCover = componentCoverTypeMapping.system.id;
         if (values.tags) { 
           values.tags = values.tags.map(item=>({name:item}))
         }
         setAddloading(true)
         const res = await addComponentService(values);
+        console.log('uploadFileList',uploadFileList);
         if (res && res.code==0) {
           setUploadFileList([])
           let uploadFileFormData = new FormData()
-          uploadFileFormData.append('file',uploadFileInfo)
+          uploadFileFormData.append('file',uploadFileList[0])
           setAddloading(false)
           props.form.resetFields()
           setAddFromSourcevisible(false);
@@ -182,48 +183,35 @@ const AddFromSource = observer((props)=>{
       />)}
     </Form.Item>
     <Form.Item label="源码文件">
-      {getFieldDecorator('sourceFile', {
+        {getFieldDecorator("sourceFile", {
           rules: [
             {
-              required: true,
-              message: '请上传源码文件'
-            }
-          ],
-        })(<div style={{display:'flex',flexDirection:'column',height:170,marginBottom:55}}>
-          <DemoShow
-            description='仅支持压缩包类文件上传'>
-            <Space
-                direction="vertical"
-                style={{
-                width: '100%'
-                }}
-            >
-            <Dragger 
-              accept=".zip"
-              height={170}
-              action={API.UPLOAD_COMPONENT+'/'+uploadId}
-              headers={{authorization: 'authorization-text'}}
-              method="post"
-              name="file"
-              fileList={uploadFileList}
-              showUploadList={true}
-              // dropSingleFileUpload={true}
-              beforeUpload={(file,fileList) => {
-                setUploadFileList(fileList)
-                setUploadProgress(100);
-                return false
-              }}
-              onChange={({file,fileList,event})=>{
-                setUploadFileInfo(file);
-                if (event) {
-                  setUploadProgress(event.percent);
+              validator:(rule,value,callback)=>{
+                if(value.fileList.length){
+                  callback()
+                }else{
+                  callback("请传入源码文件")
                 }
-              }}
-            />
-            </Space>
-          </DemoShow>
-      </div>)}
-    </Form.Item>
+              }
+            },
+          ],
+        })(
+          <Dragger
+            accept=".zip"
+            height={170}
+            name="file"
+            fileList={uploadFileList}
+            showUploadList={true}
+            beforeUpload={(file, fileList) => {
+              setUploadFileList([file])
+              return false;
+            }}
+            onRemove={()=>{
+              setUploadFileList([])
+            }}
+          />
+        )}
+      </Form.Item>
     <Form.Item label="标签">
       {getFieldDecorator('tags', {
         rules: []
@@ -241,7 +229,7 @@ const AddFromSource = observer((props)=>{
       {getFieldDecorator('desc', {
         initialValue:'',
         rules: []
-      })(<TextArea rows={4}/>)}
+      })(<TextArea maxLength={100} showCount={true}/>)}
     </Form.Item>
     <div className={styles.btnWrap}>
       <Button type='primary' htmlType='submit' disabled={addloading}>

@@ -1,4 +1,4 @@
-const MESSAGE_TYPE_PREFIX = "DATA_SEARCH_SCREEN_COMPONENT_MESSAGE";
+const MESSAGE_TYPE_PREFIX = 'DATA_SEARCH_SCREEN_COMPONENT_MESSAGE';
 
 export const MESSAGE_TYPES = {
   loaded: `${MESSAGE_TYPE_PREFIX}_LOADED`,
@@ -25,27 +25,27 @@ export const getDefaultScreenJson = (
   }
   return [
     {
-      id: "8F3P-7KQ1-FULM-VSPM-RD5I-S8DL",
+      id: '8F3P-7KQ1-FULM-VSPM-RD5I-S8DL',
       options: {
-        name: "数据可视化大屏幕",
+        name: '数据可视化大屏幕',
         width: 1920,
         height: 1080,
-        scaleMode: "origin",
-        css: "",
-        backgroundColor: "#0B1427",
-        backgroundImage: "",
+        scaleMode: 'origin',
+        css: '',
+        backgroundColor: '#0B1427',
+        backgroundImage: '',
         backgroundRepeat: false,
-        componentApiDomain: "",
+        componentApiDomain: '',
         ENVGlobalOptions: {},
-        faviconIocImage: "",
+        faviconIocImage: '',
         ...screenSetting,
       },
       components: [
         {
           type: component.id,
-          id: "AVPD-QN91-FULN-05M3-RSDT-38M8",
+          id: 'AVPD-QN91-FULN-05M3-RSDT-38M8',
           config: {
-            name: "",
+            name: '',
             left: 30,
             top: 30,
             width: 450,
@@ -57,7 +57,7 @@ export const getDefaultScreenJson = (
           connects: {},
           version: component.version,
           dataSource: {
-            type: "json",
+            type: 'json',
             options: {
               json: JSON.stringify(data || {}),
             },
@@ -103,11 +103,11 @@ export const getScreenHTML = (settings) => {
       <body>
         <div id="container"></div>
 
-        <script type="text/javascript" src="${window.LCAP_CONFIG.wwwAddress}/web/screen/config/env.js"></script>
+        <script type="text/javascript" src="${window.FLYFISH_CONFIG.wwwAddress}/web/screen/config/env.js"></script>
         <script type="text/javascript">
-          window.DATAVI_ENV.componentsDir = "${window.LCAP_CONFIG.wwwAddress}/components"
+          window.DATAVI_ENV.componentsDir = "${window.FLYFISH_CONFIG.wwwAddress}/components"
         </script>
-        <script type="text/javascript" src="${window.LCAP_CONFIG.wwwAddress}/common/data-vi.js"></script>
+        <script type="text/javascript" src="${window.FLYFISH_CONFIG.wwwAddress}/common/data-vi.js"></script>
         <script type="text/javascript">
           window.onload = function () {
               require(["data-vi/start"], function (

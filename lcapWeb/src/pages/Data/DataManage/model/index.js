@@ -11,9 +11,8 @@ const model = {
     searchParams: '', 
     DataList: [], //项目列表
     total: 0,
-    pageNo:0,
-    pageSize:10,
-    activeData:{}
+    pageNo:1,
+    pageSize:10
   },
   effects: {
     // 获取数据源列表
@@ -41,14 +40,10 @@ const model = {
     // 获取详情
     *getDetail(params,callback) {
       const res = yield reqDetail(params);
-      this.activeData=res.data;
       callback && callback(res.data);
     },
   },
   reducers: {
-    setactiveData(activeData){
-      this.activeData=activeData;
-    },
     setCurPage(page){
       this.pageNo=page;
     },

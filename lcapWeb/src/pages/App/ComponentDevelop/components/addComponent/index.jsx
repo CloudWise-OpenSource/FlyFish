@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styles from './style.less';
 import { observer, toJS } from '@chaoswise/cw-mobx';
 import store from '../../model/index';
@@ -31,6 +31,7 @@ import {
 } from '@/config/global';
 import API from '@/services/api/component';
 import globalStore from '@/stores/globalStore';
+import { useIntl } from 'react-intl';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -48,14 +49,38 @@ const AddComponent = observer((props) => {
     getTagsData,
     selectedData,
   } = store;
-  const { userInfo={} } = globalStore;
-  const { iuser={} } = userInfo;
+  const { userInfo = {} } = globalStore;
+  const { iuser = {} } = userInfo;
   // console.log(toJS(selectedData));
   const [addloading, setAddloading] = useState(false);
+  const intl = useIntl();
+
+  useEffect(() => {
+    return () => {
+      setAddloading(false);
+    };
+  }, []);
 
   const formItemLayout = {
     labelCol: { span: 4 },
     wrapperCol: { span: 18 },
+  };
+  const validateToTag = (rule, value = '', callback) => {
+    let across = true;
+    value != '' &&
+      value.map((item) => {
+        if (item.length > 20) across = false;
+      });
+    if (!across) {
+      callback(
+        intl.formatMessage({
+          id: 'components.addComponent.validTagLengthMessage',
+          defaultValue: '标签名称不能超过20个字符！',
+        })
+      );
+    } else {
+      callback();
+    }
   };
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -65,9 +90,10 @@ const AddComponent = observer((props) => {
         values.category = cateData.one;
         values.subCategory = cateData.two;
         if (values.automaticCover !== componentCoverTypeMapping.system.id) {
-          values.componentCover = values.componentCover
-            ? values.componentCover[0].url
-            : null;
+          values.componentCover =
+            values.componentCover && values.componentCover.length > 0
+              ? values.componentCover[0].url
+              : null;
         }
         values.desc = values.desc ? values.desc : undefined;
         if (values.tags) {
@@ -230,15 +256,10 @@ const AddComponent = observer((props) => {
       </Form.Item>
       <Form.Item
         label='封面设置'
-        style={
-          getFieldValue('automaticCover') ==
-          componentCoverTypeMapping.manualUpload.id
-            ? { marginBottom: '10px' }
-            : {}
-        }
+        style={{ marginBottom: '10px', display: 'none' }}
       >
         {getFieldDecorator('automaticCover', {
-          initialValue: componentCoverTypeMapping.system.id,
+          initialValue: componentCoverTypeMapping.manualUpload.id,
           rules: [
             {
               required: true,
@@ -259,18 +280,13 @@ const AddComponent = observer((props) => {
       </Form.Item>
       {getFieldValue('automaticCover') ==
       componentCoverTypeMapping.manualUpload.id ? (
-        <Form.Item wrapperCol={{ offset: 4 }} style={{ marginBottom: '10px' }}>
+        <Form.Item label='封面设置' style={{ marginBottom: '10px' }}>
           <p className={styles.uploadImgInfo}>
             图片格式：JPG/JPEG/PNG格式，仅支持长宽等比例图片，建议大小200px*112px
           </p>
           {getFieldDecorator('componentCover', {
             initialValue: null,
-            rules: [
-              {
-                required: true,
-                message: '请上传组件封面！',
-              },
-            ],
+            rules: [],
             valuePropName: 'fileList',
             getValueFromEvent: (e) => {
               if (Array.isArray(e)) {
@@ -288,10 +304,10 @@ const AddComponent = observer((props) => {
                 if (file.status === 'done') {
                   file.url = JSON.parse(file.xhr.response).data;
                   file.thumbUrl =
-                    window.LCAP_CONFIG.snapshotAddress + '/' + file.url;
+                    window.FLYFISH_CONFIG.snapshotAddress + '/' + file.url;
                   fileList[0].url = file.url;
                   fileList[0].thumbUrl =
-                    window.LCAP_CONFIG.snapshotAddress + '/' + file.url;
+                    window.FLYFISH_CONFIG.snapshotAddress + '/' + file.url;
                   setTimeout(() => {
                     setFieldsValue({
                       componentCover: fileList,
@@ -327,9 +343,13 @@ const AddComponent = observer((props) => {
 
       <Form.Item label='标签'>
         {getFieldDecorator('tags', {
-          rules: [],
+          rules: [
+            {
+              validator: validateToTag,
+            },
+          ],
         })(
-          <Select mode='tags'>
+          <Select mode='tags' maxTagTextLength={20}>
             {tagsData.map((v, k) => {
               return (
                 <Option value={v.name} key={v.id}>
@@ -354,7 +374,13 @@ const AddComponent = observer((props) => {
         {getFieldDecorator('desc', {
           initialValue: '',
           rules: [],
-        })(<TextArea rows={4} />)}
+        })(
+          <TextArea
+            maxLength={100}
+            showCount={true}
+            style={{ width: '100%' }}
+          />
+        )}
       </Form.Item>
       <div className={styles.btnWrap}>
         <Button type='primary' htmlType='submit' disabled={addloading}>
@@ -372,7 +398,6 @@ const AddComponent = observer((props) => {
         >
           取消
         </Button>
-        
       </div>
     </Form>
   );

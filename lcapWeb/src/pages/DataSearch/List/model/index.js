@@ -11,7 +11,7 @@ const model = {
     searchParams: {},
     DataList: [], //项目列表
     total: 0,
-    pageNo: 0,
+    pageNo: 1,
     pageSize: 10,
     activeData: null, //选中数据
   },

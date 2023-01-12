@@ -3,12 +3,13 @@
  * @Author: zhangzhiyong
  * @Date: 2021-11-10 19:08:41
  * @LastEditors: zhangzhiyong
- * @LastEditTime: 2022-06-21 15:55:52
+ * @LastEditTime: 2021-12-24 16:15:32
  */
 import { toMobx, toJS } from "@chaoswise/cw-mobx";
 
 import {
   getTreeDataService,
+  getUserInfoService,
   getProjectsService,
   getTagsService,
 } from "@/pages/App/ComponentDevelop/services";
@@ -24,6 +25,12 @@ const model = {
     tagsData: [],
   },
   effects: {
+    *getUserInfo() {
+      const res = yield getUserInfoService();
+      if (res && res.data) {
+        this.setUserInfo(res.data);
+      }
+    },
     *getTreeData() {
       // 请求数据
       const res = yield getTreeDataService();

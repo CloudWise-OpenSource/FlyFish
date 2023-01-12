@@ -1,15 +1,16 @@
 /*
- * @Descripttion: 
+ * @Descripttion:
  * @Author: zhangzhiyong
  * @Date: 2021-11-10 19:08:53
- * @LastEditors: zhangzhiyong
- * @LastEditTime: 2022-06-30 18:50:22
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2022-12-26 16:32:37
  */
 /*
  * 应用
  */
-const baseUrl = window.LCAP_CONFIG.apiDomain;
-const javaApiDomain = window.LCAP_CONFIG.javaApiDomain;
+const baseUrl = window.FLYFISH_CONFIG.apiDomain;
+const devServerPrefix = window.FLYFISH_CONFIG.devServerPrefix;
+
 export default {
   LOGIN: `${baseUrl}/users/login`,
   LOGINOUT: `${baseUrl}/users/logout`,
@@ -26,10 +27,10 @@ export default {
   ADD_INDUSTRY: `${baseUrl}/trades`,
   // 行业列表
   INDUSTRY_LIST: `${baseUrl}/trades`,
-  //编辑组件 
-  CHANGE_ASSEMBLY: `${baseUrl}/components/`,
+  //编辑组件
+  CHANGE_ASSEMBLY: `${devServerPrefix}/components/`,
   //获取nodeServer版本
-  GET_VERSION_NODE: `${baseUrl}/common/version-info`,
+  GET_VERSION_NODE: `${baseUrl}/system/getVersion`,
   //获取dataServer版本
-  GET_VERSION_JAVA: `${javaApiDomain}/api/dataplateform/system/getVersion`,
+  GET_VERSION_JAVA: `${baseUrl}/system/getVersion`,
 };

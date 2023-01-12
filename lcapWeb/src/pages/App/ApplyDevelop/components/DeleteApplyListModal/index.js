@@ -1,3 +1,10 @@
+/*
+ * @Descripttion: 
+ * @Author: zhangzhiyong
+ * @Date: 2022-08-23 10:21:59
+ * @LastEditors: zhangzhiyong
+ * @LastEditTime: 2022-09-08 16:09:13
+ */
 import React from "react";
 import { Modal, Form, Button, Input, Table } from "@chaoswise/ui";
 import { useIntl } from "react-intl";
@@ -17,8 +24,15 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
       {
         title: '序号',
         width: 60,
-        render: (text, record, index) => `${(index + 1) + curPage * 10}`,
+        render: (text, record, index) => {
+         if(curPage==1){
+          return `${(index) + curPage}`
+         }else{
+          return `${(index+1) +( curPage-1 )* 10}`
+         }
+        },
       },
+
       {
         title: '名称',
         width: 150,
@@ -46,7 +60,7 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
         key: 'action',
         render: (text, record) => (
           <a onClick={() => {
-            onChange && onChange(record.id, { name: `${record.name}_已还原应用`, status: 'valid' });
+            onChange && onChange(record.id, { name: `${record.name}_已还原应用`, deleted: 0 });
           }}>还原</a>
         ),
       },
@@ -54,7 +68,7 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
 
     // 分页、排序、筛选变化时触发
     const onPageChange = (curPage, pageSize) => {
-      getDeleteApplyList({ curPage: curPage - 1, pageSize, status: 'invalid' });
+      getDeleteApplyList({ curPage: curPage, pageSize, deleted: 1 });
     };
 
     return (
@@ -76,7 +90,7 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
         <Table
           scroll={{ y: '450px' }}
           pagination={{
-            current: curPage + 1,
+            current: curPage,
             pageSize: 10,
             total: total,
             onChange: onPageChange

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>clickhouse</title>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="小号图标" transform="translate(-849.000000, -501.000000)">
+            <g id="clickhouse" transform="translate(849.000000, 501.000000)">
+                <g id="编组-54" transform="translate(1.000000, 3.000000)" fill-rule="nonzero">
+                    <polygon id="路径" fill="#FF0000" points="0 17.1114312 2.44476452 17.1114312 2.44476452 19.5561957 0 19.5561957"></polygon>
+                    <path d="M0,0 L2.44476452,0 L2.44476452,17.1114312 L0,17.1114312 L0,0 Z M4.88856881,0 L7.33333333,0 L7.33333333,19.5561957 L4.88856881,19.5561957 L4.88856881,0 Z M9.77809786,0 L12.2219021,0 L12.2219021,19.5561957 L9.77809786,19.5561957 L9.77809786,0 Z M14.6666667,0 L17.1114312,0 L17.1114312,19.5561957 L14.6666667,19.5561957 L14.6666667,0 Z M19.5552355,7.94308411 L22,7.94308411 L22,11.6111911 L19.5552355,11.6111911 L19.5552355,7.94308411 Z" id="形状" fill="#FFA500"></path>
+                </g>
+                <rect id="矩形备份-16" x="0" y="0" width="24" height="24"></rect>
+            </g>
+        </g>
+    </g>
+</svg>

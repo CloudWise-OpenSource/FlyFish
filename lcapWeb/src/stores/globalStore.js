@@ -2,8 +2,8 @@
  * @Descripttion:
  * @Author: zhangzhiyong
  * @Date: 2021-12-03 22:12:00
- * @LastEditors: zhangzhiyong
- * @LastEditTime: 2022-06-21 16:30:03
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2022-12-29 09:58:59
  */
 
 import { getDemoApi } from '@/services/demo';
@@ -35,16 +35,16 @@ const globalStore = {
         localStorage.setItem('username', res.data.username);
         localStorage.setItem('isAdmin', res.data.isAdmin);
         const userInfo = {
-          authResults:res.data.menus,
-          iuser:{
-            id:res.data.id,
-            name:res.data.username,
-            isAdmin:res.data.isAdmin
-          }
+          authResults: res.data.menus,
+          iuser: {
+            id: res.data.id,
+            name: res.data.username,
+            isAdmin: res.data.isAdmin,
+          },
         };
-				this.setUserInfo(userInfo);
-				callBack&&callBack(userInfo);
-			}
+        this.setUserInfo(userInfo);
+        callBack && callBack(userInfo);
+      }
     },
   },
 

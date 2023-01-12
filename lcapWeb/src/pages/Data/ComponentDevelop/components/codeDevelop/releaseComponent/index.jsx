@@ -36,7 +36,19 @@ const ReleaseComponent = observer((props)=>{
       }
     })
   }
-
+  const checkNo = (rule, value, callback) => {
+    if (value) {
+      let splitArr=value.split('.')
+      let exp = /^[+-]?\d*(\.\d*)?(e[+-]?\d+)?$/
+      if (value.length < 6 || splitArr.length != 3 || !['v', 'V'].includes(value[0])
+      || ! exp.test(splitArr[1]) || !exp.test(splitArr[2]||!splitArr[2])
+      ) {
+        callback("请输入正确的版本号格式,如:v1.0.0!");
+      }else{
+        callback()
+      }
+    }
+  }
   return <Form 
     labelCol={{span:6}} 
     wrapperCol={{span:16}}
@@ -49,10 +61,12 @@ const ReleaseComponent = observer((props)=>{
       <Form.Item label='版本号'>
         {
           getFieldDecorator('no',{
-            rules:[
+            rules: [
               {
-                required:true,
-                message:'版本号不能为空！'
+                validator: checkNo
+              },{
+                required: true,
+                message: '版本号不能为空'
               }
             ]
           })(
@@ -110,6 +124,9 @@ const ReleaseComponent = observer((props)=>{
                   {
                     required:true,
                     message:'版本号不能为空'
+                  },
+                  {
+                    validator: checkNo
                   }
                 ]
               })(
@@ -128,7 +145,7 @@ const ReleaseComponent = observer((props)=>{
                 }
               ]
             })(
-              <TextArea placeholder='请输入描述' cols={4}/>
+              <TextArea placeholder='请输入描述' maxLength={100} showCount={true}/>
             )
           }
         </Form.Item>

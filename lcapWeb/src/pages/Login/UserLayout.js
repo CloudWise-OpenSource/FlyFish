@@ -6,10 +6,7 @@ import store from './model/index';
 import { toJS } from '@chaoswise/cw-mobx';
 import globalStore from '@/stores/globalStore';
 const { userInfo } = globalStore;
-const {
-  register,
-  login
-} = store;
+const { register, login } = store;
 import logoLogin from './logo.png';
 class UserLayout extends React.PureComponent {
   constructor(props) {
@@ -22,7 +19,6 @@ class UserLayout extends React.PureComponent {
   }
 
   componentDidMount() {
-
     const { currentUser = {}, form } = this.props;
     form.setFieldsValue(currentUser);
     this.getCaptchaCode = _.throttle(this.getCaptchaCode, 500);
@@ -71,8 +67,13 @@ class UserLayout extends React.PureComponent {
     }
   }
   findIndex(data) {
-    return data.find(item => {
-      if (item.index !== 2 && item.index !== 6 && item.index !== 9 && item.index !== 12) {
+    return data.find((item) => {
+      if (
+        item.index !== 2 &&
+        item.index !== 6 &&
+        item.index !== 9 &&
+        item.index !== 12
+      ) {
         return item;
       }
     });
@@ -90,14 +91,8 @@ class UserLayout extends React.PureComponent {
               localStorage.setItem('id', res.data.id);
               message.success('登录成功');
               this.props.history.push('/');
-              // globalStore.getUserInfo((userInfo) => {
-                // message.success('登录成功');
-                // localStorage.setItem('id', userInfo.iuser.id);
-                // let item = this.findIndex(toJS(userInfo.menus));
-                // this.props.history.push('/');
-              // }); //成功后获取个人信息
             } else {
-              message.error(res.msg || '注册失败');
+              message.error(res.msg || '登录失败');
             }
           });
         } else {
@@ -107,7 +102,6 @@ class UserLayout extends React.PureComponent {
               this.setState({
                 loginType: 0,
               });
-
             } else {
               message.error(res.msg || '注册失败');
             }
@@ -139,9 +133,7 @@ class UserLayout extends React.PureComponent {
       }
     }, 1000);
   }
-  getCaptchaCode() {
-
-  }
+  getCaptchaCode() {}
   render() {
     const { getFieldDecorator } = this.props.form;
     const { countDown, loginType } = this.state;
@@ -149,7 +141,7 @@ class UserLayout extends React.PureComponent {
       <div className={style.UserLayout}>
         <Form onSubmit={this.handleSubmit} className={style.loginForm}>
           <img className={style.logo} src={logoLogin} />
-          <Row gutter={12} type="flex" justify="center">
+          <Row gutter={12} type='flex' justify='center'>
             <Col span={24}>
               <Form.Item>
                 {getFieldDecorator('username', {
@@ -157,18 +149,18 @@ class UserLayout extends React.PureComponent {
                     {
                       required: true,
                       message: '请输入用户名！',
-                    }
+                    },
                   ],
                 })(
                   <Input
                     allowClear
-                    prefix={<Icon type="user" style={{ color: '#1890FF' }} />}
+                    prefix={<Icon type='user' style={{ color: '#1890FF' }} />}
                     placeholder={`${loginType == 0 ? '' : '*'}请输入用户名`}
                   />
                 )}
               </Form.Item>
             </Col>
-            {loginType == 1 ?
+            {loginType == 1 ? (
               <Col span={24}>
                 <Form.Item>
                   {getFieldDecorator('phone', {
@@ -179,42 +171,47 @@ class UserLayout extends React.PureComponent {
                       },
                       {
                         pattern: /^[1]([3-9])[0-9]{9}$/,
-                        message: "请输入正确的手机号",
+                        message: '请输入正确的手机号',
                       },
                     ],
                   })(
                     <Input
                       allowClear
-                      prefix={<Icon type="mobile" style={{ color: '#1890FF' }} />}
+                      prefix={
+                        <Icon type='mobile' style={{ color: '#1890FF' }} />
+                      }
                       placeholder={`${loginType == 0 ? '' : '*'}请输入手机号`}
                     />
                   )}
                 </Form.Item>
-              </Col> : null
-            }
+              </Col>
+            ) : null}
 
-            {loginType == 1 ? <Col span={24}>
-              <Form.Item>
-                {getFieldDecorator('email', {
-                  rules: [
-                    {
-                      required: true,
-                      message: '请输入邮箱！',
-                    },
-                    {
-                      pattern: /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/,
-                      message: "请输入正确的邮箱格式",
-                    },
-                  ],
-                })(
-                  <Input
-                    allowClear
-                    prefix={<Icon type="mail" style={{ color: '#1890FF' }} />}
-                    placeholder={`${loginType == 0 ? '' : '*'}请输入邮箱`}
-                  />
-                )}
-              </Form.Item>
-            </Col> : null}
+            {loginType == 1 ? (
+              <Col span={24}>
+                <Form.Item>
+                  {getFieldDecorator('email', {
+                    rules: [
+                      {
+                        required: true,
+                        message: '请输入邮箱！',
+                      },
+                      {
+                        pattern:
+                          /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/,
+                        message: '请输入正确的邮箱格式',
+                      },
+                    ],
+                  })(
+                    <Input
+                      allowClear
+                      prefix={<Icon type='mail' style={{ color: '#1890FF' }} />}
+                      placeholder={`${loginType == 0 ? '' : '*'}请输入邮箱`}
+                    />
+                  )}
+                </Form.Item>
+              </Col>
+            ) : null}
 
             <Col span={24}>
               <Form.Item>
@@ -223,25 +220,33 @@ class UserLayout extends React.PureComponent {
                     {
                       required: true,
                       message: '请输入登录密码！',
-                    }
+                    },
                   ],
                 })(
-                  loginType == 0 ? <Input.Password
-                    allowClear
-                    prefix={<Icon type="lock" style={{ color: '#1890FF' }} />}
-                    placeholder={`${loginType == 0 ? '' : '*'}请输入登录密码`}
-                  /> :
+                  loginType == 0 ? (
                     <Input.Password
                       allowClear
-                      prefix={<Icon type="lock" style={{ color: '#1890FF' }} />}
+                      prefix={<Icon type='lock' style={{ color: '#1890FF' }} />}
                       placeholder={`${loginType == 0 ? '' : '*'}请输入登录密码`}
                     />
+                  ) : (
+                    <Input.Password
+                      allowClear
+                      prefix={<Icon type='lock' style={{ color: '#1890FF' }} />}
+                      placeholder={`${loginType == 0 ? '' : '*'}请输入登录密码`}
+                    />
+                  )
                 )}
               </Form.Item>
             </Col>
 
             <Col span={24}>
-              <Button type="primary" style={{ width: '100%', height: '40px' }} htmlType="submit" className="login-form-button">
+              <Button
+                type='primary'
+                style={{ width: '100%', height: '40px' }}
+                htmlType='submit'
+                className='login-form-button'
+              >
                 {loginType == 0 ? '登录' : '注册'}
               </Button>
             </Col>
@@ -251,7 +256,7 @@ class UserLayout extends React.PureComponent {
               <>
                 {' '}
                 还没有账号,
-                <Button type="link" onClick={() => this.changeLoginType(1)}>
+                <Button type='link' onClick={() => this.changeLoginType(1)}>
                   去注册 &gt;
                 </Button>
               </>
@@ -259,7 +264,7 @@ class UserLayout extends React.PureComponent {
               <>
                 {' '}
                 已有账号,
-                <Button type="link" onClick={() => this.changeLoginType(0)}>
+                <Button type='link' onClick={() => this.changeLoginType(0)}>
                   去登录 &gt;
                 </Button>
               </>

@@ -6,11 +6,17 @@ import JSONPath from 'JSONPath';
 import { observer, loadingStore, toJS } from "@chaoswise/cw-mobx";
 
 export default Form.create({ name: "FORM_IN_USER_MODAL" })(
-  function EditRoleModal({ form, role = {}, columnsArr = [], onSave, onCancel, lookDataJson }) {
+  function EditactiveItemModal({ form, activeItem = {}, columnsArr = [], onSave, onCancel, lookDataJson }) {
     const intl = useIntl();
     const [resultValue, setResultValue] = useState('');
     const [sendValue, setSendValue] = useState('');
-    const { getFieldDecorator } = form;
+    const { getFieldDecorator, setFieldsValue } = form;
+    useEffect(() => {
+      setSendValue(activeItem?.resultValue)
+      setFieldsValue({
+        resultValue:JSON.stringify(activeItem?.resultValue)
+      })
+    }, [activeItem])
     return (
       <Modal
         draggable
@@ -18,24 +24,35 @@ export default Form.create({ name: "FORM_IN_USER_MODAL" })(
         style={{ marginTop: '10vh' }}
         width={500}
         onCancel={() => {
-          onCancel && onCancel();
+          onCancel && onCancel(false);
         }}
         onOk={() => {
           if (form) {
             form.validateFields((errors, values) => {
               if (errors == null) {
-                if (columnsArr && columnsArr.length > 0 && columnsArr.findIndex(item => item.title == values.name) !== -1) {
-                  message.error('表格中已有相同名称的列,请修改名称后再进行新增!');
-                  return;
+                if (!activeItem.id) {
+                  if (columnsArr && columnsArr.length > 0 && columnsArr.findIndex(item => item.fieldName == values.fieldName) !== -1) {
+                    message.error('表格中已有相同名称的列,请修改名称后再进行新增!');
+                    return;
+                  }
+                } else {
+                  if (columnsArr && columnsArr.length > 0 && columnsArr.findIndex(item => item.fieldName == values.fieldName) !== -1
+                    && values.fieldName !== activeItem.fieldName
+                  ) {
+                    message.error('表格中已有相同名称的列,请修改名称后再进行新增!');
+                    return;
+                  }
                 }
                 onSave && onSave({
-                  name: values.name,
-                  type: values.type,
-                  dataExtraction: values.dataExtraction,
+                  ...activeItem,
+                  fieldName: values.fieldName,
+                  fieldType: values.fieldType,
+                  jsonpath: values.jsonpath,
                   resultValue: sendValue
                 });
                 onCancel(false);
                 setResultValue('');
+
               }
             });
           }
@@ -54,11 +71,11 @@ export default Form.create({ name: "FORM_IN_USER_MODAL" })(
             xs: { span: 24 },
             sm: { span: 24 },
           }}
-          initialvalues={role || {}}
+          initialvalues={activeItem || {}}
         >
-          <Form.Item label="字段名称" name={"name"}>
-            {getFieldDecorator("name", {
-              initialValue: role.name,
+          <Form.Item label="字段名称" name={"fieldName"}>
+            {getFieldDecorator("fieldName", {
+              initialValue: activeItem.fieldName,
               rules: [
                 {
                   required: true,
@@ -67,6 +84,10 @@ export default Form.create({ name: "FORM_IN_USER_MODAL" })(
                       id: "common.pleaseInput",
                       defaultValue: "请输入",
                     }) + "字段名称",
+                },
+                {
+                  max: 20,
+                  message: "字段名称长度不能超过20个字符!",
                 },
               ],
             })(
@@ -80,9 +101,9 @@ export default Form.create({ name: "FORM_IN_USER_MODAL" })(
               />
             )}
           </Form.Item>
-          <Form.Item label="字段类型" name={"type"}>
-            {getFieldDecorator("type", {
-              initialValue: role.type || 'String',
+          <Form.Item label="字段类型" name={"fieldType"}>
+            {getFieldDecorator("fieldType", {
+              initialValue: activeItem.fieldType || 'String',
               rules: [
                 {
                   required: true,
@@ -96,15 +117,15 @@ export default Form.create({ name: "FORM_IN_USER_MODAL" })(
             })(
               <Select >
                 <Option value="String">文本</Option>
-                <Option value="Int">整数</Option>
+                <Option value="Long">整数</Option>
                 <Option value="Double" >浮点数</Option>
                 <Option value="Boolean">布尔值</Option>
               </Select>
             )}
           </Form.Item>
-          <Form.Item label="数据抽取" name={"dataExtraction"}>
-            {getFieldDecorator("dataExtraction", {
-              initialValue: role.dataExtraction,
+          <Form.Item label="数据抽取" name={"jsonpath"}>
+            {getFieldDecorator("jsonpath", {
+              initialValue: activeItem.jsonpath,
               rules: [
                 {
                   required: true,
@@ -125,7 +146,12 @@ export default Form.create({ name: "FORM_IN_USER_MODAL" })(
                         path: e.target.value
                       });
                       setSendValue(a);
-                      setResultValue(a.map(item => JSON.stringify(item)));
+                      if (a) {
+                        setFieldsValue({
+                          resultValue: a.map(item => JSON.stringify(item))
+                        })
+                      }
+
                     }
 
                   }}
@@ -145,7 +171,7 @@ export default Form.create({ name: "FORM_IN_USER_MODAL" })(
             })(
               <Input.TextArea
                 disabled
-                rows={7}         
+                rows={7}
               />
             )}
           </Form.Item>

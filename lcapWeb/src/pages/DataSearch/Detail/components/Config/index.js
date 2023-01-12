@@ -14,6 +14,7 @@ import ComponentPreview from './components/ComponentPreview';
 import ComponentSetting from './components/ComponentSetting';
 import { successCode } from '@/config/global';
 import EidtModal from './components/EditModal';
+import ParamsModal from './components/ParamsModal';
 import TablePreview from './components/TablePreview';
 import { getQueryDataListService } from './services';
 
@@ -28,6 +29,7 @@ const Config = observer(
     linkToChooseTable,
   }) => {
     const [isSaveModalVisible, setSaveModalVisible] = useState(false);
+    const [isParamsModalVisible, setParamsModalVisible] = useState(false);
     const [isDataLoading, setDataLoading] = useState(false);
     const intl = useIntl();
     const queryData = toJS(store.queryData);
@@ -38,7 +40,7 @@ const Config = observer(
     const activeComponentDataConfig = toJS(store.activeComponentDataConfig);
     const previewRef = useRef();
     const dataSettingRef = useRef();
-
+    console.log(dataSearch, 'dataSearch');
     useEffect(() => {
       if (componentList.length === 0) {
         store.getComponentList();
@@ -81,9 +83,19 @@ const Config = observer(
       if (pageNo == null) {
         setDataLoading(true);
       }
+      let params = {};
+      if (dataSearch.setting && dataSearch.setting.params) {
+        for (let i = 0; i < dataSearch.setting.params.length; i++) {
+          const param = dataSearch.setting.params[i];
+          if (param.name) {
+            params[param.name] = param.default;
+          }
+        }
+      }
       GET_QUERY_DATALIST_SERVICE_INSTANCE = getQueryDataListService({
         datasourceId: dataSearch.datasourceId,
         sql: dataSearch.sql,
+        params: params,
         pageNo: pageNo || 1,
         pageSize: pageSize || 10,
       }).then(
@@ -106,6 +118,11 @@ const Config = observer(
               }
             }
             if (!isDataValid) {
+              store.setQueryDataList(data, {
+                pageNo: 1,
+                pageSize: 10,
+                total: 0,
+              });
               return message.info(
                 intl.formatMessage({
                   id: 'pages.dataSearch.detail.searchSqlEmpty',
@@ -134,25 +151,17 @@ const Config = observer(
           } else {
             message.error(
               res.msg ||
-                intl.formatMessage({
-                  id: 'pages.dataSearch.detail.searchSqlError',
-                  defaultValue: '执行sql失败，请检查sql书写是否正确！',
-                })
-            );
-          }
-        },
-        (res) => {
-          setDataLoading(false);
-          GET_QUERY_DATALIST_SERVICE_INSTANCE = null;
-          message.error(
-            res.msg ||
               intl.formatMessage({
                 id: 'pages.dataSearch.detail.searchSqlError',
                 defaultValue: '执行sql失败，请检查sql书写是否正确！',
               })
-          );
+            );
+          }
         }
-      );
+      ).catch(error => {
+        setDataLoading(false);
+        GET_QUERY_DATALIST_SERVICE_INSTANCE = null;
+      })
     };
 
     const completers = [
@@ -283,11 +292,10 @@ const Config = observer(
           )}
 
           <div
-            className={`${styles.contentRight} ${
-              !(isChooseComponentVisible || isComponentSettingVisible)
-                ? styles.contentFullRight
-                : ''
-            }`}
+            className={`${styles.contentRight} ${!(isChooseComponentVisible || isComponentSettingVisible)
+              ? styles.contentFullRight
+              : ''
+              }`}
           >
             <div className={styles.codeEditor}>
               <Ace
@@ -331,9 +339,20 @@ const Config = observer(
                     defaultValue='执行'
                   />
                 </Button>
+                <Button
+                  className={styles.sqlAction}
+                  onClick={() => {
+                    setParamsModalVisible(true);
+                  }}
+                >
+                  <FormattedMessage
+                    id='pages.dataSearch.detail.sqlParams'
+                    defaultValue='设置参数'
+                  />
+                </Button>
               </div>
             </div>
-            {queryData && (
+            {queryData && queryData.length > 0 && (
               <div className={styles.componentPreview}>
                 {(!activeComponent || !activeComponent.id) && (
                   <div className={styles.tablePreview}>
@@ -356,7 +375,7 @@ const Config = observer(
                 )}
               </div>
             )}
-            {queryData && (
+            {queryData && queryData.length > 0 && (
               <div className={styles.contentActions}>
                 <Button
                   type='primary'
@@ -395,7 +414,7 @@ const Config = observer(
                   </Button>
                 )}
                 <p className={styles.contentActionInfo}>
-                  注：最多查询1000条数据
+                  注：最多展示1000条数据
                 </p>
               </div>
             )}
@@ -408,6 +427,26 @@ const Config = observer(
               setSaveModalVisible(false);
             }}
             onSave={(values) => {
+              let params =
+                dataSearch.setting && dataSearch.setting.params
+                  ? dataSearch.setting.params
+                  : [];
+              const sql = dataSearch.sql || '';
+              let matchParams = sql.match(/\{\{\w+\}\}/g) || [];
+              matchParams = [...new Set(matchParams)];
+              if (matchParams.length > 10) {
+                return message.error('最多设置十个参数！');
+              }
+              const deficiencyParam = matchParams
+                .map((matchParam) => matchParam.slice(2, matchParam.length - 2))
+                .filter((matchParam) => {
+                  return params.every((p) => p.name !== matchParam);
+                });
+              if (deficiencyParam.length > 0) {
+                return message.error(
+                  `参数${deficiencyParam.join(',')}未设置，请设置后再保存！`
+                );
+              }
               onSave &&
                 onSave(
                   {
@@ -418,6 +457,20 @@ const Config = observer(
                     setSaveModalVisible(false);
                   }
                 );
+            }}
+          />
+        )}
+        {isParamsModalVisible && (
+          <ParamsModal
+            dataSearch={dataSearch}
+            onCancel={() => {
+              setParamsModalVisible(false);
+            }}
+            onOk={(params) => {
+              dataSearch.setting = dataSearch.setting || {};
+              dataSearch.setting.params = params || [];
+              onChange && onChange(dataSearch);
+              setParamsModalVisible(false);
             }}
           />
         )}

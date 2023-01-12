@@ -12,8 +12,8 @@ const exec = util.promisify(require('child_process').exec);
 const moment = require('moment');
 const fs = require('fs');
 const filePath = './lcapWeb/serviceVersion.json';
-const lcapWebVersion = '1.3.0';
-const productVersion = 'V5.5.0';
+const lcapWebVersion = '1.5.0';
+const productVersion = 'v5.7.0';
 
 (async () => {
   try {

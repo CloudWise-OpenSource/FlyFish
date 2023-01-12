@@ -8,6 +8,17 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
     const intl = useIntl();
     let selectArr = toJS(list);//下拉框总数据
     let newarr = toJS(project).trades;
+    const validateToTrade = (rule, value='', callback)=>{
+      let across = true;
+      value!='' && value.map((item)=>{
+        if(item.length > 20) across = false;
+      });
+      if(!across){
+        callback("行业名称不能超过20个字符！");
+      }else{
+        callback();
+      }
+    }
     const { getFieldDecorator } = form;
     return (
       <Modal
@@ -29,7 +40,7 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
                   onSave &&
                   onSave({
                     ...values,
-                    trades: values.trades.map(item => {
+                    trades: values.trades&&values.trades.map(item => {
                       return { name: item };
                     })
                   })
@@ -37,7 +48,7 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
                 onChange &&
                   onChange(project.id, {
                     ...changeObj,
-                    trades: values.trades.map(item => {
+                    trades: values.trades&&values.trades.map(item => {
                       return { name: item };
                     })
                   });
@@ -84,6 +95,10 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
                 },{
                   pattern: /^[^\s]*$/,
                   message: "请输入正确的项目名称！"
+                },
+                {
+                  max: 20,
+                  message: "项目名称不能超过20个字符"
                 }
               ],
             })(
@@ -109,10 +124,15 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
                       defaultValue: "请选择",
                     }) + "行业",
                 },
+                {
+                  validator: validateToTrade
+                }
+                
               ],
             })(
               <Select
                 mode='tags'
+                maxTagTextLength={20}
                 placeholder={
                   intl.formatMessage({
                     id: "common.pleaseSelect",
@@ -140,11 +160,15 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
                       defaultValue: "请选择",
                     }) + "行业",
                 },
+                {
+                  validator: validateToTrade
+                }
               ],
             })(
               <Select
                 showSearch={true}
                 mode='tags'
+                maxTagTextLength={20}
                 placeholder={
                   intl.formatMessage({
                     id: "common.pleaseSelect",

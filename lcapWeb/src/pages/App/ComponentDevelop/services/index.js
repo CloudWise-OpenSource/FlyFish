@@ -1,80 +1,93 @@
 /*
- * @Descripttion: 
+ * @Descripttion:
  * @Author: zhangzhiyong
  * @Date: 2021-11-10 19:08:41
  * @LastEditors: zhangzhiyong
- * @LastEditTime: 2022-06-21 15:56:28
+ * @LastEditTime: 2022-08-30 17:47:35
  */
-import { fetchGet, fetchPost,fetchPut,fetchDelete } from "@/utils/request";
-import API from "@/services/api/component";
+import { fetchGet, fetchPost, fetchPut, fetchDelete } from '@/utils/request';
+import API from '@/services/api/component';
 
 export const getTreeDataService = () => {
-
-  return fetchPost(API.GET_TREEDATA, { });
+  return fetchPost(API.GET_TREEDATA, {});
 };
 
-export const updateTreeDataService = (param)=>{
-  return fetchPut(API.UPDATE_TREEDATA,{ body: param });
+export const updateTreeDataService = (param) => {
+  return fetchPut(API.UPDATE_TREEDATA + '/' + param.id, { body: param });
 };
-export const getListDataService = (param)=>{
-  return fetchPost(API.GET_LISTDATA,{ body: param });
+export const addTreeDataService = (param) => {
+  return fetchPost(API.UPDATE_TREEDATA, { body: param });
 };
-export const getProjectsService = (param)=>{
-  return fetchGet(API.GET_PROJECTS,{ params: param });
+export const deleteTreeDataService = (param) => {
+  return fetchDelete(API.UPDATE_TREEDATA + '/' + param.id);
 };
-export const getTagsService = (param)=>{
-  return fetchGet(API.GET_TAGS,{ params: param });
+export const getListDataService = (param) => {
+  return fetchPost(API.GET_LISTDATA, { body: param });
 };
-export const addComponentService = (param)=>{
-  return fetchPost(API.ADD_COMPONENT,{ body: param });
+export const getProjectsService = (param) => {
+  return fetchGet(API.GET_PROJECTS, { params: param });
 };
-export const getDetailDataService = (param)=>{
-  return fetchGet(API.GET_DETAILDATA+'/'+param.id);
+export const getTagsService = (param) => {
+  return fetchGet(API.GET_TAGS, { params: param });
 };
-export const editComponentService = (id,param)=>{
-  return fetchPut(API.EDIT_COMPONENT+'/'+id,{ body:param });
+export const addComponentService = (param) => {
+  return fetchPost(API.ADD_COMPONENT, { body: param });
 };
-export const copyComponentService = (id,options)=>{
-  return fetchPost(API.COPY_COMPONENT + "/" + id, { body: options });
+export const getUserInfoService = (param) => {
+  return fetchGet(API.GET_USERINFO);
 };
-export const deleteComponentService = (id)=>{
-  return fetchDelete(API.DELETE_COMPONENT+'/'+id);
+export const getDetailDataService = (param) => {
+  return fetchGet(API.GET_DETAILDATA + '/' + param.id);
 };
-export const downloadComponentService = (id,onProgress)=>{
-  return fetchGet(API.DOWNLOAD_COMPONENT+'/'+id,{
-    headers:{responseType:'blob'},
-    onDownloadProgress:(event)=>{
+export const editComponentService = (id, param) => {
+  return fetchPut(API.EDIT_COMPONENT + '/' + id, { body: param });
+};
+export const copyComponentService = (id, options) => {
+  return fetchPost(API.COPY_COMPONENT + '/' + id, { body: options });
+};
+export const deleteComponentService = (id) => {
+  return fetchDelete(API.DELETE_COMPONENT + '/' + id);
+};
+export const downloadComponentService = (id, onProgress) => {
+  return fetchGet(API.DOWNLOAD_COMPONENT + '/' + id, {
+    headers: { responseType: 'blob' },
+    onDownloadProgress: (event) => {
       onProgress(event);
-    }
+    },
   });
 };
-export const installPackagesService = (id)=>{
-  return fetchPost(API.INSTALL_PACKAGE+'/'+id);
+export const installPackagesService = (id) => {
+  return fetchPost(API.INSTALL_PACKAGE + '/' + id);
 };
-export const uploadLibraryService = (id,toLib)=>{
-  return fetchPost(API.UPLOADTO_LIBRARY+'/'+id,{body:{toLib}});
+export const uploadLibraryService = (id, toLib) => {
+  return fetchPost(API.UPLOADTO_LIBRARY + '/' + id, { body: { toLib } });
 };
-export const compileComponentService = (id)=>{
-  return fetchPost(API.COMPILE_COMPONENT+'/'+id);
+export const compileComponentService = (id) => {
+  return fetchPost(API.COMPILE_COMPONENT + '/' + id);
 };
-export const publishComponentService = (id,options)=>{
-  return fetchPost(API.PUBLISH_COMPONENT+'/'+id,{body:options});
+export const publishComponentService = (id, options) => {
+  return fetchPost(API.PUBLISH_COMPONENT + '/' + id, { body: options });
 };
-export const getRecordService = (options)=>{
-  const { id,curPage,pageSize } = options;
-  return fetchGet(API.GET_RECORD+`/${id}?curPage=${curPage}&pageSize=${pageSize}`);
+export const getRecordService = (options) => {
+  const { id, curPage, pageSize } = options;
+  return fetchGet(
+    API.GET_RECORD + `/${id}?curPage=${curPage}&pageSize=${pageSize}`
+  );
 };
-export const getDiffRecordService = (id,hash)=>{
-  return fetchGet(API.GET_DIFFRECORD+`/${id}?hash=${hash}`);
+export const getDiffRecordService = (id, hash) => {
+  return fetchGet(API.GET_DIFFRECORD + `/${id}?hash=${hash}`);
 };
-export const addTagService = (param)=>{
-  return fetchPost(API.ADD_TAG,{body:param});
+export const addTagService = (param) => {
+  return fetchPost(API.ADD_TAG, { body: param });
 };
-export const importsource = (id,file)=>{
-  return fetchPost(API.UPLOAD_COMPONENT+`/${id}`,
-  {body:file,headers:{"Content-Type": 'multipart/form-data'},
-});
+export const importsource = (id, file) => {
+  return fetchPost(API.UPLOAD_COMPONENT + `/${id}`, {
+    body: file,
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
 };
-
-
-
+export const getUserListService = ({ username, curPage, pageSize }) => {
+  return fetchPost(API.GET_USER_LIST, {
+    body: { username, curPage, pageSize },
+  });
+};

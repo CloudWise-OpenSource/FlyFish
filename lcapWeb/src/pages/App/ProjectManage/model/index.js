@@ -11,7 +11,7 @@ const model = {
     searchParams: {}, 
     projectList: [], //项目列表
     total: 0,
-    curPage:0,
+    curPage:1,
     pageSize:10,
     activeProject: null, //选中项目
     isEditProjectModalVisible: false, 

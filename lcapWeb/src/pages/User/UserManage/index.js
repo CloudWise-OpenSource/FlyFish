@@ -108,7 +108,7 @@ const UserList = observer(() => {
                   );
                   closeEditProjectModal();
                   getProjectList({
-                    curPage: 0,
+                    curPage: 1,
                   });
                 } else {
                   message.error(
@@ -190,12 +190,12 @@ const UserList = observer(() => {
   }, []);
   // 分页、排序、筛选变化时触发
   const onPageChange = (curPage, pageSize) => {
-    getProjectList({ curPage: curPage - 1, pageSize });
+    getProjectList({ curPage: curPage , pageSize });
   };
   const onSearch = (params) => {
     setSearchParams(params);
     getProjectList({
-      curPage: 0,
+      curPage: 1,
       pageSize: 10
     });
   };
@@ -210,7 +210,7 @@ const UserList = observer(() => {
         pagination={{
           showTotal: true,
           total: total,
-          current: current+1,
+          current: current,
           pageSize: pageSize,
           defaultPageSize: 10,
           onChange: onPageChange,
@@ -255,7 +255,7 @@ const UserList = observer(() => {
                 );
                 closeEditProjectModal();
                 getProjectList({
-                  curPage: 0,
+                  curPage: 1,
                 });
               } else {
                 message.error(res.msg || intl.formatMessage({
@@ -277,7 +277,7 @@ const UserList = observer(() => {
                 );
                 closeEditProjectModal();
                 getProjectList({
-                  curPage: 0,
+                  curPage: 1,
                 });
               } else {
                 message.error(

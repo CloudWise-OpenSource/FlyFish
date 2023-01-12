@@ -1,4 +1,4 @@
-const MESSAGE_TYPE_PREFIX = "DATA_SEARCH_SCREEN_COMPONENT_MESSAGE";
+const MESSAGE_TYPE_PREFIX = 'DATA_SEARCH_SCREEN_COMPONENT_MESSAGE';
 
 export const MESSAGE_TYPES = {
   loaded: `${MESSAGE_TYPE_PREFIX}_LOADED`,
@@ -14,7 +14,7 @@ export const getScreenHTML = (component, data, config, fields) => {
         <meta name="renderer" content="webkit" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="stylesheet" type="text/css" href="${
-          window.LCAP_CONFIG.wwwAddress
+          window.FLYFISH_CONFIG.wwwAddress
         }/common/editor.css" />
         <style type="text/css">
           html,
@@ -31,29 +31,40 @@ export const getScreenHTML = (component, data, config, fields) => {
             max-height: 100%;
             position: absolute;
           }
+          .ant4-form-item .ant4-form-item-label {
+            width: 100%;
+            padding-bottom: 0px;
+          }
+          .ant4-form-item {
+            margin-bottom: 5px;
+          }
+          .ant4-form-item .ant4-form-item-label:after {
+            content: ":";
+          }
         </style>
       </head>
       <body>
         <div id="container"></div>
 
         <script type="text/javascript" src="${
-          window.LCAP_CONFIG.wwwAddress
+          window.FLYFISH_CONFIG.wwwAddress
         }/web/screen/config/env.js"></script>
         <script type="text/javascript" src="${
-          window.LCAP_CONFIG.wwwAddress
+          window.FLYFISH_CONFIG.wwwAddress
         }/common/data-vi.js"></script>
         <script type="text/javascript" src="${
-          window.LCAP_CONFIG.wwwAddress
+          window.FLYFISH_CONFIG.wwwAddress
         }/common/editor.js"></script>
         <script type="text/javascript" src="${
-          window.LCAP_CONFIG.wwwAddress
+          window.FLYFISH_CONFIG.wwwAddress
         }/components/${component.id}/${
     component.version
   }/release/setting.js"></script>
         <script type="text/javascript">
             window.onload = function () {
-              require(["datavi-editor/adapter"], function (
-                adapter
+              require(["datavi-editor/adapter","datavi-editor/antd"], function (
+                adapter,
+                antd
               ) {
                     window.parent.postMessage(JSON.stringify({
                         type: "${MESSAGE_TYPES.loaded}",
@@ -66,8 +77,10 @@ export const getScreenHTML = (component, data, config, fields) => {
                     if (ConfigComponentSetting) {
                         function ConfigComponent(props) {
                             const [config, setConfig] = React.useState(props.config);
-
-                            return React.createElement(ConfigComponentSetting, {
+                            return React.createElement(
+                              antd.ConfigProvider,
+                              { prefixCls: 'ant4' },
+                              React.createElement(ConfigComponentSetting, {
                                 config: config,
                                 data: props.data,
                                 fields: props.fields,
@@ -79,7 +92,8 @@ export const getScreenHTML = (component, data, config, fields) => {
                                         data: newConfig
                                     }));
                                 },
-                            });
+                              })
+                            );
                         }
                         ReactDom.render(
                             React.createElement(ConfigComponent, {

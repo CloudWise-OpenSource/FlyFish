@@ -1,15 +1,43 @@
 .newData {
    .typeContainer{
+       overflow-x: auto;
        display: flex;
        padding-top: 16px;
-       .typeItem{
-        margin-right: 2%;
-        padding: 15px;
+    //    max-width: 920px;
+       flex-wrap: wrap;
+       .typeItem, .typeItemActive{
+        margin-right: 1%;
+        width: 134px;
+        padding: 16px;
         border: 1px solid gray;
         border-radius: 5px;
-        text-align: center;
+        white-space: nowrap;
+        display: flex;
+        margin-bottom: 8px;
+        align-items: center;
+        justify-content: center;
+        position: relative;
         cursor: pointer;
         font-size: 16px;
+        span{
+            margin-left: 12px;
+        }
+        &:hover{
+            border-color: #1890FF;
+        }
+        &.typeItemActive {
+            color: #1890FF;
+            border-color: #1890FF;
+            &:after {
+                content: ""; 
+                position: absolute;
+                right: 0;
+                bottom: 0;
+                width: 16px;
+                height: 16px;
+                background: url(./imgs/check.svg);
+            }
+        }
      }
    }
    .formContainer{

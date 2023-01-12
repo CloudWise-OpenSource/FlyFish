@@ -14,7 +14,7 @@ const AppProjectManage = observer((props) => {
   const intl = useIntl();
   const {
     getProjectList,
-    setSearchParams,
+    setSearchParams,searchParams,
     saveProject, changeProject, getIndustrysList,
     openEditProjectModal, openProjectPage, setCurPage,
     closeEditProjectModal, deleteProject
@@ -31,6 +31,7 @@ const AppProjectManage = observer((props) => {
       title: "项目名称",
       dataIndex: "name",
       key: "name",
+      width:'15%',
       render(text, record) {
         return (
           <>
@@ -52,16 +53,18 @@ const AppProjectManage = observer((props) => {
       title: "行业",
       dataIndex: "trades",
       key: "trades",
+      width:'10%',
       render(trades) {
-        const str = trades.map(item=>item.name).join(',');
-        return str?<div title={str} style={{ height:24,whiteSpace:'nowrap',overflow:'hidden',textOverflow:"ellipsis" }}>{str}</div>
-        :<div title={str} style={{ height:24,whiteSpace:'nowrap',overflow:'hidden',textOverflow:"ellipsis" }}>-</div>;
+        const str = trades&&trades.map(item=>item.name).join(',');
+        return str?<div title={str} style={{width:250, height:24,whiteSpace:'nowrap',overflow:'hidden',textOverflow:"ellipsis" }}>{str}</div>
+        :<div title={str} style={{width:250, height:24,whiteSpace:'nowrap',overflow:'hidden',textOverflow:"ellipsis" }}>-</div>;
       },
     },
     {
       title: "描述",
       dataIndex: "desc",
       key: "desc",
+      width:'20%',
       render(text){
         return(
           <>
@@ -120,10 +123,12 @@ const AppProjectManage = observer((props) => {
             </Link>
             <a
               className={styles.projectAction}
-              disabled={record?.from=='lcap-init'}
+              disabled={record?.accountId==-1}
               onClick={() => {
                 setCheckFlag(false);
-                record.trades = record.trades.map(item => item.name);
+                if (record.trades) {
+                  record.trades = record.trades.map(item => item.name);
+                }
                 openEditProjectModal(record);
               }}
             >
@@ -150,7 +155,7 @@ const AppProjectManage = observer((props) => {
                 }
               });
             }}>
-              <a className={styles.projectAction} disabled={record?.from=='lcap-init'}>
+              <a className={styles.projectAction} disabled={record?.accountId==-1}>
                 <FormattedMessage id="common.delete" defaultValue="删除" />
               </a>
             </Popconfirm>
@@ -176,24 +181,24 @@ const AppProjectManage = observer((props) => {
           })}
         />
       ),
+      formAttribute: { initialValue: searchParams.key || '' }
     },
   ];
   // 请求列表数据
   useEffect(() => {
-    setSearchParams({});
-    getProjectList({ curPage: 0 });
+    getProjectList();
     getIndustrysList();
   }, []);
   const goRoute = (item) => {
-    props.history.push({pathname:`/app/${item.id}/project-detail`,search:`?name=${item.name}`});
+    props.history.push({pathname:`/app/${item.id}/project-detail/${item.name}`});
   };
   // 分页、排序、筛选变化时触发
   const onPageChange = (curPage, pageSize) => {
-    getProjectList({ curPage: curPage - 1, pageSize });
+    getProjectList({ curPage: curPage, pageSize });
   };
   const onSearch = (params) => {
     setSearchParams(params);
-    setCurPage(0);
+    setCurPage(1);
     getProjectList();
   };
 
@@ -208,7 +213,7 @@ const AppProjectManage = observer((props) => {
         pagination={{
           showTotal: true,
           total: total,
-          current: curPage + 1,
+          current: curPage,
           pageSize: pageSize,
           onChange: onPageChange,
           onShowSizeChange: onPageChange,
@@ -296,3 +301,4 @@ const AppProjectManage = observer((props) => {
   );
 });
 export default AppProjectManage;
+

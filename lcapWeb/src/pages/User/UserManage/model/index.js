@@ -14,7 +14,7 @@ const model = {
     activeUser: null,
     isEditProjectModalVisible: false,
     deleteId:null,
-    curPage:0,
+    curPage:1,
     pageSize:10,
     addOrChange:null
   },

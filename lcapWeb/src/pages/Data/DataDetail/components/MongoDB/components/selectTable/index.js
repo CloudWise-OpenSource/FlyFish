@@ -65,7 +65,7 @@ const ProjectDetail = observer(({ tableData = [], columnsTitle, title, setActive
                             {inputBodyType && inputBodyType === recode.key && <Input placeholder={`请输入${columnsTitle[0]}`}
                                 style={{ height: 26, width: 130 }}
                                 onChange={(e) => {
-                                    setBodyInputTitle(e.target.value);
+                                    setBodyInputTitle(e.target.value.trim());
                                 }}
                                 defaultValue={text || ''}
                                 onPressEnter={() => { changeOneName(recode); }}

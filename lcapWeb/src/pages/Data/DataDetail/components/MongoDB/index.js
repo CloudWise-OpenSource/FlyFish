@@ -114,8 +114,8 @@ const HandleMenu = observer(({ activeContent, bottomTable, tableList, tableId,on
             bordered={false}
             className="site-collapse-custom-collapse"
           >
-            <Panel header={resetTreeList&&resetTreeList[checkIndex]&&resetTreeList[checkIndex].tableName} key="1" style={{ border: 'none' }}>
-            <Table dataSource={tableList} columns={columns} pagination={false} rowKey='name' />
+            <Panel header={"数据表字段"} key="1" style={{ border: 'none' }}>
+            <Table dataSource={tableList} columns={columns} pagination={false} rowKey='name'  scroll={{ y: '24vh' }} />
             </Panel>
           </Collapse>
           <Collapse

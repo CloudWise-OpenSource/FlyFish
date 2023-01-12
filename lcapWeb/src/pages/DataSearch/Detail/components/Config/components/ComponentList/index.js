@@ -1,8 +1,8 @@
-import React, { Component } from "react";
-import { Input, Collapse, Tooltip } from "@chaoswise/ui";
-import styles from "./assets/style.less";
-import noComponnetViewImg from "./assets/noComponnetView.png";
-import _ from "lodash";
+import React, { Component } from 'react';
+import { Input, Collapse, Tooltip } from '@chaoswise/ui';
+import styles from './assets/style.less';
+import noComponnetViewImg from './assets/noComponnetView.png';
+import _ from 'lodash';
 
 const { Search } = Input;
 const { Panel } = Collapse;
@@ -58,7 +58,7 @@ const filterComponentList = (componentList, searchContent) => {
 };
 export default class ComponentCard extends Component {
   state = {
-    searchContent: "",
+    searchContent: '',
   };
 
   onSearchChanged(e) {
@@ -83,8 +83,8 @@ export default class ComponentCard extends Component {
         <div className={styles.componentCardSearch}>
           <Search
             className={styles.componentCardSearchInput}
-            placeholder="按名字查找组件"
-            value={this.state.searchContent || ""}
+            placeholder='按名字查找组件'
+            value={this.state.searchContent || ''}
             onChange={(e) => this.onSearchChanged(e)}
           />
         </div>
@@ -93,8 +93,8 @@ export default class ComponentCard extends Component {
             {currentShowComponentList.map((componentGroup) => (
               <Panel
                 header={
-                  <div className="collapse-header-content">
-                    <div className="collapse-header-name">
+                  <div className='collapse-header-content'>
+                    <div className='collapse-header-name'>
                       <Tooltip title={componentGroup.name}>
                         {componentGroup.name}
                       </Tooltip>
@@ -112,8 +112,8 @@ export default class ComponentCard extends Component {
                   {componentGroup.subCategories.map((subCategory) => (
                     <Panel
                       header={
-                        <div className="collapse-header-content">
-                          <div className="collapse-header-name">
+                        <div className='collapse-header-content'>
+                          <div className='collapse-header-name'>
                             <Tooltip title={subCategory.name}>
                               {subCategory.name}
                             </Tooltip>
@@ -122,14 +122,14 @@ export default class ComponentCard extends Component {
                       }
                       key={subCategory.id}
                     >
-                      <div className="single-component-card-list">
+                      <div className='single-component-card-list'>
                         {subCategory.components.map((component) => (
                           <div
                             className={`${styles.singleComponentCard} ${
                               activeComponent &&
                               component.id === activeComponent.id
                                 ? styles.singleComponentCardActive
-                                : ""
+                                : ''
                             }`}
                             onClick={() => {
                               onActiveComponentChanged &&
@@ -138,7 +138,7 @@ export default class ComponentCard extends Component {
                             key={`component-card-${component.id}`}
                           >
                             <img
-                              src={`${window.LCAP_CONFIG.snapshotAddress}${component.cover}`}
+                              src={`${window.FLYFISH_CONFIG.snapshotAddress}${component.cover}`}
                               className={styles.singleComponentCardImg}
                               onError={(e) => {
                                 // 替换的图片

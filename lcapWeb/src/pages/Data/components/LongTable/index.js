@@ -4,7 +4,7 @@ import { Table, Tooltip } from "@chaoswise/ui";
 class TablePreview extends Component {
   state = {};
   render() {
-    let { columns,data } = this.props;
+    let { columns, data } = this.props;
     if (!data || data.length === 0) {
       return "";
     }
@@ -26,12 +26,21 @@ class TablePreview extends Component {
         dataIndex: item.name,
         key: item.name,
         render: (text) => {
-          if (text) {
-            return (
-              <Tooltip title={JSON.stringify(text)} placement="topLeft">
-                <span> {JSON.stringify(text)}</span>
-              </Tooltip>
-            );
+          if (text || text == 0||text==false) {
+            if(Object.prototype.toString.call(text) === '[object Object]'){
+              return (
+                <Tooltip title={JSON.stringify(text)} placement="topLeft">
+                  <span> {JSON.stringify(text)}</span>
+                </Tooltip>
+              );
+            }else{
+              return (
+                <Tooltip title={text} placement="topLeft">
+                  <span> {text}</span>
+                </Tooltip>
+              );
+            }
+           
           }
           return "";
         },
@@ -43,7 +52,7 @@ class TablePreview extends Component {
         style={{ marginTop: '12px' }}
         columns={endColumns}
         dataSource={myData}
-        scroll={{ x: endColumns.length * 200 }}
+        scroll={{ x: endColumns.length * 200 ,y:'35vh'}}
         pagination={false}
         rowKey={(record) => columns && columns.length > 0 ? record[columns[0]] : record}
       />

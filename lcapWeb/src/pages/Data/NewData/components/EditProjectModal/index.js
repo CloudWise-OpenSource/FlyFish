@@ -37,7 +37,7 @@ export default Form.create({ name: "FORM_IN_PROJECT_MODAL" })(
                 onChange &&
                   onChange(project.id, {
                     ...changeObj,
-                    trades: values.trades.map(item => {
+                    trades: values.trades&&values.trades.map(item => {
                       return { name: item };
                     })
                   });

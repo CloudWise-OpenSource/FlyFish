@@ -61,7 +61,7 @@
 
             .codeEditor {
                 position: relative;
-                padding: 10px 60px 10px 10px;
+                padding: 10px 100px 10px 10px;
                 border: 1px solid rgb(233, 233, 233);
                 height: @ConfigContentCodeMirrorHeight;
 
@@ -79,8 +79,15 @@
                     position: absolute;
                     right: 15px;
                     top: 15px;
+                    width: 100px;
+                    text-align: right;
+                    .sqlAction {
+                        margin-top: 15px;
 
-                    .sqlAction {}
+                        &:first-child {
+                            margin-top: 0;
+                        }
+                    }
                 }
             }
 

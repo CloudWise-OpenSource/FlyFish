@@ -1,0 +1,49 @@
+.dataSearchSelectItem {
+    position: relative;
+    display: inline-block;
+    width: 182px;
+    vertical-align: middle;
+
+    .dataSearchSelectItemError,
+    .dataSearchSelectItemValidating {
+        :global {
+            .ant-select-selection {
+                .ant-select-selection__rendered {
+                    margin-right: 48px;
+                }
+
+                .ant-select-arrow {
+                    right: 30px;
+                }
+            }
+        }
+    }
+
+    .dataSearchSelectItemError {
+        :global {
+            .ant-select-selection {
+                .ant-select-selection__rendered {
+                    .ant-select-selection-selected-value {
+                        color: #F5222D;
+
+                    }
+                }
+            }
+        }
+    }
+
+    .dataSearchSelectItemTip {
+        position: absolute;
+        top: 50%;
+        right: 8px;
+        transform: translateY(-50%);
+        color: #F5222D;
+    }
+
+    .validatingSpan {
+        position: absolute;
+        top: 50%;
+        right: 8px;
+        transform: translateY(-50%);
+    }
+}

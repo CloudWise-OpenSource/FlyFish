@@ -1,4 +1,4 @@
-const MESSAGE_TYPE_PREFIX = "COMPONENT_VIEW_DRAWER_SCREEN_COMPONENT_MESSAGE";
+const MESSAGE_TYPE_PREFIX = 'COMPONENT_VIEW_DRAWER_SCREEN_COMPONENT_MESSAGE';
 
 export const MESSAGE_TYPES = {
   loaded: `${MESSAGE_TYPE_PREFIX}_LOADED`,
@@ -33,24 +33,36 @@ export const getScreenHTML = (screenOffset, component) => {
       <body>
         <div id="container"></div>
 
-        <script type="text/javascript" src="${window.LCAP_CONFIG.wwwAddress}/web/screen/config/env.js"></script>
+        <script type="text/javascript" src="${
+          window.FLYFISH_CONFIG.wwwAddress
+        }/web/screen/config/env.js"></script>
         <script type="text/javascript">
-          window.DATAVI_ENV.componentsDir = "${window.LCAP_CONFIG.wwwAddress}/components"
+          window.DATAVI_ENV.componentsDir = "${
+            window.FLYFISH_CONFIG.wwwAddress
+          }/components"
         </script>
-        <script type="text/javascript" src="${window.LCAP_CONFIG.wwwAddress}/common/data-vi.js"></script>
+        <script type="text/javascript" src="${
+          window.FLYFISH_CONFIG.wwwAddress
+        }/common/data-vi.js"></script>
         <script type="text/javascript">
           
           window.onload = function () {
 
-              require(['json!${window.LCAP_CONFIG.wwwAddress}/components/${component.id}/v-current/options.json','data-vi/helpers', 'data-vi/start'], function (settings, _, start) {
+              require(['json!${window.FLYFISH_CONFIG.wwwAddress}/components/${
+    component.id
+  }/v-current/options.json','data-vi/helpers', 'data-vi/start'], function (settings, _, start) {
                   try {
                     settings.options.width = ${screenOffset.width};
                     settings.options.height = ${screenOffset.height};
                     settings.components =  settings.components.map(component => {
-                      component.config.height = ${screenOffset.height - 20 };
-                      component.config.width = ${Math.ceil(screenOffset.width / 3 * 2)};
+                      component.config.height = ${screenOffset.height - 20};
+                      component.config.width = ${Math.ceil(
+                        (screenOffset.width / 3) * 2
+                      )};
                       component.config.top = 10;
-                      component.config.left = ${Math.ceil(screenOffset.width / 6)};
+                      component.config.left = ${Math.ceil(
+                        screenOffset.width / 6
+                      )};
                       return component;
                     });
                     window.parent.postMessage(JSON.stringify({

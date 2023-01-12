@@ -17,7 +17,6 @@ const BatchImportExport = observer((props) => {
   useEffect(() => {
     getComponentClassifyTreeData();
     getProjectsData();
-    checkLastImportResource();
   }, []);
 
   return (
@@ -43,6 +42,7 @@ const BatchImportExport = observer((props) => {
       <Button
         type='primary'
         onClick={() => {
+          checkLastImportResource()
           props.history.push({
             pathname: `/user/bulkImport/batch-import-export`,
             state: { name: '批量导入' },
