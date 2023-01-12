@@ -11,7 +11,7 @@ mockInstance.onGet("/get/basictablelist", {
   let pageSize = config.params.pageSize;
 
   totalNum = filterData.length;
-  resultData = filterData.slice((curPage - 1) * pageSize, curPage * pageSize);
+  resultData = filterData.slice((curPage) * pageSize, curPage * pageSize);
 
   return [200, {
     data: resultData,

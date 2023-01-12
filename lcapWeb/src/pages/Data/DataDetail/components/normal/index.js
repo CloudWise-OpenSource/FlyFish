@@ -34,8 +34,10 @@ const HandleMenu = observer(({ bottomTable, tableList
             bordered={false}
             className="site-collapse-custom-collapse"
           >
-            <Panel header={resetTreeList && resetTreeList[checkIndex] && resetTreeList[checkIndex].tableName} key="1" style={{ border: 'none' }}>
-              <Table dataSource={[...tableList]} columns={columns} pagination={false} rowKey={(record) => record.name} style={{marginTop:'12px'}} />
+            <Panel header={"数据表字段"} key="1" style={{ border: 'none' }}>
+              <Table dataSource={[...tableList]} columns={columns} pagination={false}
+               scroll={{ y: '24vh' }}
+              rowKey={(record) => record.name} style={{marginTop:'12px'}} />
             </Panel>
           </Collapse>
           <Collapse
@@ -44,7 +46,7 @@ const HandleMenu = observer(({ bottomTable, tableList
             className="site-collapse-custom-collapse"
           >
             <Panel header='数据预览' key="1" style={{ border: 'none' }}>
-              <LongTable columns={tableList} data={bottomTable} />
+              <LongTable columns={tableList} data={bottomTable}  />
 
             </Panel>
           </Collapse>

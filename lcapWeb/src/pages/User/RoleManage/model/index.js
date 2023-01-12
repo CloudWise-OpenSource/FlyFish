@@ -19,7 +19,7 @@ const model = {
     isRoleModalVisible: false,
     isRoleJurisdictionModalVisible: false,
     deleteId: null,
-    curPage: 0,
+    curPage: 1,
     pageSize: 10,
     menuList: [],//菜单列表
     roleMenu:[],
@@ -32,7 +32,7 @@ const model = {
     *getAllUserList(params = {}) {
       // 处理参数
       let options = {
-        curPage: 0,
+        curPage: 1,
         pageSize: 100
       };
       // 请求数据

@@ -18,7 +18,7 @@ const ProjectDetail = observer((props) => {
     applicationLength, isAddModalVisible, pageSize, curPage, isisLibModallVisible } =
     store;
   const nowProgressId = props.match.params.id;
-  const projectName=QS.parse(props.location.search.slice(1)).name;
+  const projectName = props.match.params.name;
   return (
     <React.Fragment>
       <Menu onClick={setCheckPageFLag} mode="horizontal" selectedKeys={[checkPageFLag]} className={styles.menuStyle}>

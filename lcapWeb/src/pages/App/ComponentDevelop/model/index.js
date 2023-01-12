@@ -3,7 +3,7 @@
  * @Author: zhangzhiyong
  * @Date: 2021-11-10 19:08:41
  * @LastEditors: zhangzhiyong
- * @LastEditTime: 2022-06-02 14:26:27
+ * @LastEditTime: 2022-12-12 15:10:00
  */
 import { toMobx, toJS } from '@chaoswise/cw-mobx';
 import {
@@ -11,6 +11,7 @@ import {
   getListDataService,
   getProjectsService,
   getTagsService,
+  getUserListService,
 } from '../services';
 
 const model = {
@@ -28,8 +29,8 @@ const model = {
     treeData: [],
     listData: {},
     selectedData: {
-      category: '',
-      subCategory: '',
+      // category: '',
+      // subCategory: '',
     },
     searchName: '',
     searchKey: '',
@@ -41,25 +42,46 @@ const model = {
     projectsData: [],
     tagsData: [],
     developing: false,
-    developingData: {},
+    developingData: null,
     total: 0,
-    curPage: 0,
+    curPage: 1,
     pageSize: 10,
+    creator: undefined,
+    creatorId: '',
+    userList: [],
+    userTotal: 0,
+    userCurPage: 1,
   },
   effects: {
+    *getUserList(params) {
+      const userPageSize = 5;
+      // 请求数据
+      const res = yield getUserListService({
+        username: this.creator || '',
+        curPage: this.userCurPage,
+        pageSize: userPageSize,
+        ...params,
+      });
+      if (res && res.code === 0) {
+        this.setUserList(res.data.list);
+        this.setUserTotal(res.data.total);
+      } else {
+        message.error(res.msg);
+      }
+    },
     *getTreeDataFirst() {
       // 请求数据
       const res = yield getTreeDataService();
       if (res && res.data) {
         const data = res.data;
         this.setTreeData(data);
-        const first = toJS(data)[0];
-        if (first) {
-          this.setSelectedData({
-            category: first.id,
-            subCategory: '',
-          });
-        }
+        // const first = toJS(data)[0];
+        // if (first) {
+        //   this.setSelectedData({
+        //     category: first.id,
+        //     subCategory: '',
+        //   });
+        // }
       }
     },
     *getTreeData() {
@@ -84,12 +106,14 @@ const model = {
       const pageSize = this.pageSize;
       const { category, subCategory } = toJS(this.selectedData);
       const searchName = this.searchName;
+      const creator = this.creatorId || '';
       const searchKey = this.searchKey;
       const searchStatus = this.searchStatus;
       const searchProject = this.searchProject;
       const searchType = this.searchType;
       const params = {
         name: searchName ? searchName : undefined,
+        creator: creator,
         key: searchKey ? searchKey : undefined,
         developStatus: searchStatus !== 'all' ? searchStatus : undefined,
         type: searchType === 'all' ? undefined : searchType,
@@ -104,6 +128,18 @@ const model = {
     },
   },
   reducers: {
+    setCreatorId(res) {
+      this.creatorId = res;
+    },
+    setUserCurPage(res) {
+      this.userCurPage = res;
+    },
+    setUserList(res) {
+      this.userList = res;
+    },
+    setUserTotal(res) {
+      this.userTotal = res;
+    },
     setDetailShow(res) {
       this.detailShow = res;
     },
@@ -127,6 +163,9 @@ const model = {
     },
     setSearchName(res) {
       this.searchName = res;
+    },
+    setCreator(res) {
+      this.creator = res;
     },
     setSearchKey(res) {
       this.searchKey = res;

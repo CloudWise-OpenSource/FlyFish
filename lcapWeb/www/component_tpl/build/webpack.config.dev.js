@@ -2,8 +2,6 @@
  * @description webpack开发配置
  */
 'use strict';
-module.exports = component_mark => `
-'use strict';
 
 /**
  * @description webpack开发配置
@@ -26,5 +24,3 @@ module.exports = _.defaultsDeep({
         path: path.resolve(__dirname, '../') + '/components/',
     },
 }, baseConf);
-
-`;

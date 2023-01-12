@@ -2,14 +2,37 @@
  * @Descripttion:
  * @Author: zhangzhiyong
  * @Date: 2021-11-09 10:45:26
- * @LastEditors: zhangzhiyong
- * @LastEditTime: 2022-06-30 00:49:13
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2022-12-29 16:32:12
  */
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect, useRef } from "react";
-import { Layout,Select,Input,Icon,CWTable,Button, Modal, message, Upload, DemoShow,Space,Popconfirm,Spin,Popover,Menu,Dropdown,Tooltip,Progress,Tag} from '@chaoswise/ui';
-import { observer, toJS } from "@chaoswise/cw-mobx";
-import store from "./model/index";
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+  Layout,
+  Select,
+  Input,
+  Icon,
+  CWTable,
+  Button,
+  Modal,
+  message,
+  Upload,
+  DemoShow,
+  Space,
+  Popconfirm,
+  Spin,
+  Popover,
+  Menu,
+  Dropdown,
+  Tooltip,
+  Progress,
+  Tag,
+  CWSelect,
+  Pagination,
+  Divider,
+} from '@chaoswise/ui';
+import { observer, toJS } from '@chaoswise/cw-mobx';
+import store from './model/index';
 
 import { successCode } from '@/config/global';
 import styles from './assets/style.less';
@@ -40,9 +63,9 @@ const { Option } = Select;
 const { Dragger } = Upload;
 
 const ComponentDevelop = observer((props) => {
-  const { userInfo={} } = globalStore;
-  const { iuser={} } = userInfo;
-  const fromLcap = 'lcap-init';
+  const { userInfo } = globalStore;
+  const iuser = (userInfo && userInfo.iuser) || {};
+  const fromLcap = -1;
   const columns = [
     {
       title: '组件类型',
@@ -108,17 +131,17 @@ const ComponentDevelop = observer((props) => {
       width: 120,
       key: 'cover',
       render: (text, record = {}) => {
-        let imgUrl = text;
-        if(window.LCAP_CONFIG.isSplitComponentModule) imgUrl = text.replace('v-current', record.version).replace('components/cover', 'release/cover');
-        return (
+        return text ? (
           <ComponentCover
-            link={imgUrl}
+            link={text}
             width={100}
             onClick={() => {
-              setpreviewImgUrl(window.LCAP_CONFIG.snapshotAddress + imgUrl);
+              setpreviewImgUrl(window.FLYFISH_CONFIG.snapshotAddress + text);
               setImgModalVisible(true);
             }}
           ></ComponentCover>
+        ) : (
+          ''
         );
       },
     },
@@ -141,12 +164,19 @@ const ComponentDevelop = observer((props) => {
       width: 120,
       key: 'developStatus',
       render: (text) => {
-        return <span>
-          {
-            text==='online'?<Tag color="green">{CONSTANT.componentDevelopStatus_map_ch[text]}</Tag>
-            :<Tag color="red">{CONSTANT.componentDevelopStatus_map_ch[text]}</Tag>
-          }
-        </span>;
+        return (
+          <span>
+            {text === 'online' ? (
+              <Tag color='green'>
+                {CONSTANT.componentDevelopStatus_map_ch[text]}
+              </Tag>
+            ) : (
+              <Tag color='red'>
+                {CONSTANT.componentDevelopStatus_map_ch[text]}
+              </Tag>
+            )}
+          </span>
+        );
       },
     },
     {
@@ -181,237 +211,266 @@ const ComponentDevelop = observer((props) => {
       render: (text, record) => {
         return (
           <>
-            {
-              text&&text.length>7?
+            {text && text.length > 7 ? (
               <Popover
                 placement='left'
                 content={<div className={styles.descPopWrap}>{text}</div>}
               >
                 <div className={styles.descWrap}>{text}</div>
               </Popover>
-              :<div className={styles.descWrap}>{text}</div>
-            }
+            ) : (
+              <div className={styles.descWrap}>{text}</div>
+            )}
           </>
         );
       },
     },
     {
-        title: '创建人',
-        dataIndex: 'creator',
-        width: 100,
-        key: 'creator',
+      title: '创建人',
+      dataIndex: 'creator',
+      width: 100,
+      key: 'creator',
     },
     {
-        title: '操作',
-        key: 'action',
-        width: 110,
-        fixed: 'right',
-        render: (text, record) => {
-          const isLcap = record.from===fromLcap ;
-          const isSplit = window.LCAP_CONFIG.isSplitComponentModule;
-          return <>
+      title: '操作',
+      key: 'action',
+      width: 110,
+      fixed: 'right',
+      render: (text, record) => {
+        const isLcap = record.accountId === fromLcap;
+        const isSplit = window.FLYFISH_CONFIG.isSplitComponentModule;
+        return (
+          <>
             <Popover
-                content={
-                    <div className={styles.btnWraper}>
-                      <div
-                        className={(isLcap||isSplit)?styles.btnDisabled:''}
-                        onClick={() => {
-                          if (isLcap||isSplit) {
-                            return;
+              content={
+                <div className={styles.btnWraper}>
+                  <div
+                    className={isLcap || isSplit ? styles.btnDisabled : ''}
+                    onClick={() => {
+                      if (isLcap || isSplit) {
+                        return;
+                      }
+                      setDevelopingData(record);
+                      setDetailShow(false);
+                      setShowRecord(false);
+                      props.history.push({
+                        pathname: `/app/code-develop/${record.id}`,
+                        state: { name: record.name },
+                      });
+                    }}
+                  >
+                    开发组件
+                  </div>
+                  <div
+                    className={isLcap || isSplit ? styles.btnDisabled : ''}
+                    onClick={() => {
+                      if (isLcap || isSplit) {
+                        return;
+                      }
+                      setCloneRecord({ ...record });
+                      setCopyModalvisible(true);
+                    }}
+                  >
+                    复制组件
+                  </div>
+                  <div
+                    className={isLcap || isSplit ? styles.btnDisabled : ''}
+                    onClick={() => {
+                      if (isLcap || isSplit) {
+                        return;
+                      }
+                      setUploadId(record.id);
+                      setUploadProgress(0);
+                      setImportModalvisible(true);
+                    }}
+                  >
+                    导入源码
+                  </div>
+                  <div
+                    className={isLcap || isSplit ? styles.btnDisabled : ''}
+                    onClick={() => {
+                      if (isLcap || isSplit) {
+                        return;
+                      }
+                      setListData({
+                        ...listData,
+                        list: listData.list.map((item) => {
+                          if (item.id === record.id) {
+                            item.exportStatus = true;
                           }
-                          setDevelopingData(record);
-                          // setDeveloping(true);
-                          setDetailShow(false);
-                          setShowRecord(false);
-                          props.history.push({ pathname: `/app/${record.id}/code-develop`, state: { name: record.name } });
-                        }}
-                      >
-                        开发组件
-                      </div>
-                      <div 
-                        className={(isLcap||isSplit)?styles.btnDisabled:''}
-                        onClick={() => {
-                          if ((isLcap||isSplit)) {
-                            return;
+                          return item;
+                        }),
+                      });
+                      setListData({
+                        ...listData,
+                        list: listData.list.map((item) => {
+                          if (item.id === record.id) {
+                            item.exportProgress = 0;
                           }
-                          setCloneRecord({ ...record });
-                          setCopyModalvisible(true);
-                        }}
-                      >
-                        复制组件
-                      </div>
-                      <div 
-                        className={(isLcap||isSplit)?styles.btnDisabled:''}
-                        onClick={() => {
-                          if (isLcap||isSplit) {
-                            return;
-                          }
-                          setUploadId(record.id);
-                          setUploadProgress(0);
-                          setImportModalvisible(true);
-                        }}
-                      >
-                        导入源码
-                      </div>
-                      <div
-                        className={(isLcap||isSplit)?styles.btnDisabled:''}
-                        onClick={() => {
-                          if ((isLcap||isSplit)) {
-                            return;
-                          }
-                          setListData({
-                              ...listData,
-                              list: listData.list.map(item => {
-                                  if (item.id === record.id) {
-                                      item.exportStatus = true;
-                                  }
-                                  return item;
-                              })
-                          });
-                          setListData({
-                              ...listData,
-                              list: listData.list.map(item => {
-                                  if (item.id === record.id) {
-                                      item.exportProgress = 0;
-                                  }
-                                  return item;
-                              })
-                          });
-                          exportCode(record.id, (event) => {
-                              setListData({
-                                  ...listData,
-                                  list: listData.list.map(item => {
-                                      if (item.id === record.id) {
-                                          item.exportProgress = parseInt((event.loaded / event.total) * 100);
-                                      }
-                                      return item;
-                                  })
-                              });
-                          }).then((res) => {
-                              const $link = document.createElement('a');
-
-                              // let blob = new Blob([res.data],{type:'application/octet-stream'});
-                              // let blob = new Blob([res.data]);
-                              const url = window.URL.createObjectURL(res.data);
-                              $link.href = url;
-
-                              const disposition = res.headers['content-disposition']||'组件.zip';
-                              $link.download = decodeURI(
-                                disposition.replace('attachment;filename=', '')
+                          return item;
+                        }),
+                      });
+                      exportCode(record.id, (event) => {
+                        setListData({
+                          ...listData,
+                          list: listData.list.map((item) => {
+                            if (item.id === record.id) {
+                              item.exportProgress = parseInt(
+                                (event.loaded / event.total) * 100
                               );
-
-                              document.body.appendChild($link);
-                              $link.click();
-                              document.body.removeChild($link); // 下载完成移除元素
-                              window.URL.revokeObjectURL($link.href); // 释放掉blob对象
-
-
-                              setListData({
-                                  ...listData,
-                                  list: listData.list.map(item => {
-                                      if (item.id === record.id) {
-                                          item.exportStatus = false;
-                                      }
-                                      return item;
-                                  })
-                              });
-                              message.success('导出成功!');
-                          }, () => {
-                              message.error('导出失败!');
-                          });
-                        }}
-                      >
-                          {record.exportStatus ? <><Spin spinning={true} size='small' style={{ marginRight: 5 }} />导出中</> : '导出源码'}
-                      </div>
-                      {
-                        iuser.isAdmin ?(
-                          isLcap?
-                          <div
-                            style={{ color: '#ccc' }}
-                          >
-                            {record.isLib ? '从组件库移除' : '上传组件库'}
-                          </div>:
-                          <Popconfirm
-                            disabled={record.developStatus == CONSTANT.DEVELOPSTATUS_DOING}
-                            title={record.isLib ? '确定从组件库移除？' : "确定上传组件至组件库?上传后该组件可公开被查看及使用。"}
-                            onConfirm={() => {
-                                uploadToLibrary(record);
-                            }}
-                            okText="是"
-                            cancelText="否"
-                        >
-                            <div
-                              style={{ color: record.developStatus == CONSTANT.DEVELOPSTATUS_DOING ? '#ccc' : 'rgb(68, 156, 242)' }}
-                            >{record.isLib ? '从组件库移除' : '上传组件库'}</div>
-                        </Popconfirm>
-                        )
-                        : null
-                      }
-                      {
-                        record.type === CONSTANT.TYPE_PROJECT ?
-                        <div
-                          className={isLcap?styles.btnDisabled:''}
-                          onClick={() => {
-                            if (isLcap) {
-                              return;
                             }
-                            setEditData(record);
-                            setEditModalvisible(true);
-                          }}
-                        >
-                          编辑信息
-                        </div> :
-                        (iuser.isAdmin ?
+                            return item;
+                          }),
+                        });
+                      }).then((res) => {
+                        const $link = document.createElement('a');
+
+                        // let blob = new Blob([res.data],{type:'application/octet-stream'});
+                        // let blob = new Blob([res.data]);
+                        const url = window.URL.createObjectURL(res.data);
+                        $link.href = url;
+
+                        const disposition =
+                          res.headers['content-disposition'] || '组件.zip';
+                        $link.download = decodeURI(
+                          disposition.replace('attachment;filename=', '')
+                        );
+
+                        document.body.appendChild($link);
+                        $link.click();
+                        document.body.removeChild($link); // 下载完成移除元素
+                        window.URL.revokeObjectURL($link.href); // 释放掉blob对象
+
+                        setListData({
+                          ...listData,
+                          list: listData.list.map((item) => {
+                            if (item.id === record.id) {
+                              item.exportStatus = false;
+                            }
+                            return item;
+                          }),
+                        });
+                        message.success('导出成功!');
+                      });
+                    }}
+                  >
+                    {record.exportStatus ? (
+                      <>
+                        <Spin
+                          spinning={true}
+                          size='small'
+                          style={{ marginRight: 5 }}
+                        />
+                        导出中
+                      </>
+                    ) : (
+                      '导出源码'
+                    )}
+                  </div>
+                  {iuser.isAdmin ? (
+                    isLcap ? (
+                      <div style={{ color: '#ccc' }}>
+                        {record.isLib ? '从组件库移除' : '上传组件库'}
+                      </div>
+                    ) : (
+                      <Popconfirm
+                        disabled={
+                          record.developStatus == CONSTANT.DEVELOPSTATUS_DOING
+                        }
+                        title={
+                          record.isLib
+                            ? '确定从组件库移除？'
+                            : '确定上传组件至组件库?上传后该组件可公开被查看及使用。'
+                        }
+                        onConfirm={() => {
+                          uploadToLibrary(record);
+                        }}
+                        okText='是'
+                        cancelText='否'
+                      >
                         <div
-                          className={isLcap?styles.btnDisabled:''}
-                            onClick={() => {
-                              if (isLcap) {
-                                return;
-                              }
-                                setEditData(record);
-                                setEditModalvisible(true);
-                            }}
-                        >编辑信息</div> : null)
-                      }
-                      {
-                        isLcap?<div className={styles.btnDisabled}>删除</div>:
-                        <Popconfirm
-                          title='确定要删除吗？'
-                          cancelText='否'
-                          okText='是'
-                          onConfirm={() => { 
-                            deleteComponet(record.id); 
+                          style={{
+                            color:
+                              record.developStatus ==
+                              CONSTANT.DEVELOPSTATUS_DOING
+                                ? '#ccc'
+                                : 'rgb(68, 156, 242)',
                           }}
                         >
-                          <div>删除</div>
-                        </Popconfirm>
-                      }
-                        
+                          {record.isLib ? '从组件库移除' : '上传组件库'}
+                        </div>
+                      </Popconfirm>
+                    )
+                  ) : null}
+                  {record.type === CONSTANT.TYPE_PROJECT ? (
+                    <div
+                      className={isLcap ? styles.btnDisabled : ''}
+                      onClick={() => {
+                        if (isLcap) {
+                          return;
+                        }
+                        setEditData(record);
+                        setEditModalvisible(true);
+                      }}
+                    >
+                      编辑信息
                     </div>
-                }
-                placement="right"
+                  ) : iuser.isAdmin ? (
+                    <div
+                      className={isLcap ? styles.btnDisabled : ''}
+                      onClick={() => {
+                        if (isLcap) {
+                          return;
+                        }
+                        setEditData(record);
+                        setEditModalvisible(true);
+                      }}
+                    >
+                      编辑信息
+                    </div>
+                  ) : null}
+                  {isLcap ? (
+                    <div className={styles.btnDisabled}>删除</div>
+                  ) : (
+                    <Popconfirm
+                      title='确定要删除吗？'
+                      cancelText='否'
+                      okText='是'
+                      onConfirm={() => {
+                        deleteComponet(record.id);
+                      }}
+                    >
+                      <div>删除</div>
+                    </Popconfirm>
+                  )}
+                </div>
+              }
+              placement='right'
             >
-              <span style={{ color: 'rgba(24, 144, 255,1)', cursor: 'pointer' }}>
-                  操作选项
-            </span>
-          </Popover>
-          {record.exportStatus ? (
-            <Popover
-              content={record.exportProgress + '%'}
-              style={{ backgroundColor: 'rgba(0,0,0,0.4)' }}
-            >
-              <Progress
-                type="circle"
-                style={{ marginLeft: 5 ,position:'absolute'}}
-                percent={record.exportProgress}
-                strokeWidth={15}
-                width={12}
-                showInfo={false}
-              />
+              <span
+                style={{ color: 'rgba(24, 144, 255,1)', cursor: 'pointer' }}
+              >
+                操作选项
+              </span>
             </Popover>
-          ) : null}
-        </>;
-        }
+            {record.exportStatus ? (
+              <Popover
+                content={record.exportProgress + '%'}
+                style={{ backgroundColor: 'rgba(0,0,0,0.4)' }}
+              >
+                <Progress
+                  type='circle'
+                  style={{ marginLeft: 5, position: 'absolute' }}
+                  percent={record.exportProgress}
+                  strokeWidth={15}
+                  width={12}
+                  showInfo={false}
+                />
+              </Popover>
+            ) : null}
+          </>
+        );
+      },
     },
   ];
   const intl = useIntl();
@@ -434,12 +493,15 @@ const ComponentDevelop = observer((props) => {
     setEditData,
     getProjectsData,
     getTagsData,
-    setDeveloping,
     setDevelopingData,
     setCurPage,
     setPageSize,
     getTreeDataFirst,
     setAddFromSourcevisible,
+    setUserCurPage,
+    getUserList,
+    setCreator,
+    setCreatorId,
   } = store;
   const {
     addModalvisible,
@@ -449,6 +511,8 @@ const ComponentDevelop = observer((props) => {
     listData,
     selectedData,
     searchName,
+    creator,
+    creatorId,
     searchKey,
     searchStatus,
     searchType,
@@ -458,6 +522,9 @@ const ComponentDevelop = observer((props) => {
     curPage,
     pageSize,
     addFromSourcevisible,
+    userCurPage,
+    userList,
+    userTotal,
   } = store;
 
   const [addCateName, setAddCateName] = useState('');
@@ -472,14 +539,16 @@ const ComponentDevelop = observer((props) => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadFileInfo, setUploadFileInfo] = useState();
 
+  const userPageSize = 5;
   // 请求列表数据
   useEffect(() => {
+    getUserList();
     getProjectsData();
     getTagsData();
     getTreeDataFirst();
   }, []);
   useEffect(() => {
-    if (selectedData && selectedData.category) {
+    if (selectedData) {
       getListData();
     }
   }, [selectedData]);
@@ -493,58 +562,13 @@ const ComponentDevelop = observer((props) => {
     }
   };
   const exportCode = (id, onProgress) => {
-    // const res =  downloadComponentService(id, onProgress);
-    // if (res) {
-    //   console.log(res);
-    //   const $link = document.createElement("a");
-    //   let blob = new Blob([res],{type:'application/zip'});
-    //   $link.href = window.URL.createObjectURL(blob);
-    //   $link.download = 'component.zip';
-    //   document.body.appendChild($link);
-    //   $link.click();
-    //   document.body.removeChild($link); // 下载完成移除元素
-    //   window.URL.revokeObjectURL($link.href); // 释放掉blob对象
-    // }
-
-    // window.open('/api/components/export-source-code/'+id);
-
-    // const $link = document.createElement("a");
-    // $link.href = '/api/components/export-source-code/'+id;
-
-    // document.body.appendChild($link);
-    // $link.click();
-    // document.body.removeChild($link); // 下载完成移除元素
-    // window.URL.revokeObjectURL($link.href); // 释放掉blob对象
-
-    return axios
-      .get(
-        `${API.DOWNLOAD_COMPONENT}/${id}`,
-        {
-          responseType: 'blob',
-          onDownloadProgress:(event)=>{
-            onProgress(event);
-          },
-          timeout: 0
-        },
-      );
-      // .then((res) => {
-      //   const $link = document.createElement('a');
-
-      //   // let blob = new Blob([res.data],{type:'application/octet-stream'});
-      //   // let blob = new Blob([res.data]);
-      //   const url = window.URL.createObjectURL(res.data);
-      //   $link.href = url;
-
-      //   const disposition = res.headers['content-disposition'];
-      //   $link.download = decodeURI(
-      //     disposition.replace('attachment;filename=', '')
-      //   );
-
-      //   document.body.appendChild($link);
-      //   $link.click();
-      //   document.body.removeChild($link); // 下载完成移除元素
-      //   window.URL.revokeObjectURL($link.href); // 释放掉blob对象
-      // });
+    return axios.get(`${API.DOWNLOAD_COMPONENT}/${id}`, {
+      responseType: 'blob',
+      onDownloadProgress: (event) => {
+        onProgress(event);
+      },
+      timeout: 0,
+    });
   };
   const uploadToLibrary = async (record) => {
     const { id, isLib } = record;
@@ -556,6 +580,13 @@ const ComponentDevelop = observer((props) => {
       message.error(res.msg);
     }
   };
+
+  const debounceGetData = useCallback(
+    _.debounce(() => {
+      getListData();
+    }, 500),
+    []
+  );
 
   const menu = (
     <Menu>
@@ -632,7 +663,7 @@ const ComponentDevelop = observer((props) => {
                     value={searchProject}
                     onChange={(val) => {
                       setSearchProject(val);
-                      setCurPage(0);
+                      setCurPage(1);
                       getListData();
                     }}
                     filterOption={(input, option) =>
@@ -659,7 +690,7 @@ const ComponentDevelop = observer((props) => {
                     value={searchStatus}
                     onChange={(val) => {
                       setSearchStatus(val);
-                      setCurPage(0);
+                      setCurPage(1);
                       getListData();
                     }}
                   >
@@ -677,7 +708,7 @@ const ComponentDevelop = observer((props) => {
                     value={searchType}
                     onChange={(val) => {
                       setSearchType(val);
-                      setCurPage(0);
+                      setCurPage(1);
                       getListData();
                     }}
                   >
@@ -689,35 +720,116 @@ const ComponentDevelop = observer((props) => {
                 <div>
                   <span>组件名称：</span>
                   <Input
-                    placeholder='请输入'
+                    placeholder='请输入组件名称或id'
                     // style={{width:'calc(100% - 70px)'}}
                     style={{ width: 150 }}
                     value={searchName}
                     onChange={(e) => {
                       setSearchName(e.target.value);
                       // setSearchKey('');
+                      setCurPage(1);
+                      debounceGetData();
+                    }}
+                  ></Input>
+                </div>
+                <div>
+                  <span>创建人：</span>
+                  <CWSelect
+                    placeholder='请输入'
+                    style={{ width: 150 }}
+                    showSearch
+                    value={creatorId}
+                    filterOption={false}
+                    allowClear
+                    dropdownRender={(menu) => (
+                      <div>
+                        {menu}
+                        <Divider style={{ margin: '0' }} />
+                        <div className={styles.creatorPagi}>
+                          <span>共{userTotal}条</span>
+                          <div className={styles.creatorPagiRight}>
+                            <div
+                              style={{ color: '#ccc' }}
+                              onClick={() => {
+                                if (userCurPage == 1) {
+                                  return;
+                                }
+                                setUserCurPage(userCurPage - 1);
+                                getUserList({ curPage: userCurPage - 1 });
+                              }}
+                            >
+                              &lt;
+                            </div>
+                            <div className={styles.pageNumWrap}>
+                              {userCurPage}
+                            </div>
+                            <div
+                              style={{ color: '#ccc' }}
+                              onClick={() => {
+                                const maxpage =
+                                  userTotal % userPageSize > 0
+                                    ? parseInt(userTotal / userPageSize) + 1
+                                    : parseInt(userTotal / userPageSize);
+                                if (userCurPage == maxpage) {
+                                  return;
+                                }
+                                setUserCurPage(userCurPage + 1);
+                                getUserList({ curPage: userCurPage + 1 });
+                              }}
+                            >
+                              &gt;
+                            </div>
+                          </div>
+                        </div>
+                        {/* <Pagination
+                          current={userCurPage}
+                          total={userTotal}
+                          simple
+                          size='small'
+                        ></Pagination> */}
+                      </div>
+                    )}
+                    onSearch={(val) => {
+                      setCreator(val);
+                      setUserCurPage(1);
+                      getUserList({ username: val, curPage: 1 });
+                    }}
+                    onChange={(val) => {
+                      setUserCurPage(1);
+                      if (val === undefined) {
+                        //清空时请求所有创建人
+                        getUserList({ username: '', curPage: 1 });
+                      }
+                      setCreatorId(val || '');
                       setCurPage(0);
                       getListData();
                     }}
-                  ></Input>
+                  >
+                    {userList.map((item) => {
+                      return (
+                        <CWSelect.Option key={item.userId} value={item.userId}>
+                          {item.username}
+                        </CWSelect.Option>
+                      );
+                    })}
+                  </CWSelect>
                 </div>
                 <div>
                   <span></span>
                   <Input
                     // style={{width:'100%'}}
                     style={{ width: 250 }}
-                    placeholder='输入描述/标签/创建人查找组件'
+                    placeholder='输入描述/标签查找组件'
                     value={searchKey}
                     onChange={(e) => {
                       setSearchKey(e.target.value);
-                      setCurPage(0);
-                      getListData();
+                      setCurPage(1);
+                      debounceGetData();
                     }}
                   ></Input>
                 </div>
                 <div>
-                  {
-                    window.LCAP_CONFIG.isSplitComponentModule?null:
+                  {window.FLYFISH_CONFIG.isSplitComponentModule ? null : (
                     <Dropdown
                       overlay={menu}
                       trigger={['click']}
@@ -725,8 +837,8 @@ const ComponentDevelop = observer((props) => {
                     >
                       <Button type='primary'>添加组件</Button>
                     </Dropdown>
-                  }
-                  
+                  )}
+
                   <span>　</span>
                 </div>
               </div>
@@ -743,14 +855,14 @@ const ComponentDevelop = observer((props) => {
                     },
                     total: listData ? listData.total : 0,
                     pageSize: pageSize,
-                    current: curPage + 1,
+                    current: curPage,
                     onShowSizeChange: (page, pageSize) => {
-                      setCurPage(0);
+                      setCurPage(1);
                       setPageSize(pageSize);
                       getListData();
                     },
                     onChange: (current, size) => {
-                      setCurPage(current - 1);
+                      setCurPage(current);
                       getListData();
                     },
                   }}
@@ -866,34 +978,35 @@ const ComponentDevelop = observer((props) => {
                   height: 230,
                 }}
               >
-                <DemoShow
-                  description='仅支持压缩包类文件上传'>
+                <DemoShow description='仅支持压缩包类文件上传'>
                   <Space
-                      direction="vertical"
-                      style={{
-                      width: '100%'
-                      }}
+                    direction='vertical'
+                    style={{
+                      width: '100%',
+                    }}
                   >
-                  <Dragger
-                      accept=".zip"
+                    <Dragger
+                      accept='.zip'
                       height={170}
                       action={API.UPLOAD_COMPONENT + '/' + uploadId}
                       headers={{ authorization: 'authorization-text' }}
-                      method="post"
-                      name="file"
+                      method='post'
+                      name='file'
                       showUploadList={true}
                       dropSingleFileUpload={true}
                       beforeUpload={() => {
-                          setUploadProgress(0);
+                        setUploadProgress(0);
                       }}
                       onChange={({ file, fileList, event }) => {
-                          if (file?.response?.code === 1000) { message.error('源码文件格式错误'); }
-                          setUploadFileInfo(file);
-                          if (event) {
-                              setUploadProgress(event.percent);
-                          }
+                        if (file?.response?.code === 1000) {
+                          message.error('源码文件格式错误');
+                        }
+                        setUploadFileInfo(file);
+                        if (event) {
+                          setUploadProgress(event.percent);
+                        }
                       }}
-                  />
+                    />
                   </Space>
                 </DemoShow>
               </div>

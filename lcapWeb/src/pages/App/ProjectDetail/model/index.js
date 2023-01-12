@@ -15,8 +15,8 @@ const model = {
         type: '',
         total: 0,
         templateapplicationTotal: 0,
-        curPage: 0,
-        templateapplicationCurPage: 0,
+        curPage: 1,
+        templateapplicationCurPage: 1,
         templateapplicationPageSize: 15,
         pageSize: 15,
         hasMore: true,
@@ -49,6 +49,7 @@ const model = {
                 type: this.type || '2D',
                 curPage: this.curPage,
                 pageSize: this.pageSize,
+                isLib: true,
                 ...this.searchParams,
                 ...params
             };

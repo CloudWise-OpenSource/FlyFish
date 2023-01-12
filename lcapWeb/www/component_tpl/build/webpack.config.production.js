@@ -3,8 +3,6 @@
  */
 
 'use strict';
-module.exports = component_mark => `
-'use strict';
 
 /**
  * @description webpack开发配置
@@ -57,5 +55,3 @@ module.exports = _.defaultsDeep({
         
     ]
 }, baseConf);
-
-`;

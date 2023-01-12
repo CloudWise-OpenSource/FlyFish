@@ -182,7 +182,7 @@ const EditComponent = observer((props)=>{
       {getFieldDecorator('desc', {
         initialValue:editData.desc,
         rules: []
-      })(<TextArea rows={4}/>)}
+      })(<TextArea maxLength={100} showCount={true}/>)}
     </Form.Item>
     <Row className={styles.btnWrap}>
       <Col span={2} push={18}>

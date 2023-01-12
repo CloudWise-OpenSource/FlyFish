@@ -11,7 +11,9 @@ import HttpContainer from './components/HttpContainer';
 import MongoDBContainer from './components/MongoDB';
 import Normal from './components/normal';
 import File from './components/File';
+import Zabbix from './components/zabbix'
 const ProjectDetail = observer((props) => {
+  const{checkIndex}=MenuStore
   let {
     getTableList,
     tableList,
@@ -57,7 +59,7 @@ const ProjectDetail = observer((props) => {
           setActiveContent({ ...conentData, datasourceId: DatasourceId });
           setHeader(conentData.header);
           setParams(conentData.params);
-          setgetNewData();
+          setgetNewData()
         }
       });
     }
@@ -98,6 +100,14 @@ const ProjectDetail = observer((props) => {
         <div className={styles.contentContainer}>
           {!activeContent && (
             <Empty description='无数据源' className={styles.noData} />
+          )}
+          { activeContent&&activeData && activeData.schemaType  === 'Zabbix' && (
+            <Zabbix 
+            activeContent={activeContent}
+            activeData={activeData}
+            onChange={treeChange}
+            checkIndex={checkIndex}
+            />
           )}
           {activeData && activeData.schemaType === 'File' && (
             <File

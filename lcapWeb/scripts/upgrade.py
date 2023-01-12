@@ -41,7 +41,6 @@ class UpgradeLcapWeb(Core):
         self.check_dir(['base_dir'])
         app_path = self.install_args.get("base_dir")
         run_user = self.pub_para_install('run_user', 'tengine')
-        self.sys_cmd('chown -R {0}:{0} {1}'.format(run_user, app_path))
 
         # 替换占位符
         base_dir_path = self.install_args.get("base_dir")
@@ -58,12 +57,23 @@ class UpgradeLcapWeb(Core):
         self.replace(config_path, place_holder_config_script)
         self.replace(www_config_path, place_holder_config_script)
 
-        # 获取已备份lcapWeb下的服务
-        back_path = os.path.join(self.para.backup_path, "www/components/*")
-        target_path = os.path.join(app_path, "www/components")
+        # 恢复components
+        back_component_path = os.path.join(self.para.backup_path, "www/components/*")
+        target_component_path = os.path.join(app_path, "www/components")
+        self.sys_cmd("cp -rf {} {}/".format(back_component_path, target_component_path))
 
-        # 执行命令
-        self.sys_cmd("cp -rf {} {}/".format(back_path, target_path))
+        # 恢复applications
+        back_app_path = os.path.join(self.para.backup_path, "www/applications/*")
+        target_app_path = os.path.join(app_path, "www/applications")
+        self.sys_cmd("cp -rf {} {}/".format(back_app_path, target_app_path))
+
+        # 恢复componentGroup
+        back_com_group_path = os.path.join(self.para.backup_path, "www/componentGroup/*")
+        target_com_group_path = os.path.join(app_path, "www/componentGroup")
+        self.sys_cmd("cp -rf {} {}/".format(back_com_group_path, target_com_group_path))
+
+        self.sys_cmd('chown -R {0}:{0} {1}'.format(run_user, app_path))
+
         self.out("{} lcapWeb升级成功")
 
 

@@ -35,7 +35,10 @@ const ChooseDataSource = observer(({ value, onChange }) => {
       ? dataSourceList
       : dataSourceList.filter(
           (i) =>
-            i.datasourceName && i.datasourceName.indexOf(dataSourceQuery) !== -1
+            i.datasourceName &&
+            i.datasourceName
+              .toLocaleLowerCase()
+              .indexOf(dataSourceQuery.toLocaleLowerCase()) !== -1
         );
 
   return (

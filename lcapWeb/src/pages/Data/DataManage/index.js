@@ -8,17 +8,17 @@ import { formatDate } from '@/config/global';
 import { successCode } from "@/config/global";
 import styles from "./assets/style.less";
 import { FormattedMessage, useIntl } from "react-intl";
+import enums from '@/utils/enums.js';
 const AppProjectManage = observer((props) => {
   const intl = useIntl();
   const {
     getDataList,
-    setSearchParams, setCurPage,setpageSize,
-    deleteData,
-    setactiveData
+    setSearchParams, setCurPage,searchParams,
+    deleteData
+    
   } = store;
   const { total, pageNo, pageSize, DataList } =
     store;
-  let [checkFlag, setCheckFlag] = useState(false);
   const loading = loadingStore.loading["AppProjectManage/getDataList"];
   // 表格列表数据
   let basicTableListData = toJS(DataList);
@@ -49,6 +49,9 @@ const AppProjectManage = observer((props) => {
       title: "数据源类型",
       dataIndex: "schemaType",
       key: "schemaType",
+      render:(text)=> {
+        return enums[text];
+      },
     },
     {
       title: "数据库名称",
@@ -88,8 +91,8 @@ const AppProjectManage = observer((props) => {
                 <a
                   className={styles.projectAction}
                   onClick={() => {
-                    setactiveData(record);
-                    props.history.push('/data/change-data');
+                    props.history.push({pathname:`/data/${record.datasourceId}/change-data`
+                  });
                   }}
                 >
                   <FormattedMessage id="common.edit" defaultValue="编辑" />
@@ -99,7 +102,7 @@ const AppProjectManage = observer((props) => {
                     if (res.code === successCode) {
                       getDataList({},(res)=>{
                         if(res.data&&res.data.length==0&&res.pageNo!=0){
-                          getDataList({pageNo:0});
+                          getDataList({pageNo:1});
                         }
                       });
                       message.success(
@@ -147,24 +150,20 @@ const AppProjectManage = observer((props) => {
           })}
         />
       ),
+      formAttribute: { initialValue: searchParams.datasourceName || '' }
     },
   ];
   // 请求列表数据
   useEffect(() => {
     getDataList();
-    return () => {
-      setCurPage(0);
-      setSearchParams('');
-      setpageSize(10);
-    };
   }, []);
   // 分页、排序、筛选变化时触发
   const onPageChange = (curPage, pageSize) => {
-    getDataList({ pageNo: curPage - 1, pageSize });
+    getDataList({ pageNo: curPage , pageSize });
   };
   const onSearch = (params) => {
     setSearchParams(params);
-    setCurPage(0);
+    setCurPage(1);
     getDataList();
   };
 
@@ -178,7 +177,7 @@ const AppProjectManage = observer((props) => {
         pagination={{
           showTotal: true,
           total: Number(total),
-          current: pageNo + 1,
+          current: pageNo ,
           pageSize: pageSize,
           onChange: onPageChange,
           onShowSizeChange: onPageChange,
@@ -196,7 +195,6 @@ const AppProjectManage = observer((props) => {
                 type="primary"
                 key="create_project"
                 onClick={() => {
-                  setactiveData(null);
                   props.history.push('/data/new-data');
                 }}
               >
@@ -215,3 +213,4 @@ const AppProjectManage = observer((props) => {
   );
 });
 export default AppProjectManage;
+

@@ -40,7 +40,11 @@ const ChooseTable = observer(
       tableQuery == null || tableQuery === ''
         ? tableList
         : tableList.filter(
-            (i) => i.tableName && i.tableName.indexOf(tableQuery) !== -1
+            (i) =>
+              i.tableName &&
+              i.tableName
+                .toLocaleLowerCase()
+                .indexOf(tableQuery.toLocaleLowerCase()) !== -1
           );
 
     if (loading) {

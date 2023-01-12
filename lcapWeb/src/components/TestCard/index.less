@@ -28,7 +28,13 @@
       }
     }
   }
-
+  .enCardItemWrap{
+    ul{
+      li:nth-last-child(2),li:nth-last-child(1){
+        width: 70px !important;
+      }
+    }
+  }
   .mybtn {
     text-align: center;
     font-size: 12px;
@@ -78,7 +84,15 @@
     height: 24px;
     z-index: 1;
   }
-
+  .enTag {
+    position: absolute;
+    width: auto;
+    display: inline-block;
+    top: 20px;
+    left: 0;
+    height: 28px;
+    z-index: 1;
+  }
   .deleteTag {
     position: absolute;
     width: auto;
@@ -91,6 +105,9 @@
     left: -10px;
     z-index: 1;
     border-radius: 50%;
+    i{
+     margin-right: 1px !important; 
+    }
   }
 
   .closeTag {
@@ -225,7 +242,16 @@
     .ant-card-body {
       padding: 16px 16px 1px;
     }
-
+    .templateApp{
+      .ant-card-actions{
+        li:nth-last-child(2){
+          margin-left: 0px;
+        }
+        li:nth-last-child(3),li:nth-last-child(2){
+          width: 120px !important;
+        }
+      }
+    }
     .ant-card-actions{
       padding: 0 16px !important;
       border-top: none;

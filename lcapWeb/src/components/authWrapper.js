@@ -3,7 +3,7 @@
  * @Author: zhangzhiyong
  * @Date: 2022-02-10 16:35:07
  * @LastEditors: zhangzhiyong
- * @LastEditTime: 2022-07-15 10:58:24
+ * @LastEditTime: 2022-05-17 17:11:14
  */
 import React from 'react';
 import useAuth from '@/hooks/useAuth';
@@ -26,7 +26,7 @@ const authWrapper = (WrappedComponent) => {
     // 没有cookies跳转回首页
     if(status == 'noCookies') {
       if (!window.isInPortal) {
-        history.replace('/login');
+        // history.replace('/login');
       }
     }
 

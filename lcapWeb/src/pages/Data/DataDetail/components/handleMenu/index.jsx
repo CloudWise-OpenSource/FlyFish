@@ -1,6 +1,14 @@
 import React from 'react';
-import { Icon, Input, Popconfirm, message, Button, Tooltip } from '@chaoswise/ui';
-import { useState, useEffect } from 'react';
+
+import {
+  Icon,
+  Input,
+  Popconfirm,
+  message,
+  Button,
+  Tooltip,
+} from '@chaoswise/ui';
+import { useState, useEffect, useRef } from 'react';
 import styles from './style.less';
 import { observer, toJS } from '@chaoswise/cw-mobx';
 import _ from 'lodash';
@@ -8,9 +16,18 @@ import store from './model';
 import mainStore from '../../model';
 import FileStore from '../File/model';
 import { successCode } from '@/config/global';
+import enums from '@/utils/enums.js';
+import { PlusOutlined } from '@ant-design/icons';
 
 const HandleMenu = observer((props) => {
-  const { onChange, type, getTableList, activeContent, resetData, datasourceId } = props;
+  const {
+    onChange,
+    type,
+    getTableList,
+    activeContent,
+    resetData,
+    datasourceId,
+  } = props;
 
   const {
     treeList,
@@ -46,7 +63,8 @@ const HandleMenu = observer((props) => {
     }
     if (addCateName) {
       filterData = resetTreeList.filter(
-        (item) => item.tableName.toLowerCase().indexOf(addCateName.toLowerCase()) !== -1
+        (item) =>
+          item.tableName.toLowerCase().indexOf(addCateName.toLowerCase()) !== -1
       );
       if (filterData.length > 0) {
         data = filterData;
@@ -103,12 +121,13 @@ const HandleMenu = observer((props) => {
       },
       (data) => {
         if (data && data.length > 0) {
+          let checkOne = data.filter((item) => item.tableName === editName);
           getTableList(
             {
-              tableName: data[0].tableName,
-              schemaName: data[0].schemaName,
-              schemaType: data[0].schemaType,
-              datasourceId: data[0].datasourceId,
+              tableName: checkOne[0].tableName,
+              schemaName: checkOne[0].schemaName,
+              schemaType: checkOne[0].schemaType,
+              datasourceId: checkOne[0].datasourceId,
             },
             data[0].schemaType
           );
@@ -134,14 +153,14 @@ const HandleMenu = observer((props) => {
       <div className={styles.wrapContainer}>
         <div className={styles.inputContainer}>
           <Input
-            suffix={<Icon type="search" style={{ color: '#d9d9d9' }} />}
+            suffix={<Icon type='search' style={{ color: '#d9d9d9' }} />}
             style={{ width: '100%' }}
             allowClear
             value={addCateName}
             onChange={(e) => {
               setAddCateName(e.target.value);
             }}
-            placeholder="查找表格"
+            placeholder='查找表格'
           ></Input>
         </div>
         <div className={styles.treeContainer}>
@@ -165,9 +184,13 @@ const HandleMenu = observer((props) => {
                 return (
                   <div key={k + ''}>
                     <div
-                      className={styles.item + (checkIndex === k ? ' ' + styles.selected : '')}
+                      className={
+                        styles.item +
+                        (checkIndex === k ? ' ' + styles.selected : '')
+                      }
                       onClick={() => {
-                        setEditName(v.tableName), setCheckIndex(k), onChange(v.tableName);
+                        setEditName(v.tableName);
+                        setCheckIndex(k), onChange(v.tableName);
                       }}
                     >
                       {v.editing ? (
@@ -198,7 +221,12 @@ const HandleMenu = observer((props) => {
                                 datasourceId: activeData.datasourceId,
                                 tableId: treeList[k].tableId,
                                 tableName: editName,
-                                tableMeta: activeContent,
+                                tableMeta:
+                                  type === 'Zabbix'
+                                    ? {
+                                        ...activeContent.tableMeta,
+                                      }
+                                    : activeContent,
                               },
                               (res) => {
                                 if (res.code == successCode) {
@@ -213,13 +241,15 @@ const HandleMenu = observer((props) => {
                         ></Input>
                       ) : (
                         <Tooltip title={v.tableName}>
-                          <span className={styles.tableItemName}>{v.tableName}</span>
+                          <span className={styles.tableItemName}>
+                            {v.tableName}
+                          </span>
                         </Tooltip>
                       )}
                       {['File'].includes(type) && (
                         <div className={styles.iconContainer}>
                           <Icon
-                            type="edit"
+                            type='edit'
                             className={styles.editIcon}
                             onClick={(e) => {
                               e.stopPropagation();
@@ -227,13 +257,17 @@ const HandleMenu = observer((props) => {
                             }}
                           />
                           <a
-                            href={`${window.LCAP_CONFIG.javaApiDomain}/api/dataplateform/datatable/downloadTableFile?datasourceId=${v.datasourceId}&tableName=${v.tableName}`}
+                            href={`${window.FLYFISH_CONFIG.devServerPrefix}/datatable/downloadTableFile?datasourceId=${v.datasourceId}&tableName=${v.tableName}`}
                             onClick={(e) => e.stopPropagation()}
                           >
-                            <Icon type="download" className={styles.editIcon} onClick={(e) => e.stopPropagation()} />
+                            <Icon
+                              type='download'
+                              className={styles.editIcon}
+                              onClick={(e) => e.stopPropagation()}
+                            />
                           </a>
                           <Popconfirm
-                            title="确定删除吗?"
+                            title='确定删除吗?'
                             onClick={(e) => e.stopPropagation()}
                             onCancel={(e) => e.stopPropagation()}
                             onConfirm={async (e) => {
@@ -248,20 +282,22 @@ const HandleMenu = observer((props) => {
                                     message.success('删除成功!');
                                     reqTreeList();
                                   } else {
-                                    message.error(res.msg || '删除失败,请重试!');
+                                    message.error(
+                                      res.msg || '删除失败,请重试!'
+                                    );
                                   }
                                 }
                               );
                             }}
                           >
-                            <Icon type="delete" />
+                            <Icon type='delete' />
                           </Popconfirm>
                         </div>
                       )}
-                      {['HTTP', 'Redis'].includes(type) && (
+                      {['HTTP', 'Redis', 'Zabbix'].includes(type) && (
                         <div className={styles.iconContainer}>
                           <Icon
-                            type="edit"
+                            type='edit'
                             className={styles.editIcon}
                             onClick={(e) => {
                               e.stopPropagation();
@@ -270,6 +306,8 @@ const HandleMenu = observer((props) => {
                                 return olddata.map((v1, k1) => {
                                   if (k1 === k) {
                                     v1.editing = true;
+                                  } else {
+                                    v1.editing = false;
                                   }
                                   return v1;
                                 });
@@ -277,7 +315,7 @@ const HandleMenu = observer((props) => {
                             }}
                           />
                           <Popconfirm
-                            title="确定删除吗?"
+                            title='确定删除吗?'
                             onClick={(e) => e.stopPropagation()}
                             onCancel={(e) => e.stopPropagation()}
                             onConfirm={async (e) => {
@@ -292,13 +330,15 @@ const HandleMenu = observer((props) => {
                                     message.success('删除成功!');
                                     reqTreeList();
                                   } else {
-                                    message.error(res.msg || '删除失败,请重试!');
+                                    message.error(
+                                      res.msg || '删除失败,请重试!'
+                                    );
                                   }
                                 }
                               );
                             }}
                           >
-                            <Icon type="delete" />
+                            <Icon type='delete' />
                           </Popconfirm>
                         </div>
                       )}
@@ -316,12 +356,12 @@ const HandleMenu = observer((props) => {
                   setUploadVisiable(true);
                 }}
               >
-                <Icon type="plus" />
+                <Icon type='plus' />
                 新增表格
               </Button>
             </div>
           )}
-          {['HTTP', 'Redis'].includes(type) && (
+          {['HTTP', 'Redis', 'Zabbix'].includes(type) && (
             <>
               {!showInput && (
                 <div className={styles.btnContainer}>
@@ -332,7 +372,7 @@ const HandleMenu = observer((props) => {
                       setShowInput(true);
                     }}
                   >
-                    <Icon type="plus" />
+                    <Icon type='plus' />
                     新增表格
                   </Button>
                 </div>
@@ -344,7 +384,7 @@ const HandleMenu = observer((props) => {
                       setOutsideName(e.target.value);
                     }}
                     style={{ marginTop: '10px' }}
-                    placeholder="请输入表格名称"
+                    placeholder='请输入表格名称'
                     onBlur={() => {
                       setShowInput(false);
                     }}
@@ -375,10 +415,14 @@ const HandleMenu = observer((props) => {
                                   if (data && data.length > 0) {
                                     getTableList(
                                       {
-                                        tableName: data[data.length - 1].tableName,
-                                        schemaName: data[data.length - 1].schemaName,
-                                        schemaType: data[data.length - 1].schemaType,
-                                        datasourceId: data[data.length - 1].datasourceId,
+                                        tableName:
+                                          data[data.length - 1].tableName,
+                                        schemaName:
+                                          data[data.length - 1].schemaName,
+                                        schemaType:
+                                          data[data.length - 1].schemaType,
+                                        datasourceId:
+                                          data[data.length - 1].datasourceId,
                                       },
                                       activeData.schemaType
                                     );

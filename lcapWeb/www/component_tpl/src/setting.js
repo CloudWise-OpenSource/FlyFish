@@ -1,10 +1,7 @@
 'use strict';
 
-module.exports = (component_mark, version) => `
-'use strict';
-
 /**
- * @description 注册${component_mark}组件的设置面板
+ * @description 注册${componentId}组件的设置面板
  */
 import {
   registerComponentEvents,
@@ -15,6 +12,5 @@ import {
 // import DataSetting from "./settings/data";
 // import OptionsSetting from "./settings/options";
 
-// registerComponentOptionsSetting("${component_mark}", "${version}", OptionsSetting);
-// registerComponentDataSetting("${component_mark}", "${version}", DataSetting);
-`;
+// registerComponentOptionsSetting("${componentId}", "${componentVersion}", OptionsSetting);
+// registerComponentDataSetting("${componentId}", "${componentVersion}", DataSetting);

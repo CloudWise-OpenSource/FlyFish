@@ -55,17 +55,10 @@ const model = {
       if (res && res.data) {
         const data = res.data;
         this.setTreeData(data);
-        const first = toJS(data)[0];
-        if (first) {
-          this.setSelectedData({
-            category: first.id,
-            subCategory: ''
-          });
-        }
       }
     },
     *getListData(obj, state) {
-      let curPage = this.curPage - 1;
+      let curPage = this.curPage;
       const pageSize = this.pageSize;
       const { category, subCategory } = toJS(this.selectedData);
       const searchName = this.searchName;
@@ -89,11 +82,12 @@ const model = {
     *getLibraryListData(options, state) {
       const { category, subCategory } = toJS(this.selectedData);
       const params = {
+        isLib: true,
         type: 'project',
         category: category,
         subCategory: subCategory === '' ? undefined : subCategory,
         pageSize: 20,
-        curPage: this.libraryLisCurPage-1,
+        curPage: this.libraryLisCurPage,
         ...options,
         ...this.libraryOptions
       };

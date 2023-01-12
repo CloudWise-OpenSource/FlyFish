@@ -1,5 +1,5 @@
-import React from "react";
-import styles from "./style.less";
+import React from 'react';
+import styles from './style.less';
 
 export default function ComponentCover({ link, onClick, width }) {
   return (
@@ -7,9 +7,9 @@ export default function ComponentCover({ link, onClick, width }) {
       <img
         className={styles.ComponentCover}
         src={
-          window.LCAP_CONFIG.snapshotAddress +
+          window.FLYFISH_CONFIG.snapshotAddress +
           link +
-          `?t=${parseInt(new Date().getTime() / 10000)}`
+          `?t=${new Date().getTime()}`
         }
         width={width}
         onClick={() => {

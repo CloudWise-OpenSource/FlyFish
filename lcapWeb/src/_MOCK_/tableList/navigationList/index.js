@@ -27,7 +27,7 @@ mockInstance.onGet("/get/navigationtablelist", {
 
   totalNum = filterData.length;
   // 根据分页截取过滤后的数据
-  resultData = filterData.slice((curPage - 1) * pageSize, curPage * pageSize);
+  resultData = filterData.slice((curPage) * pageSize, curPage * pageSize);
 
   return [200, {
     data: resultData,

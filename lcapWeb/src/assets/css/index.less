@@ -44,7 +44,31 @@
         align-items: center;
         height: calc(100vh - 321px)
     }
-
+    .ant-popover .ant-popover-content .ant-popover-inner-content{
+        // padding: 10px !important;
+        .link-content{
+            width: 221px;
+            span{
+                display: -webkit-box;
+                width: 200px;
+                margin-bottom: 0px;
+                overflow: hidden;
+                word-break: break-all;
+                text-overflow: ellipsis;
+                -webkit-box-orient: vertical;
+                -webkit-line-clamp: 2;
+            }
+            a{
+                position: absolute;
+                top: 28px;
+                right: 10px;
+            }
+        }
+        
+    }
+    .ant-select-tree-node-content-wrapper span{
+        color: #000 !important;
+    }
     .ant-modal-body {
         padding: 24px 24px 0 !important;
     }
@@ -208,75 +232,6 @@
         }
     }
 
-    // @media screen and (max-width: 1310px) {
-    //     #scrollableDiv .ant-card-actions > li:not(:last-child){
-    //         margin-right: 2px !important;
-    //       }
-    //       #scrollableDiv  .ant-card-actions{
-    //         padding-right: 8px !important;
-    //     }
-    //     .ant-card-actions{
-    //         padding-right: 6px !important;
-    //     }
-    //       .ant-card-actions > li:not(:last-child){
-    //         margin-right: 4px !important;
-    //       }
-    // }
-    // @media screen and (min-width: 1311px)and(max-width: 1350px) {
-    //     .ant-card-actions{
-    //         padding-right: 6px !important;
-    //     }
-    //       .ant-card-actions > li:not(:last-child){
-    //         margin-right: 4px !important;
-    //       }
-
-    //     #scrollableDiv .ant-card-actions > li:not(:last-child){
-    //         margin-right: 2px !important;
-    //       }
-
-    // }
-    // @media screen and (min-width: 1351px)and(max-width: 1400px) {
-
-    //     #scrollableDiv  .ant-card-actions{
-    //         justify-content: right;
-    //         padding-left: 8px !important;
-    //     }
-    //     #scrollableDiv .ant-card-actions > li:not(:last-child){
-    //         margin-right: 4px !important;
-    //       }
-    //     .titleOverflowContainer:first-child{
-    //         margin-right: 8px;
-    //       }
-    //       .ant-card-actions{
-    //         padding-right: 8px !important;
-    //     }
-    //     //   .ant-card-actions > li:not(:last-child){
-    //     //     margin-right: 6px !important;
-    //     //   }
-    // }
-    // @media screen and (min-width: 1401px)and(max-width: 1472px) {
-    //     #scrollableDiv  .ant-card-actions{
-    //         justify-content: right;
-    //         padding-left: 8px !important;
-    //     }
-    //     #scrollableDiv .ant-card-actions > li:not(:last-child){
-    //         margin-right: 4px !important;
-    //       }
-    //     .ant-card-actions{
-    //         padding:0  6px !important;
-    //     }
-    //     //   .ant-card-actions > li:not(:last-child){
-    //     //     margin-right: 6px !important;
-    //     //   }
-    // }
-    // @media screen and (min-width: 1473px)and (max-width:1600px) {
-    //     #scrollableDiv  .ant-card-actions{
-    //         padding-left: 16px !important;
-    //     }
-    //     #scrollableDiv .ant-card-actions > li:not(:last-child){
-    //         margin-right: 8px !important;
-    //       }
-    // }
     .ant-menu-dark>.ant-menu-item {
         padding: 0 10px !important;
     }
@@ -319,7 +274,112 @@
         display: none !important;
     }
 
-    .ant-table-tbody > tr > td{
+    .ant-table-tbody>tr>td {
         border-bottom: 1px solid rgba(232, 232, 232, 0.91) !important;
     }
+
+    .myTree .cw-tree-location-box .cw-tree-drag .cw-tree .ant-tree-node-content-wrapper .ant-tree-title .cw-tree-treenode-content .cw-tree-treenode-title {
+        width: 280px !important;
+    }
+    .schema-form-object-description{
+        margin-left:8px
+    }
+
+
+    .schema-form-number-input{
+        width: 100%;
+    }
+
+    .schema-form-array-deleteAll{
+        margin-left: 8px;
+    }
+
+    .schema-form-select-type{
+        display: inline-block;
+        width: 100px;
+        margin-left: 10px;
+    }
+
+    .schema-form-label-box{
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+    }
+    .schema-form-label-title{
+        display: inline-block;
+    }
+
+    .ant-table-footer{
+        display: flex;
+    }
+
+    .ant-collapse-item .anticon{
+        margin-right: 8px;
+    }
+
+    .ant-typography{
+        display: inline-block;
+    }
+
+    .custom-collapse{
+        display: flex;
+        padding: 6px 16px;
+        align-items: center;
+    }
+
+    .schema-form-label-title .ant-typography{
+        margin-bottom: 0;
+    }
+
+    .custom-collapse-box{
+        padding: 16px;
+    }
+
+
+    .ant-calendar-picker{
+        width: 100%;
+    }
+    .schema-form-array-property-object-content-table .ant-form-item {
+        margin-bottom: 0;
+    }
+    .schema-form-array-property-object-content-table .ant-form-item .ant-form-item-label {
+        display: none;
+    }
+    .schema-form-array-property-object-content-table-action .ant-btn {
+        margin-right: 10px;
+    }
+    .schema-form-array-property-content-action {
+        margin-top: 15px;
+        text-align: left;
+    }
+    .schema-form-array-property-content-action .ant-btn {
+        margin-right: 10px;
+    }
+
+    .schema-form-array-property-content-item {
+        border: 1px solid #e8e8e8;
+        padding: 15px;
+        margin-bottom: 10px;
+    }
+
+    .schema-form-array-property-content-item:last-child {
+        margin-bottom: 0px;
+    }
+
+    .schema-form-array-property-object-content-item-action {
+        text-align: left;
+    }
+
+    .schema-form-array-property-object-content-item-action .ant-btn {
+        margin-right: 10px;
+    }
+        
+    .exportNewIcon{
+      margin-top: 6px;
+      background: url('/src/assets/images/export.png') no-repeat ;
+      background-size: 12px 12px;
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+  }
 }

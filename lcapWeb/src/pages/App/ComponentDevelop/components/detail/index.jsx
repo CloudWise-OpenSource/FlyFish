@@ -255,53 +255,16 @@ const Detail = observer(() => {
     annotationValue: '', //注释
     codeValue: '', //代码示例文本
     options: [
-      {
-        name: 'name',
-        desc: '柱状图',
-        type: 'string',
-        defaultValue: '-',
-      },
+      
     ],
     optionsChilds: [
-      {
-        name: 'children',
-        datas: [
-          {
-            name: 'name',
-            desc: '柱状图',
-            type: 'string',
-            defaultValue: '-',
-            parentName: '',
-          },
-        ],
-      },
-      {
-        name: 'children',
-        datas: [
-          {
-            name: 'name',
-            desc: '柱状图',
-            type: 'string',
-            defaultValue: '-',
-          },
-        ],
-      },
+      
     ],
     events: [
-      {
-        name: 'name',
-        desc: '柱状图',
-        type: 'string',
-        defaultValue: '-',
-      },
+      
     ],
     listeners: [
-      {
-        name: 'name',
-        desc: '柱状图',
-        type: 'string',
-        defaultValue: '-',
-      },
+      
     ],
     markValue: '', //markdown文本
   });
@@ -399,16 +362,16 @@ const Detail = observer(() => {
                   })
                 : ''}
             </div>
-            <div>
-              <label style={{ fontWeight: 800 }}>标签：</label>
+            <div style={{display:'flex',flexWrap:'wrap'}}>
+              <div style={{ fontWeight: 800 }}>标签：</div>
               {detailData.tags
                 ? detailData.tags.map((v, k) => {
                     return (
-                      <span key={v.id}>
+                      <div key={v.id}>
                         {k === detailData.tags.length - 1
                           ? v.name
                           : v.name + ','}
-                      </span>
+                      </div>
                     );
                   })
                 : ''}
@@ -441,14 +404,17 @@ const Detail = observer(() => {
             <div style={{ padding: '0 0 16px 0', fontWeight: 800 }}>
               组件变更记录
             </div>
-            <CWTable
+            {
+              detailShow?
+              <CWTable
               columns={recordColumns}
               dataSource={detailData.versions}
               bordered
               pagination={false}
               footer={null}
               rowKey='no'
-            />
+            />:null
+            }
           </div>
           <div className={styles.dataWrap}>
             <div style={{ fontWeight: 800, margin: '16px 0' }}>数据格式</div>

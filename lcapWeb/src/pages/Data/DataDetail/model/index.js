@@ -15,7 +15,7 @@ const model = {
     activeContent: {}, //右侧contain值
     endTableData: [],// 底部给后端的
     headerArr: [],
-    getNewData:false,
+    getNewData: false,
     paramsArr: [],
     tableId: '' //表id
 
@@ -44,8 +44,8 @@ const model = {
 
   },
   reducers: {
-    setgetNewData(){
-      this.getNewData=false;
+    setgetNewData() {
+      this.getNewData = false
     },
     resetBottomTable() {
       this.bottomTable = [];
@@ -68,7 +68,7 @@ const model = {
       this.activeContent = null;
       this.headerArr = [];
       this.paramsArr = [];
-      this.getNewData=true;
+      this.getNewData = true
     },
     setTableList(res, type) {
       if (!res.data) {
@@ -78,7 +78,7 @@ const model = {
         this.headerArr = [],
           this.paramsArr = [];
       }
-      if (type !== 'HTTP' && type !== 'Redis') {
+      if (type !== 'HTTP' && type !== 'Redis'&& type !== 'Zabbix') {
         if (res.data) {
           let { fields = {}, exampleData = {} } = res.data;
           let tableTop = [];
@@ -106,6 +106,8 @@ const model = {
             ...tableMeta
           };
         }
+      } else if (type == 'Zabbix') {
+        this.activeContent=res.data
       } else {
         let { tableMeta = {}, tableId = '' } = res.data;
         this.tableId = tableId;

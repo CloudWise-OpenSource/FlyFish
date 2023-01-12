@@ -77,7 +77,7 @@ const ImportComponent = observer((props)=>{
     let selectedArr = []
     let slectedIdArr = []
     centerListData.forEach((item)=>{
-      if(item.developStatus==='online' && !(item.from && item.from==='lcap-init')){
+      if(item.developStatus==='online' && !(item.accountId && item.accountId===-1)){
         selectedArr.push(item)
         slectedIdArr.push(item.id)
       }
@@ -152,7 +152,7 @@ const ImportComponent = observer((props)=>{
     setCenterListData(_.cloneDeep(toJS(listData)))
     let count = 0
     listData.forEach(item=>{
-      if(item.developStatus==='online' && !(item.from && item.from==='lcap-init')){
+      if(item.developStatus==='online' && !(item.accountId && item.accountId===-1)){
         count += 1
       }
     })
@@ -261,7 +261,7 @@ const ImportComponent = observer((props)=>{
                         onChange={checkState}
                         className={styles.checkBoxStyle}
                         title={item.name}
-                        disabled={(item.developStatus==='online' && !(item.from && item.from==='lcap-init'))?false:true}
+                        disabled={(item.developStatus==='online' && !(item.accountId && item.accountId===-1))?false:true}
                       >{item.name}</Checkbox>
                     </Col>)
                 })}

@@ -1,0 +1,52 @@
+.componentParamsModal {
+    .infoContent {
+        margin-bottom: 10px;
+
+        .info {
+            &>p {
+                margin-bottom: 0px;
+                line-height: 22px;
+                font-size: 14px;
+            }
+
+            .infoBlob {
+                font-weight: 600;
+            }
+        }
+    }
+
+    .content {
+        .paramTypeContent {
+            display: flex;
+
+            :global {
+
+                .ant-select,
+                .ant-input {
+                    width: calc(50% - 15px);
+                    margin-right: 15px;
+                }
+            }
+        }
+    }
+
+    .actionContent {
+        margin-top: 10px;
+
+        .action {
+            width: 100%;
+            border: 1px dotted #CCC;
+            text-align: center;
+            line-height: 24px;
+            cursor: pointer;
+
+            .actionIcon {
+                margin-right: 5px;
+            }
+
+            &:hover {
+                background-color: rgba(0, 0, 0, 0.02);
+            }
+        }
+    }
+}

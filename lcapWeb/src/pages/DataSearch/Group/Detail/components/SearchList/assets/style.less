@@ -1,0 +1,43 @@
+.searchListWrap {
+    .searchList {
+        display: flex;
+        flex-wrap: wrap;
+
+        .searchItem {
+            width: 273px;
+            position: relative;
+            padding: 8px;
+            margin-right: 10px;
+            margin-bottom: 8px;
+            background-color: rgba(0, 0, 0, 0.02);
+
+            .required {
+                margin-right: 2px;
+                font-size: 12px;
+                color: #F5222D;
+            }
+
+            .label {
+                display: inline-block;
+                width: 48px;
+                color: rgba(0,0,0,0.65);
+            }
+
+            .actionWrap {
+                position: absolute;
+                right: 8px;
+                top: 50%;
+                transform: translateY(-50%);
+
+                .action {
+                    cursor: pointer;
+                    font-size: 14px;
+
+                    :hover {
+                        color: red;
+                    }
+                }
+            }
+        }
+    }
+}

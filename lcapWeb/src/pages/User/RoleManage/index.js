@@ -123,7 +123,7 @@ const RoleList = observer(() => {
                     );
                     closeEditRoleModal();
                     getUserList({
-                      curPage: 0,
+                      curPage: 1,
                     });
                     getRoleMenu();
                   } else {
@@ -180,12 +180,12 @@ const RoleList = observer(() => {
   }, []);
   // 分页、排序、筛选变化时触发
   const onPageChange = (curPage, pageSize) => {
-    getUserList({ curPage: curPage - 1, pageSize });
+    getUserList({ curPage: curPage, pageSize });
   };
   const onSearch = (params) => {
     setSearchParams(params);
     getUserList({
-      curPage: 0,
+      curPage: 1,
       pageSize: 10
     });
   };
@@ -200,7 +200,7 @@ const RoleList = observer(() => {
         pagination={{
           showTotal: true,
           total: total,
-          current: current + 1,
+          current: current,
           pageSize: pageSize,
           defaultPageSize: 10,
           onChange: onPageChange,
@@ -245,7 +245,7 @@ const RoleList = observer(() => {
                 );
                 closeEditRoleModal();
                 getUserList({
-                  curPage: 0,
+                  curPage: 1,
                 });
               } else {
                 message.error(
@@ -268,7 +268,7 @@ const RoleList = observer(() => {
                 );
                 closeEditRoleModal();
                 getUserList({
-                  curPage: 0,
+                  curPage: 1,
                 });
                 getRoleMenu();
               } else {
@@ -303,7 +303,7 @@ const RoleList = observer(() => {
                 );
                 closeRoleModal();
                 getUserList({
-                  curPage: 0,
+                  curPage: 1,
                 });
               } else {
                 message.error(
@@ -338,7 +338,7 @@ const RoleList = observer(() => {
                 );
                 closeRoleJurisdictionModal();
                 getUserList({
-                  curPage: 0,
+                  curPage: 1,
                 });
               } else {
                 message.error(

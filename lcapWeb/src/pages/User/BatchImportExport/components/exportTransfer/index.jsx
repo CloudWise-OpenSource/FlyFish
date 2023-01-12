@@ -28,7 +28,7 @@ const ExportTransfer = observer((props)=>{
   useEffect(()=>{
     setComponentOrApp('component')
     setExportCheckboxData(['componentRelease'])
-    setExportRadioData('appOnly')
+    setExportRadioData('appAndComponent')
     setSelectedComponents([])
     setSelectedApp([])
   },[])

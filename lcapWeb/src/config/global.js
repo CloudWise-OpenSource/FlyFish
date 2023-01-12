@@ -97,12 +97,12 @@ export const formatDateNoTime = (datetime) => {
 
 export const componentCoverTypeMapping = {
   system: {
-    id: 1,
+    id: 'auto',
     key: "system",
     name: "系统生成",
   },
   manualUpload: {
-    id: 2,
+    id: 'custom',
     key: "manualUpload",
     name: "手动上传",
   },

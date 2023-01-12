@@ -1,0 +1,54 @@
+.componentChooseIcon {
+    display: flex;
+
+    .chooseIconWrap {
+        flex: 1;
+        padding: 15px 5px 5px 15px;
+        background-color: rgba(0, 0, 0, 0.06);
+
+        .iconList {
+            display: flex;
+            flex-wrap: wrap;
+
+            .iconItem {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 25px;
+                height: 25px;
+                margin-bottom: 10px;
+                margin-right: 6px;
+                border: 1px solid #CCC;
+                background-color: #FFF;
+                cursor: pointer;
+
+                &.iconItemActive,
+                &:hover {
+                    border-color: #1890ff;
+                }
+            }
+        }
+    }
+
+    .iconProviewWrap {
+        width: 85px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .iconProview {
+            padding-top: 20px;
+            width: 100%;
+            text-align: center;
+
+            .iconProviewIcon {
+                font-size: 60px;
+            }
+
+            .iconProviewText {
+                margin-top: 15px;
+                color: #AAA;
+            }
+        }
+    }
+}

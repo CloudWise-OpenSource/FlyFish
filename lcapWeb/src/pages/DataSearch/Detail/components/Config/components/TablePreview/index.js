@@ -26,7 +26,7 @@ class TablePreview extends Component {
         key: key,
         width: 200,
         render: (text) => {
-          if (!text) {
+          if (text == null || text === '') {
             return '';
           }
           let showText = '';

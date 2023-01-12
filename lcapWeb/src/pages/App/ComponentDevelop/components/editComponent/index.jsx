@@ -44,8 +44,8 @@ const EditComponent = observer((props) => {
     tagsData,
     projectsData,
   } = store;
-  const { userInfo={} } = globalStore;
-  const { iuser={} } = userInfo;
+  const { userInfo = {} } = globalStore;
+  const { iuser = {} } = userInfo;
   const handleSubmit = (e) => {
     e.preventDefault();
     validateFields(async (err, values) => {
@@ -54,17 +54,12 @@ const EditComponent = observer((props) => {
         values.category = cateData.one;
         values.subCategory = cateData.two;
         if (values.automaticCover !== componentCoverTypeMapping.system.id) {
-          values.componentCover = values.componentCover
-            ? values.componentCover[0].url
-            : null;
+          values.componentCover =
+            values.componentCover && values.componentCover.length > 0
+              ? values.componentCover[0].url
+              : '';
         } else {
-          values.componentCover = null;
-        }
-        if (
-          values.componentCover === editData.cover ||
-          values.componentCover == null
-        ) {
-          delete values.componentCover;
+          values.componentCover = '';
         }
         if (values.tags) {
           values.tags = values.tags.map((item) => ({ name: item }));
@@ -104,8 +99,8 @@ const EditComponent = observer((props) => {
             },
             {
               pattern: /^[^\s]*$/,
-              message: "请输入正确的组件名称！"
-            }
+              message: '请输入正确的组件名称！',
+            },
           ],
         })(<Input />)}
       </Form.Item>
@@ -224,17 +219,10 @@ const EditComponent = observer((props) => {
       </Form.Item>
       <Form.Item
         label='封面设置'
-        style={
-          getFieldValue('automaticCover') ==
-          componentCoverTypeMapping.manualUpload.id
-            ? { marginBottom: '10px' }
-            : {}
-        }
+        style={{ marginBottom: '10px', display: 'none' }}
       >
         {getFieldDecorator('automaticCover', {
-          initialValue: editData.automaticCover
-            ? editData.automaticCover
-            : componentCoverTypeMapping.system.id,
+          initialValue: componentCoverTypeMapping.manualUpload.id,
           rules: [
             {
               required: true,
@@ -255,7 +243,7 @@ const EditComponent = observer((props) => {
       </Form.Item>
       {getFieldValue('automaticCover') ==
       componentCoverTypeMapping.manualUpload.id ? (
-        <Form.Item wrapperCol={{ offset: 4 }} style={{ marginBottom: '10px' }}>
+        <Form.Item label='封面设置' style={{ marginBottom: '10px' }}>
           <p className={styles.uploadImgInfo}>
             图片格式：JPG/JPEG/PNG格式，仅支持长宽等比例图片，建议大小200px*112px
           </p>
@@ -270,16 +258,11 @@ const EditComponent = observer((props) => {
                       status: 'done',
                       url: editData.cover,
                       thumbUrl:
-                        window.LCAP_CONFIG.snapshotAddress + editData.cover,
+                        window.FLYFISH_CONFIG.snapshotAddress + editData.cover,
                     },
                   ]
                 : [],
-            rules: [
-              {
-                required: true,
-                message: '请上传组件封面！',
-              },
-            ],
+            rules: [],
             valuePropName: 'fileList',
             getValueFromEvent: (e) => {
               if (Array.isArray(e)) {
@@ -291,16 +274,16 @@ const EditComponent = observer((props) => {
             <Upload
               accept='.jpg,.jpeg,.png'
               className={styles.uploadComponentImg}
-              action={API.UPLOAD_COMPONENT_COVER}
+              action={API.UPLOAD_COMPONENT_COVER + `&destPath=${editData.id}`}
               listType='picture-card'
               onChange={({ file, fileList }) => {
                 if (file.status === 'done') {
                   file.url = JSON.parse(file.xhr.response).data;
                   file.thumbUrl =
-                    window.LCAP_CONFIG.snapshotAddress + '/' + file.url;
+                    window.FLYFISH_CONFIG.snapshotAddress + '/' + file.url;
                   fileList[0].url = file.url;
                   fileList[0].thumbUrl =
-                    window.LCAP_CONFIG.snapshotAddress + '/' + file.url;
+                    window.FLYFISH_CONFIG.snapshotAddress + '/' + file.url;
                   setTimeout(() => {
                     setFieldsValue({
                       componentCover: fileList,
@@ -338,7 +321,7 @@ const EditComponent = observer((props) => {
           initialValue: editData.tags.map((item) => item.name),
           rules: [],
         })(
-          <Select mode='tags'>
+          <Select mode='tags' maxTagTextLength={20}>
             {tagsData.map((v, k) => {
               return (
                 <Option value={v.name} key={v.id}>
@@ -363,7 +346,13 @@ const EditComponent = observer((props) => {
         {getFieldDecorator('desc', {
           initialValue: editData.desc,
           rules: [],
-        })(<TextArea rows={4} />)}
+        })(
+          <TextArea
+            maxLength={100}
+            showCount={true}
+            style={{ width: '100%' }}
+          />
+        )}
       </Form.Item>
       <div className={styles.btnWrap}>
         <Button type='primary' htmlType='submit'>

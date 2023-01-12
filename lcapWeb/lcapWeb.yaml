@@ -3,12 +3,12 @@ kind: service
 # 服务在平台显示的名称，请与服务目录名称保持一致，建议字符：英文、数字、_ （类型：string）
 name: lcapWeb
 # 上传后显示的服务版本，建议字符： 数字、字母、_ 、. （类型：string）
-version: 1.3.0
+version: 1.5.0
 product:
   # 产品名称 （类型: string)
   name: lcap
   # 产品版本 （类型: string)
-  version: 5.5.0
+  version: 5.7.0
 # 指定该服务安装后是否需要启动 （类型：boolean)
 auto_launch: false
 # 指定服务是否为基础环境组件，如 jdk, 该类组件以基础环境方式安装 （类型：boolean)
@@ -31,7 +31,7 @@ affinity: tengine
 # 定义该组件安装所需依赖组件名称与版本,如不需其他组件依赖，可留空 （类型： list[map,map..])
 dependencies:
   - name: tengine
-    version: 1.20.1
+    version: 1.23.2
 # 该组件所需最小资源需求 （类型：map)
 resources:
 

@@ -3,7 +3,7 @@
  * @Author: zhangzhiyong
  * @Date: 2021-11-10 19:08:41
  * @LastEditors: zhangzhiyong
- * @LastEditTime: 2022-06-21 15:57:08
+ * @LastEditTime: 2022-01-06 11:41:51
  */
 import { fetchGet, fetchPost,fetchPut,fetchDelete } from "@/utils/request";
 import API from "@/services/api/component";
@@ -43,4 +43,7 @@ export const changeAssembly = (id,param) => {
 export const assemblyDetail=(id)=>{
   return fetchGet(API.DELETE_ASSEMBLY+id);
 
+};
+export const getUserInfoService = ()=>{
+  return fetchGet(API.GET_USERINFO);
 };

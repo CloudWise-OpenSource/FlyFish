@@ -1,20 +1,22 @@
 {
 	"name": "lcap",
 	"packageName": "lcapWeb",
-	"version": "2.0.0",
+	"version": "1.5.0",
 	"private": true,
 	"dependencies": {
 		"@byte-power/json-press": "^1.0.22",
-		"@chaoswise/cw-mobx": "^0.0.13",
-		"@chaoswise/request": "^0.0.23",
-		"@chaoswise/scaffold": "0.0.68",
-		"@chaoswise/ui": "0.0.144",
-		"@chaoswise/utils": "^0.0.26",
+		"@chaoswise/cw-mobx": "0.0.15",
+		"@chaoswise/request": "0.0.31",
+		"@chaoswise/scaffold": "0.0.77",
+		"@chaoswise/ui": "0.0.155",
+		"@chaoswise/utils": "0.0.29",
 		"@json-editor/json-editor": "^2.6.1",
-		"jsoneditor": "^9.7.4",
 		"JSONPath": "^0.11.2",
+		"diff2html": "^3.4.13",
+		"jsoneditor": "^9.7.4",
 		"moment": "^2.29.1",
 		"react": "^16.14.0",
+		"react-collapsed": "3.3.2",
 		"react-copy-to-clipboard": "^5.1.0",
 		"react-dom": "^16.14.0",
 		"react-infinite-scroll-component": "^6.1.0",
@@ -40,5 +42,8 @@
 		">0.2%",
 		"not dead",
 		"not op_mini all"
-	]
+	],
+	"devDependencies": {
+		"terser-webpack-plugin": "5.3.6"
+	}
 }

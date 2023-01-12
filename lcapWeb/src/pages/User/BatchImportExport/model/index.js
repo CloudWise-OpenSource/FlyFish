@@ -19,7 +19,7 @@ const model = {
     selectedComponents: [], //导出资源配置页签选中组件
     selectedApp: [], //导出资源配置页签选中应用
     exportCheckboxData: ['componentRelease'], //导出配置checkbox选中配置数组
-    exportRadioData: 'appOnly', //导出配置radio选中配置数组
+    exportRadioData: 'appAndComponent', //导出配置radio选中配置数组
     uploadSuccess: false, //文件上传成功
     importSelectedNum: 0, //导入配置列表选中项数量，用于导入配置底部展示和点击导入时的判断
     projectsData: [], //导入配置所属项目数据
@@ -35,9 +35,9 @@ const model = {
     importSuccess: false, //是否导入成功
     importSourceList: [], //导入失败列表数据
     isAppHasComponent: false,//导入应用下是否有组件
-    previouStepFlag:true,//导入应用时展示列表判断
-    comsInAppTableData:[],//导入应用下有组件时组件列表数据
-    importFailedMsg:''
+    previouStepFlag: true,//导入应用时展示列表判断
+    comsInAppTableData: [],//导入应用下有组件时组件列表数据
+    importFailedMsg: ''
   },
   effects: {
     //获取导入组件或应用解压后数据
@@ -46,51 +46,57 @@ const model = {
         key: this.uploadFileName,
       };
       const res = yield getImportConfigService(options);
-      if(res.code === 0){
+      if (res.code === 0) {
         if (res.data.type === 'component') {
-          res.data.components.map((item,index) => {
+          res.data.components.map((item, index) => {
             item.versionFlag = '';
             item.versionValidateMes = '';
-            item.versionEdit = false;
+            item.resetVersion=item.version
+            item.versionEdit = false
             item.key = index;
-            if(!(item.update && item.type === 'project' && !item.projects && !item.projectsName)){
+            if (item.update && item.type === 'project' && (!(item.projects && item.projects.length > 0) || !(item.projectsName && item.projectsName.length > 0))) {
+              item.type = 'common'
               item.projects = [];
               item.projectsName = [];
             }
-            if(!item.update){
-              item.type = 'common';
+            if (!item.update) {
+              item.type = 'common'
               item.projects = [];
               item.projectsName = [];
             }
-            if(item.subCategory == null || !item.updata){
-              item.category = '19700101';
-              item.categoryName = '待分类';
-              item.subCategory = '197001010';
+            if (item.subCategory == null || !item.update) {
+              item.category = '1564525415961214975';
+              item.categoryName = '未分类';
+              item.subCategory = '1564525861660540928';
+              item.subCategoryName = '未分类'
             }
           });
           this.setImportTableData(res.data.components);
           this.setIsComponent(true);
         } else {
-          res.data.applications.map((appItem,index1) => {
-            if(appItem.components != null){
-              appItem.components.map((comItem,index2) => {
+          res.data.applications.map((appItem, index1) => {
+            if (appItem.components != null) {
+              appItem.components.map((comItem, index2) => {
                 comItem.versionFlag = '';
                 comItem.versionValidateMes = '';
-                comItem.versionEdit = false;
+                comItem.resetVersion=comItem.version
+                comItem.versionEdit = false
                 comItem.key = appItem.id + comItem.id;
-                if(!(comItem.update && comItem.type === 'project' && !comItem.projects && !comItem.projectsName)){
+                if (comItem.update && comItem.type === 'project' && (!(comItem.projects && comItem.projects.length > 0) || !(comItem.projectsName && comItem.projectsName.length > 0))) {
+                  comItem.type = 'common'
                   comItem.projects = [];
                   comItem.projectsName = [];
                 }
-                if(!comItem.update){
-                  comItem.type = 'common';
+                if (!comItem.update) {
+                  comItem.type = 'common'
                   comItem.projects = [];
                   comItem.projectsName = [];
                 }
-                if(comItem.subCategory == null || !comItem.updata){
-                  comItem.category = '19700101';
-                  comItem.categoryName = '待分类';
-                  comItem.subCategory = '197001010';
+                if (comItem.subCategory == null || !comItem.update) {
+                  comItem.category = '1564525415961214975';
+                  comItem.categoryName = '未分类';
+                  comItem.subCategory = '1564525861660540928';
+                  comItem.subCategoryName = '未分类'
                 }
               });
             }
@@ -98,7 +104,7 @@ const model = {
           this.setImportTableData(res.data.applications);
           this.setIsComponent(false);
           res.data.applications.forEach(item => {
-            if(item.components !== null){
+            if (item.components !== null) {
               this.setIsAppHasComponent(true);
             }
           });
@@ -134,7 +140,7 @@ const model = {
     *getListData(params = {}) {
       const param = {
         subCategory: params.subCategory,
-        pageSize:params.pageSize,
+        pageSize: params.pageSize,
       };
       const res = yield getListDataService(param);
       this.setListData(res.data.list);
@@ -166,38 +172,102 @@ const model = {
       }
       const res = yield importComOrAppService(param);
       this.setImportSuccess(res.msg);
-      if(res.data){
-        if ( res.data.type === 'component' && res.data.componentImportFailed.length > 0 ) {
+      if (res.data) {
+        if (res.data.type === 'component' && res.data.componentImportFailed.length > 0) {
           this.setImportSourceList(res.data.componentImportFailed);
-        } else if ( res.data.type === 'application' && res.data.applicationImportFailed.length > 0 ) {
+        } else if (res.data.type === 'application' && res.data.applicationImportFailed.length > 0) {
           this.setImportSourceList(res.data.applicationImportFailed);
         }
       } else {
-        this.setImportFailedMsg(res.msg);
+        this.setImportFailedMsg(res.msg)
       }
     },
     *getVersionValidate(params) {
       let param = {};
       param = {
-        id:params.id,
-        version:params.version
+        id: params.id,
+        version: params.version
       };
+
+      let splitArr = params.version.split('.')
+      let exp = /^[+-]?\d*(\.\d*)?(e[+-]?\d+)?$/
+      if (params.version.length < 6 || splitArr.length != 3 || !['v', 'V'].includes(params.version[0]) ||
+        !exp.test(splitArr[1]) || !exp.test(splitArr[2] || !splitArr[2])) {
+        let newData = _.cloneDeep(toJS(this.importTableData))
+        let newComsInAppTableData = _.cloneDeep(toJS(this.comsInAppTableData))
+        if (this.isComponent) {
+          let newData = _.cloneDeep(toJS(this.importTableData));
+          newData.forEach(item => {
+            if (item.id === param.id) {
+              item.versionFlag = 'error';
+              item.version = params.version
+              item.versionValidateMes = '请输入正确的组件版本格式！如:v1.0.0'
+            }
+          });
+          this.setImportTableData(newData);
+          if (this.selectedRows.some(item => item.id === param.id)) {
+            let selectedRowsCopy = _.cloneDeep(toJS(this.selectedRows));
+            selectedRowsCopy.forEach(item => {
+              if (item.id === param.id) {
+                item.version =params.version
+                item.versionFlag = 'error';
+                item.versionValidateMes = '请输入正确的组件版本格式！如:v1.0.0'
+              }
+            });
+            this.setSelectedRows(selectedRowsCopy);
+          }
+        } else {
+          newData.forEach(item => {
+            item.components.forEach(element => {
+              if (element.id === param.id) {
+                element.versionFlag = 'error'
+                element.version = params.version
+                element.versionValidateMes = '请输入正确的组件版本格式！如:v1.0.0'
+              }
+            });
+          });
+          newComsInAppTableData.forEach(item => {
+            if (item.id === param.id) {
+              item.versionFlag = 'error'
+              item.version = params.version
+              item.versionValidateMes = '请输入正确的组件版本格式！如:v1.0.0'
+            }
+          });
+          let selectedRowsCopy = _.cloneDeep(toJS(this.selectedRows));
+          selectedRowsCopy.forEach(item => {
+            item.components.forEach(element => {
+              if (element.id === param.id) {
+                element.versionFlag = 'error'
+                element.version = params.version
+                element.versionValidateMes = '请输入正确的组件版本格式！如:v1.0.0'
+              }
+            });
+          });
+          this.setSelectedRows(selectedRowsCopy);
+          this.setImportTableData(newData)
+          this.setComsInAppTableData(newComsInAppTableData)
+        }
+
+        return
+      }
       const res = yield importVersionValidateService(param);
-      if(res.code === 0){
-        if(this.isComponent){
-          if(res.data){
+      if (res.code === 0) {
+        if (this.isComponent) {
+          if (res.data) {
             let newData = _.cloneDeep(toJS(this.importTableData));
             newData.forEach(item => {
-              if(item.id === param.id){
+              if (item.id === param.id) {
                 item.versionFlag = 'error';
+                item.version = '';
                 item.versionValidateMes = '不可跟组件已有版本重复';
               }
             });
             this.setImportTableData(newData);
-            if(this.selectedRows.some(item => item.id === param.id)){
+            if (this.selectedRows.some(item => item.id === param.id)) {
               let selectedRowsCopy = _.cloneDeep(toJS(this.selectedRows));
               selectedRowsCopy.forEach(item => {
-                if(item.id === param.id){
+                if (item.id === param.id) {
+                  item.version = '';
                   item.versionFlag = 'error';
                   item.versionValidateMes = '不可跟组件已有版本重复';
                 }
@@ -207,92 +277,95 @@ const model = {
           } else {
             let newData = _.cloneDeep(toJS(this.importTableData));
             newData.forEach(item => {
-              if(item.id === param.id){
-                item.versionFlag = '';
+              if (item.id === param.id) {
+                item.versionFlag = 'success';
                 item.version = params.version;
                 item.versionValidateMes = '';
-                item.versionEdit = true;
+                item.versionEdit = true
               }
             });
             this.setImportTableData(newData);
-            if(this.selectedRows.some(item => item.id === param.id)){
+            if (this.selectedRows.some(item => item.id === param.id)) {
               let selectedRowsCopy = _.cloneDeep(toJS(this.selectedRows));
               selectedRowsCopy.forEach(item => {
-                if(item.id === param.id){
-                  item.versionFlag = '';
+                if (item.id === param.id) {
+                  item.versionFlag = 'success';
                   item.version = params.version;
                   item.versionValidateMes = '';
-                  item.versionEdit = true;
+                  item.versionEdit = true
                 }
               });
               this.setSelectedRows(selectedRowsCopy);
             }
           }
         } else {
-          if(res.data){
-            let newData = _.cloneDeep(toJS(this.importTableData));
-            let newComsInAppTableData = _.cloneDeep(toJS(this.comsInAppTableData));
+          if (res.data) {
+            let newData = _.cloneDeep(toJS(this.importTableData))
+            let newComsInAppTableData = _.cloneDeep(toJS(this.comsInAppTableData))
             newData.forEach(item => {
               item.components.forEach(element => {
-                if(element.id === param.id){
-                  element.versionFlag = 'error';
-                  element.versionValidateMes = '不可跟组件已有版本重复';
+                if (element.id === param.id) {
+                  element.versionFlag = 'error'
+                  element.version = '';
+                  element.versionValidateMes = '不可跟组件已有版本重复'
                 }
               });
             });
             newComsInAppTableData.forEach(item => {
-              if(item.id === param.id){
-                item.versionFlag = 'error';
-                item.versionValidateMes = '不可跟组件已有版本重复';
-              }
-            });
-              let selectedRowsCopy = _.cloneDeep(toJS(this.selectedRows));
-              selectedRowsCopy.forEach(item => {
-                item.components.forEach(element => {
-                  if(element.id === param.id){
-                    element.versionFlag = 'error';
-                    element.versionValidateMes = '不可跟组件已有版本重复';
-                  }
-                });
-              });
-              this.setSelectedRows(selectedRowsCopy);
-            this.setImportTableData(newData);
-            this.setComsInAppTableData(newComsInAppTableData);
-          } else {
-            let newData = _.cloneDeep(toJS(this.importTableData));
-            let newComsInAppTableData = _.cloneDeep(toJS(this.comsInAppTableData));
-            newData.forEach(item => {
-              item.components.forEach(element => {
-                if(element.id === param.id){
-                  element.versionFlag = '';
-                  element.version = params.version;
-                  element.versionValidateMes = '';
-                  element.versionEdit = true;
-                }
-              });
-            });
-            newComsInAppTableData.forEach(item => {
-              if(item.id === param.id){
-                item.versionFlag = '';
-                item.version = params.version;
-                item.versionValidateMes = '';
-                item.versionEdit = true;
+              if (item.id === param.id) {
+                item.versionFlag = 'error'
+                item.version = '';
+                item.versionValidateMes = '不可跟组件已有版本重复'
               }
             });
             let selectedRowsCopy = _.cloneDeep(toJS(this.selectedRows));
             selectedRowsCopy.forEach(item => {
               item.components.forEach(element => {
-                if(element.id === param.id){
-                  element.versionFlag = '';
-                  element.version = params.version;
-                  element.versionValidateMes = '';
-                  element.versionEdit = true;
+                if (element.id === param.id) {
+                  element.versionFlag = 'error'
+                  element.version = '';
+                  element.versionValidateMes = '不可跟组件已有版本重复'
                 }
               });
             });
             this.setSelectedRows(selectedRowsCopy);
-            this.setImportTableData(newData);
-            this.setComsInAppTableData(newComsInAppTableData);
+            this.setImportTableData(newData)
+            this.setComsInAppTableData(newComsInAppTableData)
+          } else {
+            let newData = _.cloneDeep(toJS(this.importTableData))
+            let newComsInAppTableData = _.cloneDeep(toJS(this.comsInAppTableData))
+            newData.forEach(item => {
+              item.components.forEach(element => {
+                if (element.id === param.id) {
+                  element.versionFlag = 'success'
+                  element.version = params.version
+                  element.versionValidateMes = ''
+                  element.versionEdit = true
+                }
+              });
+            });
+            newComsInAppTableData.forEach(item => {
+              if (item.id === param.id) {
+                item.versionFlag = 'success'
+                item.version = params.version
+                item.versionValidateMes = ''
+                item.versionEdit = true
+              }
+            });
+            let selectedRowsCopy = _.cloneDeep(toJS(this.selectedRows));
+            selectedRowsCopy.forEach(item => {
+              item.components.forEach(element => {
+                if (element.id === param.id) {
+                  element.versionFlag = 'success'
+                  element.version = params.version
+                  element.versionValidateMes = ''
+                  element.versionEdit = true
+                }
+              });
+            });
+            this.setSelectedRows(selectedRowsCopy);
+            this.setImportTableData(newData)
+            this.setComsInAppTableData(newComsInAppTableData)
           }
         }
       }

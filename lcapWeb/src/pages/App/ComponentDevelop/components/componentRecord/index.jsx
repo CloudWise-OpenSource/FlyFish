@@ -6,6 +6,8 @@ import store from "../../model/index";
 import { observer } from "@chaoswise/cw-mobx";
 import { getRecordService,getDiffRecordService } from '../../services';
 import moment from 'moment';
+import * as Diff2html from 'diff2html';
+import { useRef } from 'react';
 
 const ComponentRecord = observer((props)=>{
   const columns = [
@@ -42,23 +44,25 @@ const ComponentRecord = observer((props)=>{
   } = store;
 
   const [data, setData] = useState([]);
-  const [curPage, setCurPage] = useState(0);
+  const [curPage, setCurPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [total, setTotal] = useState(0);
 
   const [showDiff, setShowDiff] = useState(false);
+  const iframeResultRef = useRef();
 
 
   const viewDiffClick = async (hash)=>{
     const res = await getDiffRecordService(developingData.id,hash);
     // setDiffData(res);
     setShowDiff(true);
-    addIframe(res)
+    addIframe(res.data)
   }
   const addIframe = (resp) =>{
     const iframeWindow = window.frames['iframeResult'].document;
+    
     if(iframeWindow.head){
-        const prefix = window.isInPortal?'/lcapWeb':'';
+        const prefix = window.isInPortal?'/lcapWeb':'/lcapWeb';
         const highlightCss = createLink(`${prefix}/diff/highlight.css`);
         const diff2htmlCss = createLink(`${prefix}/diff/diff2html.css`);
         const diff2htmlScripts = createScripts(`${prefix}/diff/diff2html-ui.min.js`);
@@ -66,7 +70,17 @@ const ComponentRecord = observer((props)=>{
         iframeWindow.head.appendChild(diff2htmlCss); 
         iframeWindow.head.appendChild(diff2htmlScripts);
     }
-    if(iframeWindow.body) iframeWindow.body.innerHTML = resp; 
+
+    const diffJson = Diff2html.parse(resp);
+    const diffHtml = Diff2html.html(diffJson, { drawFileList: false });
+    // const compressHtml = minify(diffHtml, {
+    //   collapseWhitespace: true,
+    //   collapseInlineTagWhitespace: true,
+    //   conservativeCollapse: true,
+    // });
+
+    if(iframeWindow.body) iframeWindow.body.innerHTML = diffHtml; 
+    
   }
   const createLink = (href = '')=>{
     const linkTag = document.createElement('link');
@@ -126,7 +140,6 @@ const createScripts = (src = '')=>{
           <Button
             onClick={()=>{
               setShowRecord(false)
-              // props.history.push({pathname:`/app/${developingData.id}/code-develop`,state:{name:developingData.name}});
             }}
           >返回</Button>
         </div>
@@ -137,7 +150,7 @@ const createScripts = (src = '')=>{
           // showQuickJumper:true,
           showSizeChanger:true,
           pageSize:pageSize,
-          current:curPage+1,
+          current:curPage,
           total:total,
           showTotal:(total)=>{
             return `共${total}条记录`;
@@ -146,7 +159,7 @@ const createScripts = (src = '')=>{
             setPageSize(size)
           },
           onChange:(curPage,size)=>{
-            setCurPage(curPage-1);
+            setCurPage(curPage);
           }
         }}
         footer={null}
