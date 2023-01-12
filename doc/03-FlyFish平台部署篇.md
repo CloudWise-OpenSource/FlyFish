@@ -33,7 +33,6 @@ vim lcapWeb/lcapWeb/conf/env-config.js
 
 # code-server访问静态资源时的路径前缀
 static_dir = '/data/app/FlyFish/lcapWeb/lcapWeb'
-
 ```
 
 3. nginx 部署前端
@@ -64,7 +63,7 @@ map $http_upgrade $connection_upgrade {
 
 server {
   listen 8089;
-  server_name FlyFish;
+  server_name flyfish;
   default_type application/octet-stream;
   client_max_body_size 100m;
 
@@ -89,28 +88,33 @@ server {
     proxy_http_version 1.1;
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection $connection_upgrade;
-    proxy_pass http://127.0.0.1:8081/;
+    #部署code—server服务器的ip
+    proxy_pass http://ip:8081/;
   }
 
-  # 静态资源代理
-  location /lcapWww/ {
+  # 静态资源代理（cover、png）
+  location ^~ /lcapWeb/www/ {
+    # PRO_PATH 替换成 FlyFish 项目路径
+    # 例如： data/app/FlyFish/lcapWeb/lcapWeb/www/;
+    alias PRO_PATH/lcapWeb/lcapWeb/www/;
+  }
+  #访问可视化组件需要使用
+  location ^~ /www/ {
     # PRO_PATH 替换成 FlyFish 项目路径
     # 例如： data/app/FlyFish/lcapWeb/lcapWeb/www/;
     alias PRO_PATH/lcapWeb/lcapWeb/www/;
   }
 
-  # 静态资源代理
-  location /lcapWeb/ {
-    # PRO_PATH 替换成 FlyFish 项目路径
-    # 例如： data/app/FlyFish/lcapWeb/lcapWeb/www/;
-    alias PRO_PATH/lcapWeb/lcapWeb/;
+  # lcapDevServer 反向代理
+  location ^~ /flyfish-dev/ {
+    proxy_pass http://127.0.0.1:19532/flyfish-dev/;
+    # IP 替换成当前主机 IP
+    proxy_cookie_domain 0.0.0.0 IP;
   }
 
   # lcapServer 反向代理
-  location ^~ /api/ {
-    proxy_pass http://0.0.0.0:7001/;
-    # IP 替换成当前主机 IP
-    proxy_cookie_domain 0.0.0.0 IP;
+  location ^~ /flyfish/ {
+    proxy_pass http://127.0.0.1:19531/flyfish/;
   }
 }
 
@@ -127,97 +131,82 @@ http://ip:8089
 
 ### 二、后端部署
 
-> lcapServer 后端源码
-
-1. 安装依赖
+> flyfishServer 后端源码
+1. 生成并解压压缩包
 
 ```bash
-# 安装主服务依赖
-# FlyFish 目录下执行
-cd lcapServer/ && npm install
+# 服务打包
+# 生成 flyfishServer-${version}-${datetime}-${git_commit_id}.tar.gz 安装包
+# FlyFish下执行
+cd ./flyfishServer && mvn clean package -Dmaven.test.skip=true -Dmaven.gitcommitid.skip=true -am -pl flyfishServer
 
-# 安装初始化脚本依赖
+# 解压部署包
+# FlyFish/flyfishServer 目录下执行
+tar -zxvf ./flyfishServer/target/lcapDataServer-\$\{git.build.version\}-\$\{git.commit.time\}-\$\{git.commit.id.abbrev\}.tar.gz
+
+#解压后
+cd flyfishServer
+ls
+#可以看到bin、conf、lib、logs、utils目录
+```
+1. 初始化数据库
+
+```bash
+# 执行sql脚本
+cd /data/app/FlyFish/flyfishServer/sql
+#连接数据库，在数据库sql脚本框中执行sql文件
+#或者直接mysql -u用户名 -p
+#输入密码
+
+mysql> source SQL文件（init.sql）的绝对路径
+#执行完毕后，查看数据库
+mysql> show databases;
+mysql> use cw_lcap;
+mysql> show tables;
+```
+
+2. 初始化内置组件
+
+```bash
+# 初始化内置组件
 # FlyFish 目录下执行
-cd lcapServer/changelog && npm install
+cd flyfishServer/utils
+java -jar -Dspring.datasource.url="jdbc:mysql://${IP}:${port}/cw_lcap?createDatabaseIfNotExist=true&allowMultiQueries=true&useUnicode=true&autoReconnect=true&characterEncoding=utf8&connectionCollation=utf8_general_ci&useSSL=false&&serverTimezone=Asia/Shanghai" -Dspring.datasource.username="${username}" -Dspring.datasource.password="${password}" 
+
+注意事项：执行java -jar前检查目录
+/data/app/FlyFish/lcapWeb/lcapWeb
+/data/app/FlyFish/flyfishServer/utils
 
 ```
 
-2. 初始化数据库
+3. 修改配置
 
 ```bash
-# 初始化数据库
-# FlyFish 目录下执行
-cd lcapServer/changelog && NODE_ENV=development node scripts/initDatabase.js
+# 修改后端配置: application.properties
 
-# 提示以下内容意味初始化成功
-# init menu success
-# init role success
-# init user success
-# init component_categories success
+spring.datasource.driver-class-name=com.mysql.jdbc.Driver
+spring.datasource.url=jdbc:mysql://${ip}:${port}/cw_lcap?createDatabaseIfNotExist=true&allowMultiQueries=true&useUnicode=true&autoReconnect=true&characterEncoding=utf8&connectionCollation=utf8_general_ci&useSSL=false&&serverTimezone=Asia/Shanghai
+spring.datasource.username=${username}
+spring.datasource.password=${password}
 
 ```
 
-3. 修改配置并启动后端服务
+3. 启动服务
 
 ```bash
-# 修改后端配置
-# 无特殊需求，使用默认配置即可。
-# FlyFish 目录下执行
-cd lcapServer && vim ./config/config.development.js
-
-staticDir -> 静态目录 eg:  /data/app/lcapWeb
-commonDirPath -> 组件开发目录, 默认www, 配置staticDir使用，eg: /data/app/lcapWeb/lacpWeb/www
-dataBaseDir -> 数据目录 eg:  /data/appData
-logsBaseDir -> 日志目录 eg:  /data/logs
-
-serverIp -> 服务ip eg: '127.0.0.1'
-serverPort -> 服务port eg: 7001
-
-mongodbIp -> monggodbIp eg: '127.0.0.1'
-mongodbPort -> mongodbPort eg: '127.0.0.1'
-
-// 非必须 如mongodb没有username和password，请使用//将username和password注释掉
-mongodbUsername -> mongodbUsername eg: 'admin'
-mongodbPassword -> mongodbPassword eg: 'admin'
-
-// mongodb没有username和password，使用第一个url配置
-config.mongoose = {
-    clients: {
-      flyfish: {
-        // url: `mongodb://${mongodbIp}:${mongodbPort}/flyfish`,
-        url: `mongodb://${mongodbUsername}:${mongodbPassword}@${mongodbIp}:${mongodbPort}/flyfish?authSource=test`,
-        options: {
-          useUnifiedTopology: true,
-        },
-      },
-    },
-  };
-
-// chrome 端口，用于自动生成组件、应用缩略图服务，默认9222
-chromePort -> chrome无头浏览器port eg: 9222
-```
-
-3. 解压缩略图依赖
-
-```bash
-# 以下命令在 FlyFish 下执行
-cd lcapServer/lib/chrome-linux && unzip chrome-core.zip
-
-```
-
-4. 启动服务
-
-```bash
-# 以下命令在 FlyFish/lcapServer 下执行
+# 以下命令在 FlyFish/flyfishServer/bin 下执行
 # 启动后端服务
-npm run development
+./flyfishServer start
 
 # 停止后端服务
-npm run stop
+./flyfishServer stop
+
+# 重启后端服务
+./flyfishServer restart
 
 ```
 
-5. 组件开发环境配置
+4. 组件开发环境配置
 
 ```bash
 # 以下命令在 FlyFish 下执行
@@ -226,73 +215,53 @@ cd lcapWeb/lcapWeb/www/components && npm install
 
 ```
 
-> lcapDataserver 源码部署
+> flyfishDevServer 源码部署
 
-1. 生成并解压压缩包压缩包
+1. 生成并解压压缩包
 
 ```bash
 # 服务打包
-# 生成 lcapDataServer-${version}-${datetime}-${git_commit_id}.tar.gz 安装包
+# 生成 flyfishDevServer-${version}-${datetime}-${git_commit_id}.tar.gz 安装包
 # FlyFish下执行
-cd ./lcapDataServer && mvn clean package -Dmaven.test.skip=true -Dmaven.gitcommitid.skip=true -am -pl lcap-server
+cd ./flyfishDevServer && mvn clean package -Dmaven.test.skip=true -Dmaven.gitcommitid.skip=true -am -pl flyfishDevServer
 
 # 解压部署包
-# FlyFish/lcapDataServer 目录下执行
+# FlyFish/flyfishDevServer 目录下执行
 tar -zxvf ./lcap-server/target/lcapDataServer-\$\{git.build.version\}-\$\{git.commit.time\}-\$\{git.commit.id.abbrev\}.tar.gz
 
-# 解压后生成的核心文件目录如下：
-cd ./lcap-server/target/lcapDataServer
-ll
-
-# 总用量 32
-# drwxrwxr-x  2 kid kid    56 7月  18 21:31 bin
-# drwxrwxr-x  3 kid kid   107 7月  18 21:41 conf
-# drwxrwxr-x  2 kid kid 12288 7月  18 21:25 lib
 ```
 
 2. 修改服务配置文件
 
 ```bash
 # 进入服务解压目录，执行以下命令
-# 在 FlyFish/lcapDataServer/lcap-server/target/lcapDataServer 目录下执行
+# 在 FlyFish/flyfishDevServer 目录下执行
 vim ./conf/application.properties
 
 # 修改以下配置项
-# 应用/组件导入导出相关配置，导入导出时需要用到web端的应用/组件源码,所以请设置对应的路径
-file.basepath=/data/app/FlyFish/lcapWeb/www
-application_basepath=/data/app/FlyFish/lcapWeb/lcapWeb/www/applications
-component_basepath=/data/app/FlyFish/lcapWeb/lcapWeb/www/components
-component_down_tmp_basepath=/data/appData/lcapDataServer/down_tmp_basepath
-component_upload_tmp_basepath=/data/appData/lcapDataServer/upload_tmp_basepath
-config_filename=config_filename
-
-# mongo数据源配置
-spring.application.name=lcapDataServer
-spring.main.allow-bean-definition-overriding=true
-spring.data.mongodb.host=${IP}
-spring.data.mongodb.port=${PORT}
-# 如mongodb没有username和password，请使用#将username和password注释掉
-spring.data.mongodb.username=${USERNAME}
-spring.data.mongodb.password=${PASSWORD}
-spring.data.mongodb.database=flyfish
-spring.data.mongodb.authenticationDatabase=test
-spring.servlet.multipart.max-file-size=1024MB
-spring.servlet.multipart.max-request-size=1024MB
+spring.datasource.driver-class-name=com.mysql.jdbc.Driver
+spring.datasource.url=jdbc:mysql://${ip}:${port}/cw_lcap?createDatabaseIfNotExist=true&allowMultiQueries=true&useUnicode=true&autoReconnect=true&characterEncoding=utf8&connectionCollation=utf8_general_ci&useSSL=false&&serverTimezone=Asia/Shanghai
+spring.datasource.username=${username}
+spring.datasource.password=${password}
 ```
 
 3. 启动服务
 
 ```bash
-# 启动 lcapDataServer 服务
-./bin/lcapDataServer start
+# 以下命令在 FlyFish/flyfishDevServer/bin 下执行
+# 启动后端服务
+./flyfishDevServer start
 
-# 停止 lcapDataServer 服务
-./bin/lcapDataServer stop
+# 停止后端服务
+./flyfishDevServer stop
+
+# 重启后端服务
+./flyfishDevServer restart
 
 # 查看日志验证服务是否启动
 # 在以下目录下执行
-# FlyFish/lcapDataServer/lcap-server/target/lcapDataServer
-tail -200f ./logs/lcapDataServer/lcap-dataserver.info.log
+# FlyFish/flyfishDevServer/
+tail -200f ./logs/flyfishDevServer/flyfishDevServer.info.log
 ```
 
 ### 三、验证
