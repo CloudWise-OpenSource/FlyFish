@@ -1,0 +1,136 @@
+#!/usr/bin/env bash
+
+usage="Usage: server.sh (start|stop|restart)"
+
+# forbidden root execute this script
+#if [ `whoami` == root ]; then
+#  echo Do not run this script as root or using sudo.
+#  exit 1
+#fi
+
+# if no args specified, show usage
+if [ $# -ne 1 ]; then
+  echo $usage
+  exit 1
+fi
+
+cmd=$1
+shift
+
+
+CLASS=com.cloudwise.lcap.devserver.LcapDevServer
+
+echo "Begin $cmd start......"
+
+BIN_DIR=`dirname $0`
+BIN_DIR=`cd "$BIN_DIR"; pwd`
+SERVER_HOME=$BIN_DIR/..
+
+export JAVA_HOME=$JAVA_HOME
+export HOSTNAME=`hostname`
+
+export SERVER_PID_DIR=$SERVER_HOME/logs
+export SERVER_LOG_DIR=$SERVER_HOME/logs
+export SERVER_CONF_DIR=$SERVER_HOME/conf
+export SERVER_LIB_JARS=$SERVER_HOME/lib/*
+
+if [ ! -d "$SERVER_LOG_DIR" ]; then
+  mkdir $SERVER_LOG_DIR
+fi
+
+log=$SERVER_LOG_DIR/server.out
+pid=$SERVER_PID_DIR/server.pid
+
+cd $SERVER_HOME
+
+JAVA_OPTS="-Xloggc:$SERVER_LOG_DIR/gc_memory_logs.log -Xms1g -Xmx1g -XX:+PrintGCDetails -XX:+PrintGCDateStamps
+-XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:NumberOfGCLogFiles=5 -XX:+UseGCLogFileRotation -XX:GCLogFileSize=20m"
+
+# start function
+start() {
+  [ -w "$SERVER_PID_DIR" ] ||  mkdir -p "$SERVER_PID_DIR"
+
+  if [ -f $pid ]; then
+    # kill -0, not kill in fact, only check if process is exist
+    if kill -0 `cat $pid` > /dev/null 2>&1; then
+      echo "$service running as process `cat $pid`, stop it first"
+      exit 1
+    fi
+  fi
+
+  echo "starting $service, logging to $log"
+
+  if [ -z $JAVA_HOME ]; then
+     exec_command="java $JAVA_OPTS -classpath $SERVER_CONF_DIR:$SERVER_LIB_JARS $CLASS"
+  else
+     exec_command="$JAVA_HOME/bin/java $JAVA_OPTS -classpath $SERVER_CONF_DIR:$SERVER_LIB_JARS $CLASS"
+  fi
+
+  echo "nohup $exec_command > $log 2>&1 < /dev/null &"
+  nohup $exec_command > $log 2>&1 < /dev/null &
+
+  if [ $? -ne 0 ]; then
+    echo "start failed"
+  else
+    echo $! > $pid
+    echo "start succeed, pid is `cat $pid`"
+  fi
+}
+
+# stop function
+stop() {
+  if [ -f $pid ]; then
+    TARGET_PID=`cat $pid`
+
+    if kill -0 $TARGET_PID > /dev/null 2>&1; then
+      # echo "stopping $TARGET_PID"
+      # kill $TARGET_PID
+
+      # sleep for five seconds
+      # sleep 120
+
+      while kill -0 $TARGET_PID > /dev/null 2>&1;
+      do
+        echo "stopping $TARGET_PID"
+        kill $TARGET_PID
+        sleep 5
+      done
+
+      if kill -0 $TARGET_PID > /dev/null 2>&1; then
+        echo "$service did not stop gracefully after five seconds: killing with kill -9"
+        kill -9 $TARGET_PID
+      else
+        echo "kill $service successful"
+      fi
+    else
+      echo "no $service to stop"
+    fi
+
+    rm -f $pid
+  else
+    echo "no $service to stop"
+  fi
+}
+
+case $cmd in
+  (start)
+    start
+    ;;
+
+  (stop)
+    stop
+    ;;
+
+  (restart)
+    stop
+    start
+    ;;
+
+  (*)
+    echo $usage
+    exit 1
+    ;;
+
+esac
+
+echo "End $cmd $service."

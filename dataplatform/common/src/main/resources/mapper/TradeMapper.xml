@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cloudwise.lcap.commonbase.mapper.TradeMapper">
+    <resultMap id="BaseResultMap" type="com.cloudwise.lcap.commonbase.entity.Trade">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="init_from" property="initFrom" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <select id="findTradesByProjectIds" resultType="com.cloudwise.lcap.commonbase.vo.TradeVo">
+        select
+            t.id id,
+            t.name name,
+            ptr.project_id projectId
+        from trade t
+           left join project_trade_ref ptr on ptr.trade_id=t.id
+        where ptr.deleted=0 and ptr.project_id in
+        <foreach collection="projectIds" index="index" item="id" separator="," close=")" open="(">
+            #{id}
+        </foreach>
+
+    </select>
+
+</mapper>

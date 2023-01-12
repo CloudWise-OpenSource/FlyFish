@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cloudwise.lcap.commonbase.mapper.AppAuthMapper">
+    <resultMap id="BaseResultMap" type="com.cloudwise.lcap.commonbase.entity.AppAuth">
+        <id column="app_id" property="appId" jdbcType="BIGINT"/>
+        <result column="app_name" property="appName" jdbcType="VARCHAR"/>
+        <result column="app_key" property="appKey" jdbcType="VARCHAR"/>
+        <result column="app_secret" property="appSecret" jdbcType="VARCHAR"/>
+        <result column="access_params" property="accessParams" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        app_id, app_name, `app_key`,app_secret,access_params
+    </sql>
+
+    <select id="queryLcapAppAuth" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from app_auth where app_name='LCAP'
+    </select>
+
+</mapper>

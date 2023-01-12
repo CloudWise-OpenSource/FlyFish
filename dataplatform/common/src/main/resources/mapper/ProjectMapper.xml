@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cloudwise.lcap.commonbase.mapper.ProjectMapper">
+    <resultMap id="BaseResultMap" type="com.cloudwise.lcap.commonbase.entity.Project">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="init_from" property="initFrom" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="projectList" resultMap="BaseResultMap">
+        select * from project where deleted=0 and account_id in
+        <foreach collection="accountIds" index="index" item="id" separator="," close=")" open="(">
+            #{id}
+        </foreach>
+
+    </select>
+
+</mapper>

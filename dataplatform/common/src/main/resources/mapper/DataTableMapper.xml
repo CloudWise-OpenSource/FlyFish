@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cloudwise.lcap.commonbase.mapper.DataTableMapper">
+    <resultMap id="BaseResultMap" type="com.cloudwise.lcap.commonbase.entity.DataTable">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="data_source_id" property="dataSourceId" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="meta" property="meta" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, data_source_id, `name`,meta
+    </sql>
+
+    <select id="queryDataSourceAndTable" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select dt.*
+        from data_source ds
+        left join data_table dt
+        on ds.id=dt.data_source_id
+        where ds.schema_type='HTTP' and dt.id in
+        <foreach collection="dataTableIds" index="index" item="id" separator="," close=")" open="(">
+            #{id}
+        </foreach>
+    </select>
+
+</mapper>

@@ -1,0 +1,8 @@
+/*.iml
+/.idea/
+/logs/
+/*/target/
+**/*.iml
+**/rebel.xml
+.DS_Store
+*git.properties

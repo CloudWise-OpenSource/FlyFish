@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cloudwise.lcap.commonbase.mapper.ApplicationMapper">
+    <resultMap id="BaseResultMap" type="com.cloudwise.lcap.commonbase.entity.Application">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="develop_status" property="developStatus" jdbcType="VARCHAR"/>
+        <result column="type" property="type" jdbcType="VARCHAR"/>
+        <result column="cover" property="cover" jdbcType="VARCHAR"/>
+        <result column="pages" property="pages" jdbcType="VARCHAR"/>
+        <result column="init_from" property="initFrom" jdbcType="VARCHAR"/>
+        <result column="is_lib" property="isLib" jdbcType="VARCHAR"/>
+        <result column="is_recommend" property="isRecommend" jdbcType="VARCHAR"/>
+        <result column="invalid" property="invalid" jdbcType="VARCHAR"/>
+        <result column="project_id" property="projectId" jdbcType="VARCHAR"/>
+        <result column="account_id" property="accountId" jdbcType="VARCHAR"/>
+        <result column="creator" property="creator" jdbcType="VARCHAR"/>
+        <result column="updater" property="updater" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="selectByProjectIds" resultMap="BaseResultMap">
+        select * from application where deleted=0 and invalid=0 and project_id in
+         <foreach collection="projectIds" index="index" item="id" separator="," close=")" open="(">
+              #{id}
+        </foreach>
+        and account_id in
+        <foreach collection="accountIds" index="index" item="id" separator="," close=")" open="(">
+            #{id}
+        </foreach>
+    </select>
+
+    <update id="updateCoverWithId">
+        update application set cover=#{coverPath} where id=#{appId}
+    </update>
+
+</mapper>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cloudwise.lcap.commonbase.mapper.ComponentProjectRefMapper">
+    <resultMap id="BaseResultMap" type="com.cloudwise.lcap.commonbase.entity.ComponentProjectRef">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="project_id" property="projectId" jdbcType="VARCHAR"/>
+        <result column="component_id" property="componentId" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="projectBase" type="com.cloudwise.lcap.commonbase.entity.Project">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="project_id" property="name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, project_id, `component_id`
+    </sql>
+
+    <select id="selectByComponentIds" resultType="cn.hutool.json.JSONObject">
+        select  p.id as projectId, p.name as projectName,cp.component_id as componentId from component_project_ref cp
+         left  join project p on cp.project_id=p.id
+        where cp.deleted=0 and cp.component_id in
+         <foreach collection="ids" index="index" item="id" separator="," close=")" open="(">
+              #{id}
+        </foreach>
+    </select>
+
+    <insert id="batchSave" parameterType="list">
+        INSERT INTO component_project_ref(id,project_id,component_id)
+        VALUES
+        <foreach collection="ids" item="item" separator=",">
+            (#{item.id},#{item.projectId},#{item.componentId})
+        </foreach>
+    </insert>
+
+</mapper>

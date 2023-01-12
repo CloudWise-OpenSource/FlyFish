@@ -1,9 +1,0 @@
-﻿modeId,metric_key（指标标识）,metric_desc_cn（指标描述）,"单位
-",指标显示单位,指标类型,对应组件,对应模板位置,参考,备注,,,,,,,,,,
-nginx-node,nginx.requests.total,客户端请求的总数。,requests,请求,状态类型,折线面积图,1、2,观测云,,,,,,,,,,,
-nginx-node,nginx.connections.accepted,已接受的客户端连接的总数。,connections,连接,性能类型,折线面积图,3、4,观测云,,,,,,,,,,,
-nginx-node,nginx.connections.active,当前活动的客户端连接数。,connections,连接,性能类型,折线面积图,5、6,观测云,,,,,,,,,,,
-nginx-node,nginx.net.reading,读取客户端请求的连接数。,connections,连接,性能类型,折线面积图,7、8,观测云,,,,,,,,,,,
-nginx-node,nginx.net.request_per_s,处理请求的速率。测量成功和失败的请求。,requests/second,请求/秒,性能类型,折线面积图,9、10,观测云,需计算,,,,,,,,,,
-nginx-node,nginx.net.waiting,等待工作的保持活动连接数。,connections,连接,性能类型,折线面积图,11、12,观测云,,,,,,,,,,,
-nginx-node,nginx.net.writing,等待上游响应和/或向客户端写入响应的连接数。,connections,连接,性能类型,折线面积图,13、14,观测云,,,,,,,,,,,

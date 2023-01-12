@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cloudwise.lcap.commonbase.mapper.DataQueryMapper">
+    <resultMap id="BaseResultMap" type="com.cloudwise.lcap.commonbase.entity.DataQuery">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="data_source_id" property="dataSourceId" jdbcType="VARCHAR"/>
+        <result column="table_id" property="tableId" jdbcType="VARCHAR"/>
+        <result column="query_name" property="queryName" jdbcType="VARCHAR"/>
+        <result column="query_type" property="queryType" jdbcType="VARCHAR"/>
+        <result column="setting" property="setting" jdbcType="VARCHAR"/>
+        <result column="sql" property="sql" jdbcType="VARCHAR"/>
+        <result column="account_id" property="accountId" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, data_source_id, table_id,query_name,query_type,setting,`sql`,account_id
+    </sql>
+
+    <select id="queryDataQueryAndSource" resultType="java.util.Map" parameterType="java.lang.Integer">
+        select
+            dq.id as dataQueryId,
+            dq.query_type as dataQueryType,
+            ds.id as dataSourceId,
+            ds.schema_type as schemaType
+        from `data_query` as dq
+        left join data_source ds
+        on dq.data_source_id=ds.id
+        where dq.id = #{dataQueryId}
+    </select>
+
+</mapper>

@@ -1,8 +1,0 @@
-﻿modeId,metric_key（指标标识）,metric_desc_cn（指标描述）,"单位
-",指标显示单位,指标类型,对应组件,对应模板位置,参考,备注,,,,,,,,,,
-zookeeper-node,zookeeper.connections,客户端连接的总数。,connections,连接,状态类型,数字看板,1,,,,,,,,,,,,
-zookeeper-node,zookeeper.open_file_descriptor_count,,,,状态类型,数字看板,2,观测云,,,,,,,,,,,
-zookeeper-node,zookeeper.node_changed_watch_count,node_changed_watch_count 的直方图。,,,数值类型,折线图,3、4,观测云,[仅限 zookeeper 3.6+ 版] ,,,,,,,,,,
-zookeeper-node,zookeeper.nodes,ZooKeeper 命名空间（数据）中的 znode 数量。,nodes,节点,数值类型,折线图,5、6,观测云,,,,,,,,,,,
-zookeeper-node,zookeeper.num_alive_connections,客户端连接的总数。,connections,连接,性能类型,折线面积图,7、8,观测云,,,,,,,,,,,
-zookeeper-node,zookeeper.outstanding_requests,当服务器负载不足，并且接收的持续请求数超过其处理能力时排队的请求数。,requests,请求,数值类型,折线图,9、10,观测云,,,,,,,,,,,
