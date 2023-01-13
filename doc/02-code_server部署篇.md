@@ -35,3 +35,4 @@ npm run macos-start
 ### 三、验证 code-server 部署是否成功
 
 访问链接：http://ip:8081
+如果无法访问，那就访问:http://ip:8081/?folder=/data/app/

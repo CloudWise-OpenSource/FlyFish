@@ -299,7 +299,7 @@ CREATE TABLE if not exists `project` (
     `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-INSERT INTO cw_lcap.project (id,name,`desc`,init_from,account_id,deleted,creator,updater,create_time,update_time) VALUES ('1564451835235811329','系统内置','系统内置','lcap-init',-1,0,3,3,'2022-08-30 11:15:58','2022-08-30 11:15:58') ON DUPLICATE KEY UPDATE update_time=update_time;
+INSERT INTO project (id,name,`desc`,init_from,account_id,deleted,creator,updater,create_time,update_time) VALUES ('1564451835235811329','系统内置','系统内置','lcap-init',-1,0,3,3,'2022-08-30 11:15:58','2022-08-30 11:15:58') ON DUPLICATE KEY UPDATE update_time=update_time;
 
 CREATE TABLE if not exists `project_trade_ref` (
     `id` varchar(255) NOT NULL,
@@ -310,7 +310,7 @@ CREATE TABLE if not exists `project_trade_ref` (
     `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-INSERT INTO `cw_lcap`.`project_trade_ref` (`id`, `project_id`, `trade_id`, `deleted`, `create_time`, `update_time`) VALUES ('1593515946641805314', '1564451835235811329', '1564144977514147842', 0, '2022-11-18 16:06:22', '2022-11-18 16:06:22')  ON DUPLICATE KEY UPDATE update_time=update_time;
+INSERT INTO `project_trade_ref` (`id`, `project_id`, `trade_id`, `deleted`, `create_time`, `update_time`) VALUES ('1593515946641805314', '1564451835235811329', '1564144977514147842', 0, '2022-11-18 16:06:22', '2022-11-18 16:06:22')  ON DUPLICATE KEY UPDATE update_time=update_time;
 
 CREATE TABLE if not exists `tag` (
     `id` varchar(255) NOT NULL,
@@ -339,7 +339,7 @@ CREATE TABLE if not exists `trade` (
     `update_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-INSERT INTO cw_lcap.trade (id,name,`desc`,init_from,deleted,account_id,creator,updater,create_time,update_time) VALUES ('1564144977514147842','全行业',NULL,NULL,0,-1,3,3,'2022-08-29 14:56:38','2022-08-29 14:56:38') ON DUPLICATE KEY UPDATE update_time=update_time;
+INSERT INTO trade (id,name,`desc`,init_from,deleted,account_id,creator,updater,create_time,update_time) VALUES ('1564144977514147842','全行业',NULL,NULL,0,-1,3,3,'2022-08-29 14:56:38','2022-08-29 14:56:38') ON DUPLICATE KEY UPDATE update_time=update_time;
 
 CREATE TABLE if not exists `user` (
   `id` varchar(255) NOT NULL COMMENT 'id',

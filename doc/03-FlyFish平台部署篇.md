@@ -3,6 +3,12 @@
 > ⚠️ 包含 server 和 web 部署！部署路径 /data/app/FlyFish/
 
 ```bash
+#注意事项
+mkdir -p /data/app/FlyFish 
+mkdir -p /data/app/flyfish
+/data/app/FlyFish   是源码包的位置，包括前端源码lcapWeb包，和后端源码dataplatform包
+/data/app/flyfish/  是构建打包后的运行包的位置，包括前端运行包lcapWeb，后端运行包flyfishServer、flyfishDevServer、flyfishCodeServer
+
 cd /data/app/FlyFish
 # 切换 npm 源
 npm config set registry https://registry.npmmirror.com
@@ -21,6 +27,9 @@ cd lcapWeb && npm install
 
 # 打包
 npm run build
+#移动lcapWeb运行包
+#FlyFish/lcapWeb
+mv lcapWeb /data/app/flyfish
 
 ```
 
@@ -32,7 +41,7 @@ npm run build
 vim lcapWeb/lcapWeb/conf/env-config.js
 
 # code-server访问静态资源时的路径前缀
-static_dir = '/data/app/FlyFish/lcapWeb/lcapWeb'
+static_dir = '/data/app/flyfish/lcapWeb'
 ```
 
 3. nginx 部署前端
@@ -42,7 +51,7 @@ static_dir = '/data/app/FlyFish/lcapWeb/lcapWeb'
 # cd /
 # 创建配置文件
 nginx 配置文件位置检查
-/usr/local/nginx/sbin/nginx -t
+nginx -t
 nginx: the configuration file /usr/local/nginx/conf/nginx.conf syntax is ok
 nginx: configuration file /usr/local/nginx/conf/nginx.conf test is successful
 
@@ -77,9 +86,9 @@ server {
 
   # lcapWeb
   location / {
-    # PRO_PATH 替换成 FlyFish 项目路径
-    # 例如： data/app/FlyFish/lcapWeb/lcapWeb/;
-    root PRO_PATH/lcapWeb/lcapWeb/;
+    # PRO_PATH 替换成 flyfish 项目路径
+    # 例如： /data/app/flyfish/lcapWeb/;
+    root PRO_PATH/lcapWeb/;
     index index.html index.htm;
   }
 
@@ -94,15 +103,15 @@ server {
 
   # 静态资源代理（cover、png）
   location ^~ /lcapWeb/www/ {
-    # PRO_PATH 替换成 FlyFish 项目路径
-    # 例如： data/app/FlyFish/lcapWeb/lcapWeb/www/;
-    alias PRO_PATH/lcapWeb/lcapWeb/www/;
+    # PRO_PATH 替换成 flyfish 项目路径
+    # 例如： /data/app/flyfish/lcapWeb/www/;
+    alias PRO_PATH/lcapWeb/www/;
   }
   #访问可视化组件需要使用
   location ^~ /www/ {
-    # PRO_PATH 替换成 FlyFish 项目路径
-    # 例如： data/app/FlyFish/lcapWeb/lcapWeb/www/;
-    alias PRO_PATH/lcapWeb/lcapWeb/www/;
+    # PRO_PATH 替换成 flyfish 项目路径
+    # 例如： /data/app/flyfish/lcapWeb/www/;
+    alias PRO_PATH/lcapWeb/www/;
   }
 
   # lcapDevServer 反向代理
@@ -132,28 +141,32 @@ http://ip:8089
 ### 二、后端部署
 
 > flyfishServer 后端源码
-1. 生成并解压压缩包
+1. 生成并解压压缩包，把解压后的运行包，移动到/data/app/flyfish
 
 ```bash
 # 服务打包
 # 生成 flyfishServer-${version}-${datetime}-${git_commit_id}.tar.gz 安装包
 # FlyFish下执行
-cd ./flyfishServer && mvn clean package -Dmaven.test.skip=true -Dmaven.gitcommitid.skip=true -am -pl flyfishServer
+cd ./dataplatform && mvn clean package -Dmaven.test.skip=true -Dmaven.gitcommitid.skip=true -am -pl flyfishServer
 
 # 解压部署包
-# FlyFish/flyfishServer 目录下执行
-tar -zxvf ./flyfishServer/target/lcapDataServer-\$\{git.build.version\}-\$\{git.commit.time\}-\$\{git.commit.id.abbrev\}.tar.gz
+# FlyFish/dataplatform/目录下执行
+tar -zxvf ./flyfishServer/target/flyfishServer-\$\{git.build.version\}-\$\{git.commit.time\}-\$\{git.commit.id.abbrev\}.tar.gz
 
 #解压后
 cd flyfishServer
 ls
 #可以看到bin、conf、lib、logs、utils目录
+#通过maven构建打包，得到了真正的运行的包,把解压后的运行包，移动到/data/app/flyfish
+cd ..
+mv flyfishServer /data/app/flyfish
+
 ```
 1. 初始化数据库
 
 ```bash
 # 执行sql脚本
-cd /data/app/FlyFish/flyfishServer/sql
+cd /data/app/FlyFish/dataplatform/flyfishServer/sql
 #连接数据库，在数据库sql脚本框中执行sql文件
 #或者直接mysql -u用户名 -p
 #输入密码
@@ -162,22 +175,10 @@ mysql> source SQL文件（init.sql）的绝对路径
 #执行完毕后，查看数据库
 mysql> show databases;
 mysql> use cw_lcap;
+#查看表
 mysql> show tables;
 ```
 
-2. 初始化内置组件
-
-```bash
-# 初始化内置组件
-# FlyFish 目录下执行
-cd flyfishServer/utils
-java -jar -Dspring.datasource.url="jdbc:mysql://${IP}:${port}/cw_lcap?createDatabaseIfNotExist=true&allowMultiQueries=true&useUnicode=true&autoReconnect=true&characterEncoding=utf8&connectionCollation=utf8_general_ci&useSSL=false&&serverTimezone=Asia/Shanghai" -Dspring.datasource.username="${username}" -Dspring.datasource.password="${password}" 
-
-注意事项：执行java -jar前检查目录
-/data/app/FlyFish/lcapWeb/lcapWeb
-/data/app/FlyFish/flyfishServer/utils
-
-```
 
 3. 修改配置
 
@@ -194,7 +195,7 @@ spring.datasource.password=${password}
 3. 启动服务
 
 ```bash
-# 以下命令在 FlyFish/flyfishServer/bin 下执行
+# 以下命令在 /data/app/flyfish/flyfishServer/bin 下执行
 # 启动后端服务
 ./flyfishServer start
 
@@ -209,9 +210,9 @@ spring.datasource.password=${password}
 4. 组件开发环境配置
 
 ```bash
-# 以下命令在 FlyFish 下执行
+# 以下命令在 /data/app/flyfish 下执行
 # 进入组件开发目录
-cd lcapWeb/lcapWeb/www/components && npm install
+cd lcapWeb/www/components && npm install
 
 ```
 
@@ -223,19 +224,22 @@ cd lcapWeb/lcapWeb/www/components && npm install
 # 服务打包
 # 生成 flyfishDevServer-${version}-${datetime}-${git_commit_id}.tar.gz 安装包
 # FlyFish下执行
-cd ./flyfishDevServer && mvn clean package -Dmaven.test.skip=true -Dmaven.gitcommitid.skip=true -am -pl flyfishDevServer
+cd ./dataplatform && mvn clean package -Dmaven.test.skip=true -Dmaven.gitcommitid.skip=true -am -pl flyfishDevServer
 
 # 解压部署包
-# FlyFish/flyfishDevServer 目录下执行
-tar -zxvf ./lcap-server/target/lcapDataServer-\$\{git.build.version\}-\$\{git.commit.time\}-\$\{git.commit.id.abbrev\}.tar.gz
+# dataplatform目录下执行
+tar -zxvf ./flyfishDevServer/target/lcapDataServer-\$\{git.build.version\}-\$\{git.commit.time\}-\$\{git.commit.id.abbrev\}.tar.gz
 
+#把构建的运行包移到/data/app/flyfish下
+# dataplatform目录下执行
+mv ./flyfishDevServer/target/flyfishDevServer /data/app/flyfish
 ```
 
 2. 修改服务配置文件
 
 ```bash
 # 进入服务解压目录，执行以下命令
-# 在 FlyFish/flyfishDevServer 目录下执行
+# 在 /data/app/flyfish/flyfishDevServer 目录下执行
 vim ./conf/application.properties
 
 # 修改以下配置项
@@ -244,11 +248,23 @@ spring.datasource.url=jdbc:mysql://${ip}:${port}/cw_lcap?createDatabaseIfNotExis
 spring.datasource.username=${username}
 spring.datasource.password=${password}
 ```
-
-3. 启动服务
+3. 初始化内置组件
 
 ```bash
-# 以下命令在 FlyFish/flyfishDevServer/bin 下执行
+# 初始化内置组件
+# /data/app/flyfish 目录下执行
+cd flyfishDevServer/utils
+java -jar -Dspring.datasource.url="jdbc:mysql://${IP}:${port}/cw_lcap?createDatabaseIfNotExist=true&allowMultiQueries=true&useUnicode=true&autoReconnect=true&characterEncoding=utf8&connectionCollation=utf8_general_ci&useSSL=false&&serverTimezone=Asia/Shanghai" -Dspring.datasource.username="${username}" -Dspring.datasource.password="${password}" 
+
+注意事项：执行java -jar前检查目录
+/data/app/flyfish/lcapWeb
+/data/app/flyfish/flyfishDevServer/utils
+
+```
+4. 启动服务
+
+```bash
+# 以下命令在 flyfish/flyfishDevServer/bin 下执行
 # 启动后端服务
 ./flyfishDevServer start
 
