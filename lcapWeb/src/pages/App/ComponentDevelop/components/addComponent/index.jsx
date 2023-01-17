@@ -130,7 +130,7 @@ const AddComponent = observer((props) => {
               message: '请最多输入20个字符！',
             },
           ],
-        })(<Input />)}
+        })(<Input maxLength={20} />)}
       </Form.Item>
       {/* <Form.Item label="组件标识">
       {getFieldDecorator('logo', {

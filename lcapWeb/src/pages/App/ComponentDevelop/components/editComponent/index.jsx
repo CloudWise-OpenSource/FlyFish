@@ -102,7 +102,7 @@ const EditComponent = observer((props) => {
               message: '请输入正确的组件名称！',
             },
           ],
-        })(<Input />)}
+        })(<Input maxLength={20} />)}
       </Form.Item>
       <Form.Item
         label={

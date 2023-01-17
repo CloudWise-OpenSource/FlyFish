@@ -1,51 +1,81 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from "react";
-import { CWTable, Input, Button, message, Icon, Select, Popconfirm } from "@chaoswise/ui";
-import { observer, loadingStore, toJS } from "@chaoswise/cw-mobx";
-import store from "./model/index";
-import EditRoleModal from "./components/EditRoleModal";
-import ChangeRoleModal from "./components/changeRoleMoal";
-import { successCode } from "@/config/global";
-import styles from "./assets/style.less";
+import React, { useEffect, useState } from 'react';
+import {
+  CWTable,
+  Input,
+  Button,
+  message,
+  Icon,
+  Select,
+  Popconfirm,
+} from '@chaoswise/ui';
+import { observer, loadingStore, toJS } from '@chaoswise/cw-mobx';
+import store from './model/index';
+import EditRoleModal from './components/EditRoleModal';
+import ChangeRoleModal from './components/changeRoleMoal';
+import { successCode } from '@/config/global';
+import styles from './assets/style.less';
 import ChangeRoleJurisdiction from './components/changeRoleJurisdiction';
 import { formatDate } from '@/config/global';
 
-import { FormattedMessage, useIntl } from "react-intl";
+import { FormattedMessage, useIntl } from 'react-intl';
 const RoleList = observer(() => {
   const intl = useIntl();
   const {
-    getUserList, changeRole,
+    getUserList,
+    changeRole,
     setSearchParams,
     openEditRoleModal,
     openRoleModal,
     closeRoleModal,
-    deleteRole, getRoleMenu,
-    getAllUserList, changeRoleMenu,
-    closeEditRoleModal, changeRoleAuth,
+    deleteRole,
+    getRoleMenu,
+    getAllUserList,
+    changeRoleMenu,
+    closeEditRoleModal,
+    changeRoleAuth,
     openRoleJurisdictionModal,
-    closeRoleJurisdictionModal, getRoleDetail,
-    addNewRole, getAllMenuList
+    closeRoleJurisdictionModal,
+    getRoleDetail,
+    addNewRole,
+    getAllMenuList,
   } = store;
 
-  const { total, menuList, roleMenu, projectList, pageSize, current, userList, oneRoleDetail, oneRoleMenu, isEditRoleModalVisible, isRoleJurisdictionModalVisible, isRoleModalVisible, activeUser, activeProject } =
-    store;
+  const {
+    total,
+    menuList,
+    roleMenu,
+    projectList,
+    pageSize,
+    current,
+    userList,
+    oneRoleDetail,
+    oneRoleMenu,
+    isEditRoleModalVisible,
+    isRoleJurisdictionModalVisible,
+    isRoleModalVisible,
+    activeUser,
+    activeProject,
+  } = store;
   const [saveOrChangeFlag, setSaveOrChangeFlag] = useState(false);
   // 成员列表的值
-  const loading = loadingStore.loading["RoleList/getUserList"];
+  const loading = loadingStore.loading['RoleList/getUserList'];
   // 表格列表数据
   let basicTableListData = toJS(projectList);
   // 表格列配置信息
   const columns = [
     {
-      title: "角色名",
-      dataIndex: "name",
-      key: "name",
+      title: '角色名',
+      dataIndex: 'name',
+      key: 'name',
+      width: '20%',
       disabled: true,
     },
     {
-      title: "描述",
-      dataIndex: "desc",
-      key: "desc",
+      title: '描述',
+      dataIndex: 'desc',
+      key: 'desc',
+      width: '20%',
       disabled: true,
     },
     {
@@ -54,29 +84,30 @@ const RoleList = observer(() => {
       key: 'updateTime',
       render: (updateTime) => {
         return formatDate(updateTime);
-      }
+      },
     },
     {
-      title: "创建时间",
-      dataIndex: "createTime",
-      key: "createTime",
+      title: '创建时间',
+      dataIndex: 'createTime',
+      key: 'createTime',
       disabled: true,
       render(createTime) {
         return formatDate(createTime);
-      }
+      },
     },
     {
       title: intl.formatMessage({
-        id: "common.actions",
-        defaultValue: "操作",
+        id: 'common.actions',
+        defaultValue: '操作',
       }),
       width: 270,
-      dataIndex: "actions",
-      key: "actions",
+      dataIndex: 'actions',
+      key: 'actions',
       render(text, record, index) {
         return (
           <span className={styles.projectActionList}>
-            <a className={styles.projectAction}
+            <a
+              className={styles.projectAction}
               onClick={async () => {
                 await getRoleDetail(record.id);
                 getAllUserList();
@@ -84,63 +115,74 @@ const RoleList = observer(() => {
               }}
             >
               <FormattedMessage
-                id="pages.roleManage.member"
-                defaultValue="成员列表"
+                id='pages.roleManage.member'
+                defaultValue='成员列表'
               />
             </a>
-            {record.name !== '管理员' && <a className={styles.projectAction}
-              onClick={() => {
+            {record.name !== '管理员' && (
+              <a
+                className={styles.projectAction}
+                onClick={() => {
+                  openRoleJurisdictionModal(record);
+                }}
+              >
+                <FormattedMessage
+                  id='pages.roleManage.role'
+                  defaultValue='权限配置'
+                />
+              </a>
+            )}
 
-                openRoleJurisdictionModal(record);
-              }}
-            >
-              <FormattedMessage
-                id="pages.roleManage.role"
-                defaultValue="权限配置"
-              />
-            </a>}
-
-            {
-              record.name !== '管理员' && record.name !== '成员' && <a
+            {record.name !== '管理员' && record.name !== '成员' && (
+              <a
                 className={styles.projectAction}
                 onClick={() => {
                   setSaveOrChangeFlag(false);
                   openEditRoleModal(record);
                 }}
               >
-                <FormattedMessage id="common.editDetail" defaultValue="编辑信息" />
+                <FormattedMessage
+                  id='common.editDetail'
+                  defaultValue='编辑信息'
+                />
               </a>
-            }
-            {
-              record.name !== '管理员' && record.name !== '成员' && <Popconfirm title="确认删除？" okText="确认" cancelText="取消" onConfirm={() => {
-                deleteRole({ id: record.id, ...record }, (res) => {
-                  if (res.code === successCode) {
-                    message.success(
-                      intl.formatMessage({
-                        id: "common.deleteSuccess",
-                        defaultValue: "删除成功！",
-                      })
-                    );
-                    closeEditRoleModal();
-                    getUserList({
-                      curPage: 1,
-                    });
-                    getRoleMenu();
-                  } else {
-                    message.error(
-                      res.msg || intl.formatMessage({
-                        id: "common.deleteError",
-                        defaultValue: "删除失败，请稍后重试！",
-                      })
-                    );
-                  }
-                });
-              }}>
+            )}
+            {record.name !== '管理员' && record.name !== '成员' && (
+              <Popconfirm
+                title='确认删除？'
+                okText='确认'
+                cancelText='取消'
+                onConfirm={() => {
+                  deleteRole({ id: record.id, ...record }, (res) => {
+                    if (res.code === successCode) {
+                      message.success(
+                        intl.formatMessage({
+                          id: 'common.deleteSuccess',
+                          defaultValue: '删除成功！',
+                        })
+                      );
+                      closeEditRoleModal();
+                      getUserList({
+                        curPage: 1,
+                      });
+                      getRoleMenu();
+                    } else {
+                      message.error(
+                        res.msg ||
+                          intl.formatMessage({
+                            id: 'common.deleteError',
+                            defaultValue: '删除失败，请稍后重试！',
+                          })
+                      );
+                    }
+                  });
+                }}
+              >
                 <a className={styles.projectAction} href='#'>
-                  <FormattedMessage id="common.delete" defaultValue="删除" />
+                  <FormattedMessage id='common.delete' defaultValue='删除' />
                 </a>
               </Popconfirm>
-            }
+            )}
           </span>
         );
       },
@@ -150,26 +192,33 @@ const RoleList = observer(() => {
     {
       components: (
         <Select
-          id="name"
-          key="name"
+          id='name'
+          key='name'
           name='角色名'
           allowClear
-          suffix={<Icon type="search" />
-          }
-          style={{ width: "200px" }}
+          suffix={<Icon type='search' />}
+          style={{ width: '200px' }}
           placeholder={intl.formatMessage({
-            id: "pages.roleManage.searchInputRoleName",
-            defaultValue: "选择角色名进行查询",
+            id: 'pages.roleManage.searchInputRoleName',
+            defaultValue: '选择角色名进行查询',
           })}
         >
-          {
-            roleMenu ? roleMenu.map(item => {
-              return <Select.Option key={item.id} value={item.name} label={item.name}>{item.name}</Select.Option>;
-            }) : null
-          }
+          {roleMenu
+            ? roleMenu.map((item) => {
+                return (
+                  <Select.Option
+                    key={item.id}
+                    value={item.name}
+                    label={item.name}
+                  >
+                    {item.name}
+                  </Select.Option>
+                );
+              })
+            : null}
         </Select>
       ),
-    }
+    },
   ];
   // 请求列表数据
   useEffect(() => {
@@ -186,7 +235,7 @@ const RoleList = observer(() => {
     setSearchParams(params);
     getUserList({
       curPage: 1,
-      pageSize: 10
+      pageSize: 10,
     });
   };
 
@@ -205,23 +254,24 @@ const RoleList = observer(() => {
           defaultPageSize: 10,
           onChange: onPageChange,
           onShowSizeChange: onPageChange,
-          showSizeChanger: true
+          showSizeChanger: true,
         }}
         searchBar={{
           onSearch: onSearch,
           extra: () => {
             return [
               <Button
-                type="primary"
-                key="create_project"
+                type='primary'
+                key='create_project'
                 onClick={() => {
                   setSaveOrChangeFlag(true);
-                  openEditRoleModal({}, 1); setSaveOrChangeFlag(true);
+                  openEditRoleModal({}, 1);
+                  setSaveOrChangeFlag(true);
                 }}
               >
                 <FormattedMessage
-                  id="pages.roleManage.create"
-                  defaultValue="角色"
+                  id='pages.roleManage.create'
+                  defaultValue='角色'
                 />
               </Button>,
             ];
@@ -239,8 +289,8 @@ const RoleList = observer(() => {
               if (res.code === successCode) {
                 message.success(
                   intl.formatMessage({
-                    id: "common.changeSuccess",
-                    defaultValue: "修改成功！",
+                    id: 'common.changeSuccess',
+                    defaultValue: '修改成功！',
                   })
                 );
                 closeEditRoleModal();
@@ -249,10 +299,11 @@ const RoleList = observer(() => {
                 });
               } else {
                 message.error(
-                  res.msg || intl.formatMessage({
-                    id: "common.changeError",
-                    defaultValue: "修改失败，请稍后重试！",
-                  })
+                  res.msg ||
+                    intl.formatMessage({
+                      id: 'common.changeError',
+                      defaultValue: '修改失败，请稍后重试！',
+                    })
                 );
               }
             });
@@ -262,8 +313,8 @@ const RoleList = observer(() => {
               if (res.code === successCode) {
                 message.success(
                   intl.formatMessage({
-                    id: "common.saveSuccess",
-                    defaultValue: "新增成功！",
+                    id: 'common.saveSuccess',
+                    defaultValue: '新增成功！',
                   })
                 );
                 closeEditRoleModal();
@@ -273,10 +324,11 @@ const RoleList = observer(() => {
                 getRoleMenu();
               } else {
                 message.error(
-                  res.msg || intl.formatMessage({
-                    id: "common.saveError",
-                    defaultValue: "新增失败，请稍后重试！",
-                  })
+                  res.msg ||
+                    intl.formatMessage({
+                      id: 'common.saveError',
+                      defaultValue: '新增失败，请稍后重试！',
+                    })
                 );
               }
             });
@@ -288,7 +340,6 @@ const RoleList = observer(() => {
       {/* 修改用户角色 */}
       {isRoleModalVisible && (
         <ChangeRoleModal
-
           id={activeUser.id}
           project={userList}
           checkProject={oneRoleDetail}
@@ -297,8 +348,8 @@ const RoleList = observer(() => {
               if (res.code === successCode) {
                 message.success(
                   intl.formatMessage({
-                    id: "common.saveSuccess",
-                    defaultValue: "保存成功！",
+                    id: 'common.saveSuccess',
+                    defaultValue: '保存成功！',
                   })
                 );
                 closeRoleModal();
@@ -308,19 +359,17 @@ const RoleList = observer(() => {
               } else {
                 message.error(
                   res.mag ||
-                  intl.formatMessage({
-                    id: "common.saveError",
-                    defaultValue: "保存失败，请稍后重试！",
-                  })
+                    intl.formatMessage({
+                      id: 'common.saveError',
+                      defaultValue: '保存失败，请稍后重试！',
+                    })
                 );
               }
             });
           }}
           onCancel={closeRoleModal}
         />
-
-      )
-      }
+      )}
       {/* 修改菜单 */}
       {isRoleJurisdictionModalVisible && (
         <ChangeRoleJurisdiction
@@ -332,8 +381,8 @@ const RoleList = observer(() => {
               if (res.code === successCode) {
                 message.success(
                   intl.formatMessage({
-                    id: "common.saveSuccess",
-                    defaultValue: "保存成功！",
+                    id: 'common.saveSuccess',
+                    defaultValue: '保存成功！',
                   })
                 );
                 closeRoleJurisdictionModal();
@@ -343,19 +392,17 @@ const RoleList = observer(() => {
               } else {
                 message.error(
                   res.msg ||
-                  intl.formatMessage({
-                    id: "common.saveError",
-                    defaultValue: "保存失败，请稍后重试！",
-                  })
+                    intl.formatMessage({
+                      id: 'common.saveError',
+                      defaultValue: '保存失败，请稍后重试！',
+                    })
                 );
               }
             });
           }}
           onCancel={closeRoleJurisdictionModal}
         />
-
-      )
-      }
+      )}
     </React.Fragment>
   );
 });

@@ -136,7 +136,7 @@ const CloneComponent = observer(
                 message: '请最多输入20个字符！',
               },
             ],
-          })(<Input />)}
+          })(<Input maxLength={20} />)}
         </Form.Item>
         <Form.Item
           label={
