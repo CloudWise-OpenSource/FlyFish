@@ -807,7 +807,7 @@ const ComponentDevelop = observer((props) => {
                   >
                     {userList.map((item) => {
                       return (
-                        <CWSelect.Option key={item.userId} value={item.userId}>
+                        <CWSelect.Option key={item.id} value={item.id}>
                           {item.username}
                         </CWSelect.Option>
                       );

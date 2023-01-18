@@ -77,6 +77,7 @@ const RoleList = observer(() => {
       key: 'desc',
       width: '20%',
       disabled: true,
+      ellipsis: true,
     },
     {
       title: '最近更新时间',
