@@ -18,6 +18,7 @@ public class RoleVo {
     private String name;
     private List<MenusVo> menus;
     private List<BaseUser> members;
+    private String desc;
     private Long updater;
     private Long creator;
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")

@@ -1,8 +1,6 @@
 package com.cloudwise.lcap.commonbase.config;
 
 import cn.hutool.core.util.StrUtil;
-import com.cloudwise.lcap.commonbase.enums.ResultCode;
-import com.cloudwise.lcap.commonbase.exception.BaseException;
 import com.cloudwise.lcap.commonbase.threadlocal.ThreadLocalContext;
 import com.cloudwise.lcap.commonbase.util.JwtUtils;
 import io.jsonwebtoken.Claims;
@@ -51,7 +49,8 @@ public class TokenInterceptor implements HandlerInterceptor {
                 Cookie cookie = new Cookie("token", null);
                 cookie.setMaxAge(0);
                 response.addCookie(cookie);
-                throw new BaseException(ResultCode.TOKEN_ERROR.getCode(), ResultCode.TOKEN_ERROR.getMsg());
+                return false;
+//                throw new BaseException(ResultCode.TOKEN_ERROR.getCode(), ResultCode.TOKEN_ERROR.getMsg());
             }
             // 4、判断 token 是否过期
             Date expiration = claim.getExpiration();
@@ -61,7 +60,8 @@ public class TokenInterceptor implements HandlerInterceptor {
                 Cookie cookie = new Cookie("token", null);
                 cookie.setMaxAge(0);
                 response.addCookie(cookie);
-                throw new BaseException(ResultCode.TOKEN_EXPIRE.getCode(), ResultCode.TOKEN_EXPIRE.getMsg());
+                return false;
+//                throw new BaseException(ResultCode.TOKEN_EXPIRE.getCode(), ResultCode.TOKEN_EXPIRE.getMsg());
             }
 
             // 5、 从 token 中获取员工信息
@@ -71,7 +71,8 @@ public class TokenInterceptor implements HandlerInterceptor {
                 Cookie cookie = new Cookie("token", null);
                 cookie.setMaxAge(0);
                 response.addCookie(cookie);
-                throw new BaseException(ResultCode.TOKEN_NOTFOUND.getCode(), ResultCode.TOKEN_NOTFOUND.getMsg());
+                return false;
+//                throw new BaseException(ResultCode.TOKEN_NOTFOUND.getCode(), ResultCode.TOKEN_NOTFOUND.getMsg());
             }
             // 7、成功后 设置想设置的属性，比如员工姓名
 //            request.setAttribute("userId", subject);

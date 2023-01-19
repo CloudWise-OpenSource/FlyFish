@@ -57,7 +57,7 @@ public enum ResultCode {
     ALREADY_EXISTS(1003,"资源名称已存在"),
     NO_AUTH(3004,"操作失败, 无权限"),
     EXISTS_ALREADY_PROJECT_REF(3005,"删除失败, 项目中存在组件或者应用"),
-    PROJECT_EXISTS_ALREADY(3006,"编辑失败,, 项目名称已存在"),
+    PROJECT_EXISTS_ALREADY(3006,"编辑失败, 项目名称已存在"),
     EXISTS_ALREADY_COMPONENT_REF(3007,"删除失败, 该组件被使用, 不允许删除"),
     DB_NOT_FOUND(3008, "未找到该资源!"),
     EXISTS_ALREADY_COMPONENT_CATEGORY(3009,"删除失败, 该组件分类还有子分类, 不允许删除"),

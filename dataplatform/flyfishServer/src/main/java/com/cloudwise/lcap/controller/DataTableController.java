@@ -6,6 +6,7 @@ import com.cloudwise.lcap.commonbase.base.PageResult;
 import com.cloudwise.lcap.commonbase.dto.DataTableDto;
 import com.cloudwise.lcap.commonbase.entity.DataQuery;
 import com.cloudwise.lcap.commonbase.entity.DataSource;
+import com.cloudwise.lcap.commonbase.entity.DataTable;
 import com.cloudwise.lcap.commonbase.exception.ParameterException;
 import com.cloudwise.lcap.commonbase.threadlocal.ThreadLocalContext;
 import com.cloudwise.lcap.commonbase.util.JsonUtils;
@@ -50,6 +51,7 @@ public class DataTableController {
 
     @Value("${datasource.maxconnect}")
     private int maxConnect;
+
     /**
      * 条件查询数据源下的表列表
      * 对于http、redis、mongo数据源，直接从 datatable 查询
@@ -63,7 +65,8 @@ public class DataTableController {
             throw new ParameterException("参数错误,数据源不存在");
         }
         String schemaType = dataSource.getSchemaType();
-
+        String datasourceName = dataSource.getDatasourceName();
+        String schemaName = dataSource.getSchemaName();
         switch (schemaType.toLowerCase()) {
             case MYSQL:
             case POSTGRES:
@@ -72,7 +75,17 @@ public class DataTableController {
             case DAMENG:
             case MARIA:
             case CLICKHOUSE:
-                return JDBCQueryProxy.getTableList(dataSource,maxConnect,schemaType);
+                return JDBCQueryProxy.getTableList(dataSource, maxConnect, schemaType);
+            case HTTP:
+                List<DataTableDto> returnData = new ArrayList<>();
+                List<DataTable> tables = dataTableService.getTables(datasourceId);
+                if (CollectionUtil.isNotEmpty(tables)) {
+                    returnData = tables.stream().map(o -> DataTableDto.builder().tableId(o.getId()).tableName(o.getName()).datasourceId(datasourceId).modelName(schemaName).datasourceName(datasourceName).schemaName(schemaName).schemaType(schemaType).build()).collect(Collectors.toList());
+                    if (StringUtils.isNotEmpty(tableName)) {
+                        returnData = returnData.stream().filter(tableDto -> tableDto.getTableName().contains(tableName)).collect(Collectors.toList());
+                    }
+                }
+                return returnData;
             default:
                 break;
         }
@@ -147,7 +160,7 @@ public class DataTableController {
         HttpEnumerable enumerable = HttpEnumerable.builder()
                 .url(url).method(method).params(param1).header(header1).requestBody(requestBody).build();
 
-        Map<String,Object> extraHeader = new HashMap<>();
+        Map<String, Object> extraHeader = new HashMap<>();
         extraHeader.forEach(enumerable.getHeader()::putIfAbsent);
         return HttpQueryUtil.request(enumerable);
     }
@@ -159,7 +172,7 @@ public class DataTableController {
      * @return
      */
     @PostMapping("/sqlquery")
-    public PageResult<Map<String,Object>> sqlquery(@RequestBody SqlQueryReq sqlQueryReq) {
+    public PageResult<Map<String, Object>> sqlquery(@RequestBody SqlQueryReq sqlQueryReq) {
         String datasourceId = sqlQueryReq.getDatasourceId();
         DataSource dataSource = dataSourceService.findByDatasourceId(datasourceId);
         if (null == dataSource) {
@@ -201,12 +214,12 @@ public class DataTableController {
             }
         }
         params.setSql(dataSql);
-        List<Map<String,Object>> data = queryExecute.execute(params);
+        List<Map<String, Object>> data = queryExecute.execute(params);
         int total = data.size();
         if (total > DATA_TOTAL) {
             total = DATA_TOTAL;
         }
-        List<Map<String,Object>> subData = new LinkedList<>();
+        List<Map<String, Object>> subData = new LinkedList<>();
         if (startLimit < total) {
             int pageCount = pageNo * pageSize;
             if (pageCount > total) {

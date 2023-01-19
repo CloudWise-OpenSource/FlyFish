@@ -14,4 +14,6 @@ import java.util.List;
  */
 public interface ITagRefService {
     void updateTagsRef(String id, List<TagVo> tags, String type);
+
+    void deleteTagsRef(String id, String type);
 }

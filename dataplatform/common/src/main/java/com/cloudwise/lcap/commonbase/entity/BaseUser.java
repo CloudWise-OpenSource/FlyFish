@@ -57,6 +57,7 @@ public class BaseUser implements Serializable {
     /**
      * 密码
      */
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     /**
@@ -101,7 +102,7 @@ public class BaseUser implements Serializable {
     /**
      * 更新时间
      */
-    @TableField(fill = FieldFill.INSERT_UPDATE,update = "now()")
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date updateTime;

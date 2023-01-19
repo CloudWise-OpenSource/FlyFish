@@ -1,13 +1,13 @@
 package com.cloudwise.lcap.commonbase.vo;
 
-import java.util.List;
-
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.cloudwise.lcap.commonbase.entity.Component;
 import lombok.Builder;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
 
 @Data
 @Builder
@@ -16,6 +16,7 @@ public class ComponentInfoRespVo {
   private Boolean isLib;
   private String name;
   private String type;
+  private String desc;
   private String developStatus;
   private List<ProjectRespVo> projects;
   private UserInfoVo creatorInfo;
@@ -31,6 +32,7 @@ public class ComponentInfoRespVo {
     }
     return ComponentInfoRespVo.builder().id(component.getId()).isLib((null == isLib || isLib == 0)?false:true).name(component.getName())
             .type(component.getType()).developStatus(component.getDevelopStatus())
+            .desc(component.getDesc())
             .dataConfig(dataConfig).build();
   }
 }

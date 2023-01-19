@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 /**
  * <p>
- *  服务实现类
+ * 服务实现类
  * </p>
  *
  * @author luke.miao
@@ -48,7 +48,7 @@ public class TagRefServiceImpl implements ITagRefService {
     @Override
     public void updateTagsRef(String refId, List<TagVo> tags, String type) {
         Long accountId = ThreadLocalContext.getAccountId();
-        if (CollectionUtils.isEmpty(tags)){
+        if (CollectionUtils.isEmpty(tags)) {
             return;
         }
         List<String> reqTagNames = tags.stream().map(TagVo::getName).collect(Collectors.toList());
@@ -62,7 +62,7 @@ public class TagRefServiceImpl implements ITagRefService {
         // 新增：系统不存在的tag, 需要先插入Tag
         List<String> newTagNames = reqTagNames.stream().filter(tag -> !oldTagNames.contains(tag)).collect(Collectors.toList());
 
-        if(newTagNames.size() > 0){
+        if (newTagNames.size() > 0) {
             //插入新增tag
             List<Tag> newTagData = newTagNames.stream().map(t -> {
                 Tag tag = new Tag();
@@ -81,7 +81,7 @@ public class TagRefServiceImpl implements ITagRefService {
                 .in(Tag::getName, reqTagNames);
         List<Tag> allTags = iTagService.getBaseMapper().selectList(reqTagsWrapper);
 
-        if (ResourceType.APPLICATION.getType().equals(type)){
+        if (ResourceType.APPLICATION.getType().equals(type)) {
             LambdaQueryWrapper<ApplicationTagRef> atrWrapper = new LambdaQueryWrapper<>();
             atrWrapper.eq(ApplicationTagRef::getApplicationId, refId);
             iApplicationTagRefService.getBaseMapper().delete(atrWrapper);
@@ -95,12 +95,12 @@ public class TagRefServiceImpl implements ITagRefService {
             }).collect(Collectors.toList());
             iApplicationTagRefService.saveBatch(updateRef);
 
-        }else if (ResourceType.COMPONENT.getType().equals(type)) {
+        } else if (ResourceType.COMPONENT.getType().equals(type)) {
 /*            ComponentTagRef deleteEntity = new ComponentTagRef();
             deleteEntity.setDeleted(ValidType.VALID.getType());*/
             LambdaQueryWrapper<ComponentTagRef> atrWrapper = new LambdaQueryWrapper<>();
             atrWrapper.eq(ComponentTagRef::getComponentId, refId);
-           // iComponentTagRefService.getBaseMapper().update(deleteEntity, atrWrapper);
+            // iComponentTagRefService.getBaseMapper().update(deleteEntity, atrWrapper);
             iComponentTagRefService.getBaseMapper().delete(atrWrapper);
 
             // 更新component_tag_ref表
@@ -111,6 +111,19 @@ public class TagRefServiceImpl implements ITagRefService {
                 return atr;
             }).collect(Collectors.toList());
             iComponentTagRefService.saveBatch(updateRef);
+        }
+    }
+
+    @Override
+    public void deleteTagsRef(String refId, String type) {
+        if (ResourceType.APPLICATION.getType().equals(type)) {
+            LambdaQueryWrapper<ApplicationTagRef> atrWrapper = new LambdaQueryWrapper<>();
+            atrWrapper.eq(ApplicationTagRef::getApplicationId, refId);
+            iApplicationTagRefService.getBaseMapper().delete(atrWrapper);
+        } else if (ResourceType.COMPONENT.getType().equals(type)) {
+            LambdaQueryWrapper<ComponentTagRef> atrWrapper = new LambdaQueryWrapper<>();
+            atrWrapper.eq(ComponentTagRef::getComponentId, refId);
+            iComponentTagRefService.getBaseMapper().delete(atrWrapper);
         }
     }
 }

@@ -57,7 +57,7 @@ public class ApplicationServiceImpl extends ServiceImpl<ApplicationMapper, Appli
     @Autowired
     ITagRefService iTagRefService;
 
-//    @Autowired
+    //    @Autowired
 //    DoucApiImp doucApiImp;
     @Autowired
     HttpServletRequest request;
@@ -98,6 +98,8 @@ public class ApplicationServiceImpl extends ServiceImpl<ApplicationMapper, Appli
 
     @Value("${lcap.component.init_version}")
     private String componentInitVersion;
+    @Autowired
+    public BaseUserService baseUserService;
 
     @Override
     public IdRespVo install(ApplicationInstallReqVo installInfo) {
@@ -308,6 +310,8 @@ public class ApplicationServiceImpl extends ServiceImpl<ApplicationMapper, Appli
 
         if (tags != null && tags.size() > 0) {
             iTagRefService.updateTagsRef(id, tags, ResourceType.APPLICATION.getType());
+        } else {
+            iTagRefService.deleteTagsRef(id, ResourceType.APPLICATION.getType());
         }
         baseMapper.updateById(newApplication);
     }
@@ -529,8 +533,8 @@ public class ApplicationServiceImpl extends ServiceImpl<ApplicationMapper, Appli
                 applicationListRespVo.setTags(appTagMap.get(app.getId()) != null ? appTagMap.get(app.getId()) : new ArrayList<>());
 //                applicationListRespVo.setCreator(userMap.get(app.getCreator()));
 //                applicationListRespVo.setUpdater(userMap.get(app.getUpdater()));
-                applicationListRespVo.setCreator(String.valueOf(ThreadLocalContext.getUserId()));
-                applicationListRespVo.setUpdater(String.valueOf(ThreadLocalContext.getUserId()));
+                applicationListRespVo.setCreator(getUserName(app.getCreator()));
+                applicationListRespVo.setUpdater(getUserName(app.getUpdater()));
                 applicationListRespVo.setCover(app.getCover());
                 applicationListResVos.add(applicationListRespVo);
             });
@@ -541,6 +545,19 @@ public class ApplicationServiceImpl extends ServiceImpl<ApplicationMapper, Appli
         pageBaseListRespVo.setTotal(applicationPage.getTotal());
         pageBaseListRespVo.setList(applicationListResVos);
         return pageBaseListRespVo;
+    }
+
+    private String getUserName(Long userId) {
+        //doucApi 获取用户信息
+        if (null == userId) {
+            return null;
+        }
+        BaseUser byId = baseUserService.getById(userId);
+        if (byId != null) {
+            return byId.getUsername();
+        } else {
+            return "-";
+        }
     }
 
 

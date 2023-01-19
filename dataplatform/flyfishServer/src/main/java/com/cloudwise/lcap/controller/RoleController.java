@@ -25,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.charset.Charset;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,19 +57,17 @@ public class RoleController {
      */
     @PostMapping
     public void save(@RequestBody Role role) {
-        try {
-            LambdaQueryWrapper<Role> eq = Wrappers.<Role>lambdaQuery().eq(StrUtil.isNotBlank(role.getName()), Role::getName, role.getName());
-            Role one = roleService.getOne(eq);
+        LambdaQueryWrapper<Role> eq = Wrappers.<Role>lambdaQuery().eq(StrUtil.isNotBlank(role.getName()), Role::getName, role.getName());
+        Role one = roleService.getOne(eq);
 
-            if (one != null) {
-                throw new BizException("角色已存在");
-            }
-            role.setStatus("valid");
-            roleService.save(role);
-        } catch (Exception e) {
-            log.error("保存角色异常:", e);
-            throw new BizException("保存角色异常:" + e.getMessage());
+        if (one != null) {
+            throw new BizException("角色已存在");
         }
+        role.setStatus("valid");
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.set("menus",JSONUtil.createArray());
+        role.setMenus(JSONUtil.toJsonStr(jsonObject));
+        roleService.save(role);
     }
 
     /**
@@ -80,15 +79,17 @@ public class RoleController {
     @PutMapping("/{id}/basic")
     public void update(@PathVariable Long id, @RequestBody Role role) {
         try {
-            LambdaUpdateWrapper<Role> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
-            lambdaUpdateWrapper.eq(Role::getId, id)
-                    .set(StrUtil.isNotBlank(role.getName()), Role::getName, role.getName())
-                    .set(StrUtil.isNotBlank(role.getDesc()), Role::getDesc, role.getDesc())
-                    .set(StrUtil.isNotBlank(role.getMenus()), Role::getMenus, role.getMenus())
-                    .set(StrUtil.isNotBlank(role.getStatus()), Role::getStatus, role.getStatus())
-                    .set(role.getUpdater()!=null, Role::getUpdater, role.getUpdater())
-                    .set(role.getCreator()!=null, Role::getCreator, role.getCreator());
-            roleService.update(null, lambdaUpdateWrapper);
+//            LambdaUpdateWrapper<Role> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+//            lambdaUpdateWrapper.eq(Role::getId, id)
+//                    .set(StrUtil.isNotBlank(role.getName()), Role::getName, role.getName())
+//                    .set(StrUtil.isNotBlank(role.getDesc()), Role::getDesc, role.getDesc())
+//                    .set(StrUtil.isNotBlank(role.getMenus()), Role::getMenus, role.getMenus())
+//                    .set(StrUtil.isNotBlank(role.getStatus()), Role::getStatus, role.getStatus())
+//                    .set(role.getUpdater()!=null, Role::getUpdater, role.getUpdater())
+//                    .set(role.getCreator()!=null, Role::getCreator, role.getCreator());
+//            roleService.update(null, lambdaUpdateWrapper);
+            role.setId(StrUtil.str(id, Charset.defaultCharset()));
+            roleService.updateById(role);
         } catch (Exception e) {
             log.error("basic更新角色异常:", e);
             throw new BizException("basic更新角色异常:" + e.getMessage());
@@ -162,11 +163,14 @@ public class RoleController {
     public void updateMembers(@PathVariable String id, @RequestBody UserIdDto userIdDto) {
         try {
             List<String> members = userIdDto.getMembers();
-            List<BaseUser> baseUsers = baseUserService.getBaseMapper().selectBatchIds(members);
-            baseUsers.forEach(x -> {
-                x.setRoleId(id);
-            });
-            baseUserService.saveOrUpdateBatch(baseUsers);
+            if (CollUtil.isNotEmpty(members)) {
+                List<BaseUser> baseUsers = baseUserService.getBaseMapper().selectBatchIds(members);
+                baseUsers.forEach(x -> {
+                    x.setRoleId(id);
+                    x.setUpdateTime(x.getUpdateTime());
+                });
+                baseUserService.saveOrUpdateBatch(baseUsers);
+            }
         } catch (Exception e) {
             log.error("修改members异常:", e);
             throw new BizException("修改members异常:" + e.getMessage());
@@ -231,7 +235,7 @@ public class RoleController {
                     }
                     return roleVo;
                 }).collect(Collectors.toList());
-                collect=collect.stream().sorted(Comparator.comparing(RoleVo::getCreateTime).reversed()).collect(Collectors.toList());
+                collect = collect.stream().sorted(Comparator.comparing(RoleVo::getUpdateTime).reversed()).collect(Collectors.toList());
                 PageResultOfOpenSource<RoleVo> rolePageResultOfOpenSource = new PageResultOfOpenSource<>(page1.getCurrent(), page1.getSize(), page1.getTotal(), collect);
                 return rolePageResultOfOpenSource;
             } else {
@@ -248,7 +252,7 @@ public class RoleController {
                     }
                     return roleVo;
                 }).collect(Collectors.toList());
-                collect=collect.stream().sorted(Comparator.comparing(RoleVo::getCreateTime).reversed()).collect(Collectors.toList());
+                collect = collect.stream().sorted(Comparator.comparing(RoleVo::getUpdateTime).reversed()).collect(Collectors.toList());
                 PageResultOfOpenSource<RoleVo> rolePageResultOfOpenSource = new PageResultOfOpenSource<>(page1.getCurrent(), page1.getSize(), page1.getTotal(), collect);
                 return rolePageResultOfOpenSource;
             }

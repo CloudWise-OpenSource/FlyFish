@@ -1,6 +1,8 @@
 package com.cloudwise.lcap.commonbase.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.file.FileReader;
@@ -9,6 +11,7 @@ import cn.hutool.core.util.ZipUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cloudwise.lcap.commonbase.contants.Constant;
@@ -56,6 +59,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -301,7 +305,7 @@ public class ComponentServiceImpl extends ServiceImpl<ComponentMapper, Component
             componentLambdaQueryWrapper.and(wrapper -> wrapper.like(Component::getName, name).or().eq(Component::getId, name));
         }
         if (StringUtils.isNotBlank(componentListReqVo.getCreator())) {
-            componentLambdaQueryWrapper.eq(Component::getCreator, Long.valueOf(componentListReqVo.getCreator()));
+            componentLambdaQueryWrapper.eq(Component::getCreator, componentListReqVo.getCreator());
         }
         componentLambdaQueryWrapper.eq(StringUtils.isNotEmpty(componentListReqVo.getCategory()), Component::getCategoryId, componentListReqVo.getCategory());
         componentLambdaQueryWrapper.eq(StringUtils.isNotEmpty(componentListReqVo.getSubCategory()), Component::getSubCategoryId, componentListReqVo.getSubCategory());
@@ -348,8 +352,8 @@ public class ComponentServiceImpl extends ServiceImpl<ComponentMapper, Component
         List<ComponentRespVo> componentListRespVoList = new ArrayList<>();
 
         if (componentList != null && !componentList.isEmpty()) {
-//            List<Long> userIds = componentList.stream().map(Component::getCreator).filter(Objects::nonNull).distinct().collect(Collectors.toList());
-//            List<JSONObject> usersInfo = doucApiImp.getUserInfoByIds(userIds);
+            List<Long> userIds = componentList.stream().map(Component::getCreator).filter(Objects::nonNull).distinct().collect(Collectors.toList());
+            List<BaseUser> usersInfo = baseUserService.list(Wrappers.<BaseUser>lambdaQuery().in(CollUtil.isNotEmpty(userIds),BaseUser::getId, userIds));
 
             List<String> componentIds = componentList.stream().map(Component::getId).collect(Collectors.toList());
             Map<String, List<Project>> componentIdProjectMap = getProjectsByComponentIds(componentIds);
@@ -357,7 +361,8 @@ public class ComponentServiceImpl extends ServiceImpl<ComponentMapper, Component
 
             componentList.forEach(i -> {
                 ComponentRespVo componentRespVo = ComponentRespVo.dtoToBean(i);
-//                Optional<JSONObject> curUserInfo = usersInfo.stream().filter(user -> Objects.equals(user.getLong("userId"), i.getCreator())).findFirst();
+                String creator = StrUtil.str(i.getCreator(), (Charset) null);
+                Optional<BaseUser> first = usersInfo.stream().filter(user -> Objects.equals(user.getId(), creator)).findFirst();
 
                 List<ProjectRespVo> projectRespVos = new ArrayList<>();
                 if ("project".equalsIgnoreCase(componentRespVo.getType())) {
@@ -376,11 +381,7 @@ public class ComponentServiceImpl extends ServiceImpl<ComponentMapper, Component
                 componentRespVo.setTags(tagVos);
 
                 componentRespVo.setVersion(Objects.equals(i.getDevelopStatus(), ComponentDevStatus.ONLINE.getType()) ? i.getLatestVersion() : "暂未上线");
-                String userId = String.valueOf(ThreadLocalContext.getUserId());
-                if(StrUtil.isNotBlank(userId)){
-                    BaseUser byId = baseUserService.getById(userId);
-                    componentRespVo.setCreator(byId.getUsername());
-                }
+                componentRespVo.setCreator(first.isPresent() ? first.get().getUsername() : "-");
                 componentListRespVoList.add(componentRespVo);
             });
         }
@@ -424,13 +425,13 @@ public class ComponentServiceImpl extends ServiceImpl<ComponentMapper, Component
 
         UserInfoVo creatorUserInfoVo = new UserInfoVo();
         creatorUserInfoVo.setId(componentInfo.getCreator());
-        String userId = String.valueOf(ThreadLocalContext.getUserId());
-        if(StrUtil.isNotBlank(userId)) {
-            BaseUser byId = baseUserService.getById(userId);
-            creatorUserInfoVo.setUsername(byId.getUsername());
-        }
+        log.info("componentInfo.getCreator():{}",componentInfo.getCreator());
+        String creator = StrUtil.str(componentInfo.getCreator(), (Charset) null);
+        List<BaseUser> usersInfo = baseUserService.list(Wrappers.<BaseUser>lambdaQuery().in(CollUtil.isNotEmpty(ListUtil.of(creator)),BaseUser::getId, ListUtil.of(creator)));
+        Optional<BaseUser> curCreatorUserInfo = usersInfo.stream().filter(i -> Objects.equals(i.getId(), creator)).findFirst();
+        creatorUserInfoVo.setUsername(curCreatorUserInfo.isPresent() ? curCreatorUserInfo.get().getUsername() : "-");
         componentRespVo.setCreatorInfo(creatorUserInfoVo);
-
+        log.info("componentRespVo.setCreatorInfo:{}",componentRespVo.getCreatorInfo());
         return componentRespVo;
     }
 
@@ -480,15 +481,17 @@ public class ComponentServiceImpl extends ServiceImpl<ComponentMapper, Component
             if (!new File(srcPath).exists()) {
                 throw new BaseException(ResultCode.COMPONENT_CUSTOM_COVER_PATH_ERROR.getCode(), ResultCode.COMPONENT_CUSTOM_COVER_PATH_ERROR.getMsg());
             }
-            String targetPath = componentBasePath + File.separator + id + "/v-current/cover.jpeg";
+            String targetPath = componentBasePath + File.separator + id + "/v-current/components/cover.jpeg";
             FileUtil.move(new File(srcPath), new File(targetPath), true);
-            component.setCover(componentRelativePath + File.separator + id + "/v-current/cover.jpeg");
+            component.setCover(componentRelativePath + File.separator + id + "/v-current/components/cover.jpeg");
         }else {
             component.setCover("");
         }
 
         if (CollectionUtil.isNotEmpty(componentReqVo.getTags())) {
             iTagRefService.updateTagsRef(id, componentReqVo.getTags(), ResourceType.COMPONENT.getType());
+        }else{
+            iTagRefService.deleteTagsRef(id,ResourceType.COMPONENT.getType());
         }
         baseMapper.updateById(component);
         return new IdRespVo(id);

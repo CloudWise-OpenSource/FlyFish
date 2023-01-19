@@ -34,7 +34,12 @@ public class BaseEntityHandler implements MetaObjectHandler {
 
     @Override
     public void updateFill(MetaObject metaObject) {
-        metaObject.setValue("updateTime", new Date());
+        if (metaObject.hasGetter("updateTime") && metaObject.getValue("updateTime") != null) {
+            metaObject.setValue("updateTime", metaObject.getValue("updateTime"));
+        }
+        if(metaObject.hasGetter("updateTime") && metaObject.getValue("updateTime") == null) {
+            metaObject.setValue("updateTime", new Date());
+        }
         if (metaObject.hasGetter("updater") && metaObject.getValue("updater") == null) {
             metaObject.setValue("updater", ThreadLocalContext.getUserId());
         }

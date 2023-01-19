@@ -299,7 +299,7 @@ CREATE TABLE if not exists `project` (
     `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-INSERT INTO project (id,name,`desc`,init_from,account_id,deleted,creator,updater,create_time,update_time) VALUES ('1564451835235811329','系统内置','系统内置','lcap-init',-1,0,3,3,'2022-08-30 11:15:58','2022-08-30 11:15:58') ON DUPLICATE KEY UPDATE update_time=update_time;
+INSERT INTO project (id,name,`desc`,init_from,account_id,deleted,creator,updater,create_time,update_time) VALUES ('1564451835235811329','系统内置','系统内置','lcap-init',-1,0,1613128193869365249,1613128193869365249,'2022-08-30 11:15:58','2022-08-30 11:15:58') ON DUPLICATE KEY UPDATE update_time=update_time;
 
 CREATE TABLE if not exists `project_trade_ref` (
     `id` varchar(255) NOT NULL,
@@ -339,7 +339,7 @@ CREATE TABLE if not exists `trade` (
     `update_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-INSERT INTO trade (id,name,`desc`,init_from,deleted,account_id,creator,updater,create_time,update_time) VALUES ('1564144977514147842','全行业',NULL,NULL,0,-1,3,3,'2022-08-29 14:56:38','2022-08-29 14:56:38') ON DUPLICATE KEY UPDATE update_time=update_time;
+INSERT INTO trade (id,name,`desc`,init_from,deleted,account_id,creator,updater,create_time,update_time) VALUES ('1564144977514147842','全行业',NULL,NULL,0,-1,1613128193869365249,1613128193869365249,'2022-08-29 14:56:38','2022-08-29 14:56:38') ON DUPLICATE KEY UPDATE update_time=update_time;
 
 CREATE TABLE if not exists `user` (
   `id` varchar(255) NOT NULL COMMENT 'id',
@@ -347,24 +347,24 @@ CREATE TABLE if not exists `user` (
   `email` varchar(32) DEFAULT NULL COMMENT '邮箱',
   `phone` varchar(11) DEFAULT NULL COMMENT '电话',
   `password` varchar(100) DEFAULT NULL COMMENT '密码',
-  `role_id` int(11) DEFAULT NULL COMMENT '角色id',
+  `role_id` varchar(255) DEFAULT NULL COMMENT '角色id',
   `status` varchar(20) DEFAULT NULL COMMENT '是否非法，是否禁用',
   `is_douc` tinyint(1) DEFAULT NULL COMMENT '是否是douc用户',
   `updater` bigint(32) DEFAULT NULL COMMENT '更新人',
   `creator` bigint(32) DEFAULT NULL COMMENT '创建人',
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `update_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP  COMMENT '更新时间',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户表';
 INSERT INTO `user`
 (id, user_name, email, phone, password, role_id, status, is_douc, updater, creator, create_time, update_time)
-VALUES('1613128193869365249', 'admin', '1203947952@qq.com', '18939657757', '327731c2e3932dcd84ffaf232c5644f6', 1, 'valid', 0, NULL, NULL, '2023-01-11 18:58:27', '2023-01-11 18:58:27');
+VALUES('1613128193869365249', 'admin', '1203947952@qq.com', '18939657757', '327731c2e3932dcd84ffaf232c5644f6', "1", 'valid', 0, NULL, NULL, '2023-01-11 18:58:27', '2023-01-11 18:58:27');
 
 CREATE TABLE if not exists `role` (
   `id` varchar(255) NOT NULL COMMENT 'id',
   `status` varchar(10) DEFAULT NULL COMMENT '是否合法',
   `name` varchar(100) DEFAULT NULL COMMENT '角色名',
-  `desc` varchar(100) DEFAULT NULL COMMENT '描述',
+  `desc` text  COMMENT '描述',
   `menus` text COMMENT '菜单对象MenuVo',
   `updater` bigint(32) DEFAULT NULL COMMENT '更新人',
   `creator` bigint(32) DEFAULT NULL COMMENT '创建人',

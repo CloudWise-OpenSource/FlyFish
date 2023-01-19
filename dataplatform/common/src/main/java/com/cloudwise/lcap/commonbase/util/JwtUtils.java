@@ -14,6 +14,8 @@ public class JwtUtils {
  
   // 过期时间
   private static long expire = 43200000;
+//  private static long expire = 120000;
+
   // 秘钥
   private static String secret = "HSyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9";
  

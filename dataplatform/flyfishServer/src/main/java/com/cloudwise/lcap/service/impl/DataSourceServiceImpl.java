@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cloudwise.lcap.commonbase.dto.DataTableDto;
 import com.cloudwise.lcap.commonbase.entity.DataSource;
+import com.cloudwise.lcap.commonbase.entity.DataTable;
 import com.cloudwise.lcap.commonbase.exception.ParameterException;
 import com.cloudwise.lcap.commonbase.mapper.DataSourceMapper;
 import com.cloudwise.lcap.commonbase.threadlocal.ThreadLocalContext;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import static com.cloudwise.lcap.commonbase.contants.Constant.*;
 
@@ -40,6 +42,7 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceMapper, DataSou
 
     @Value("${datasource.maxconnect}")
     private int maxConnect;
+
     @Override
     public DataSource findByDatasourceId(String dataSourceId) {
         LambdaQueryWrapper<DataSource> queryWrapper = new LambdaQueryWrapper<>();
@@ -49,8 +52,8 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceMapper, DataSou
     }
 
     @Override
-    public List<DataSource> findByDatasourceIds(Collection<String> dataSourceIds){
-        if (CollectionUtil.isEmpty(dataSourceIds)){
+    public List<DataSource> findByDatasourceIds(Collection<String> dataSourceIds) {
+        if (CollectionUtil.isEmpty(dataSourceIds)) {
             return new ArrayList<>();
         }
         LambdaQueryWrapper<DataSource> queryWrapper = new LambdaQueryWrapper<>();
@@ -83,7 +86,7 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceMapper, DataSou
     @Override
     public Page<DataSource> findWithPage(Long pageNo, Long pageSize, String dataSourceName, String schemaName) {
         LambdaQueryWrapper<DataSource> queryWrapper = new LambdaQueryWrapper<>();
-        if (StringUtils.isNotBlank(schemaName)){
+        if (StringUtils.isNotBlank(schemaName)) {
             queryWrapper.like(DataSource::getSchemaName, schemaName);
         }
         if (StringUtils.isNotBlank(dataSourceName)) {
@@ -94,7 +97,7 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceMapper, DataSou
         accountIds.add(ThreadLocalContext.getAccountId());
         accountIds.add(-1L);
 
-        queryWrapper.in(DataSource::getAccountId,accountIds);
+        queryWrapper.in(DataSource::getAccountId, accountIds);
         queryWrapper.orderByDesc(DataSource::getUpdateTime);
         Page<DataSource> page = baseMapper.selectPage(new Page<>(pageNo, pageSize), queryWrapper);
         return page;
@@ -119,7 +122,25 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceMapper, DataSou
             case DAMENG:
             case MARIA:
             case CLICKHOUSE:
-                return JDBCQueryProxy.getTableDetail(dataSource, tableName, dataTableDto,maxConnect,schemaType);
+                return JDBCQueryProxy.getTableDetail(dataSource, tableName, dataTableDto, maxConnect, schemaType);
+            case HTTP:
+                List<DataTable> tables = dataTableService.getTables(dataSourceId);
+                if (CollectionUtil.isNotEmpty(tables)) {
+                    Optional<DataTable> first = tables.stream().filter(table -> table.getName().equalsIgnoreCase(tableName)).findFirst();
+                    if (first.isPresent()) {
+                        DataTable dataTable = first.get();
+                        JSONObject tableMeta = new JSONObject(dataTable.getMeta());
+                        dataTableDto.setTableMeta(tableMeta);
+                        dataTableDto.setTableId(dataTable.getId());
+                        dataTableDto.setTableName(dataTable.getName());
+                        if (null != tableMeta && tableMeta.containsKey("fields")) {
+                            Object fields = tableMeta.get("fields");
+                            dataTableDto.setFields(fields);
+                        }
+                    }
+                }
+                //http不需要样例数据
+                return dataTableDto;
             default:
                 break;
         }
@@ -136,7 +157,7 @@ public class DataSourceServiceImpl extends ServiceImpl<DataSourceMapper, DataSou
         accountIds.add(ThreadLocalContext.getAccountId());
         accountIds.add(-1L);
 
-        queryWrapper.in(DataSource::getAccountId,accountIds);
+        queryWrapper.in(DataSource::getAccountId, accountIds);
         return baseMapper.selectList(queryWrapper);
     }
 

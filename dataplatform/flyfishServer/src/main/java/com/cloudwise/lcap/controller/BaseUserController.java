@@ -133,7 +133,9 @@ public class BaseUserController {
         try {
             user.setId(id);
             String password = user.getPassword();
-            user.setPassword(SecureUtil.md5(password));
+            if(StrUtil.isNotBlank(password)){
+                user.setPassword(SecureUtil.md5(password));
+            }
             baseUserService.updateById(user);
         } catch (Exception e) {
             log.error("更新用户异常:", e);
@@ -189,7 +191,7 @@ public class BaseUserController {
                     .like(StrUtil.isNotBlank(user.getUsername()), BaseUser::getUsername, user.getUsername())
                     .like(StrUtil.isNotBlank(user.getEmail()), BaseUser::getEmail, user.getEmail())
                     .like(StrUtil.isNotBlank(user.getStatus()), BaseUser::getStatus, user.getStatus())
-                    .orderByDesc(BaseUser::getCreateTime);
+                    .orderByDesc(BaseUser::getUpdateTime);
             Page<BaseUser> page1 = baseUserService.page(page, queryWrapper);
             PageResultOfOpenSource<BaseUser> rolePageResultOfOpenSource = new PageResultOfOpenSource<>(page1.getCurrent(), page1.getSize(), page1.getTotal(), page1.getRecords());
             return rolePageResultOfOpenSource;

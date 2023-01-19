@@ -255,6 +255,7 @@ spring.datasource.password=${password}
 # /data/app/flyfish 目录下执行
 cd flyfishDevServer/utils
 java -jar -Dspring.datasource.url="jdbc:mysql://${IP}:${port}/cw_lcap?createDatabaseIfNotExist=true&allowMultiQueries=true&useUnicode=true&autoReconnect=true&characterEncoding=utf8&connectionCollation=utf8_general_ci&useSSL=false&&serverTimezone=Asia/Shanghai" -Dspring.datasource.username="${username}" -Dspring.datasource.password="${password}" 
+/data/app/flyfish/flyfishDevServer/utils/initResource-0.0.1-SNAPSHOT.jar
 
 注意事项：执行java -jar前检查目录
 /data/app/flyfish/lcapWeb

@@ -1,8 +1,11 @@
 package com.cloudwise.lcap.service;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cloudwise.lcap.commonbase.contants.Constant;
 import com.cloudwise.lcap.commonbase.entity.*;
@@ -25,6 +28,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -144,12 +148,13 @@ public class ApplicationService extends ServiceImpl<ApplicationMapper, Applicati
 //        Optional<JSONObject> curUpdaterUserInfo = usersInfo.stream().filter(i -> Objects.equals(Long.parseLong(i.getStr("userId")), applicationInfo.getUpdater())).findFirst();
 //        applicationDetailRespVo.setCreator(curCreatorUserInfo.isPresent() ? curCreatorUserInfo.get().getStr("name") : "-");
 //        applicationDetailRespVo.setUpdater(curUpdaterUserInfo.isPresent() ? curUpdaterUserInfo.get().getStr("name") : "-");
-        String userId = String.valueOf(ThreadLocalContext.getUserId());
-        if(StrUtil.isNotBlank(userId)){
-            BaseUser byId = baseUserService.getById(userId);
-            applicationDetailRespVo.setCreator(byId.getUsername());
-            applicationDetailRespVo.setUpdater(byId.getUsername());
-        }
+        String creator = StrUtil.str(applicationInfo.getCreator(), Charset.defaultCharset());
+        String updater = StrUtil.str(applicationInfo.getUpdater(), Charset.defaultCharset());
+        List<BaseUser> usersInfo = baseUserService.list(Wrappers.<BaseUser>lambdaQuery().in(CollUtil.isNotEmpty(ListUtil.of(creator, updater)),BaseUser::getId, ListUtil.of(creator, updater)));
+        Optional<BaseUser> curCreatorUserInfo = usersInfo.stream().filter(i -> Objects.equals(i.getId(), applicationInfo.getCreator())).findFirst();
+        Optional<BaseUser> curUpdaterUserInfo = usersInfo.stream().filter(i -> Objects.equals(i.getId(), applicationInfo.getUpdater())).findFirst();
+        applicationDetailRespVo.setCreator(curCreatorUserInfo.isPresent() ? curCreatorUserInfo.get().getUsername() : "-");
+        applicationDetailRespVo.setUpdater(curUpdaterUserInfo.isPresent() ? curUpdaterUserInfo.get().getUsername() : "-");
 
         List<JSONObject> pageList = JsonUtils.parseArray(applicationInfo.getPages(), JSONObject.class);
         BusinessUtils.renderPagesConfig(pageList);
