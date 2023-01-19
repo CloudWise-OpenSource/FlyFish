@@ -36,9 +36,9 @@ mv lcapWeb /data/app/flyfish
 2. 修改前端配置
 
 ```bash
-# FlyFish 目录下执行
+# /data/app/flyfish 目录下执行
 # 修改配置
-vim lcapWeb/lcapWeb/conf/env-config.js
+vim lcapWeb/conf/env-config.js
 
 # code-server访问静态资源时的路径前缀
 static_dir = '/data/app/flyfish/lcapWeb'
@@ -172,6 +172,7 @@ cd /data/app/FlyFish/dataplatform/flyfishServer/sql
 #输入密码
 
 mysql> source SQL文件（init.sql）的绝对路径
+#如果报找不到数据库的错，那就重新执行一遍source SQL文件（init.sql）的绝对路径
 #执行完毕后，查看数据库
 mysql> show databases;
 mysql> use cw_lcap;
@@ -183,7 +184,8 @@ mysql> show tables;
 3. 修改配置
 
 ```bash
-# 修改后端配置: application.properties
+# 修改后端配置: 
+vi /data/app/flyfish/flyfishServer/conf/application.properties
 
 spring.datasource.driver-class-name=com.mysql.jdbc.Driver
 spring.datasource.url=jdbc:mysql://${ip}:${port}/cw_lcap?createDatabaseIfNotExist=true&allowMultiQueries=true&useUnicode=true&autoReconnect=true&characterEncoding=utf8&connectionCollation=utf8_general_ci&useSSL=false&&serverTimezone=Asia/Shanghai
