@@ -31,7 +31,7 @@ window.FLYFISH_CONFIG = (function () {
     isSplitComponentModule: false,
     devServerPrefix: `/flyfish-dev`,
     devServerExportPrefix: `/flyfish`,
-    vscodeFolderPrefix: `${static_dir}${common_dir}`,
+    vscodeFolderPrefix: `${static_dir}/${common_dir}`,
     vscodeAddress: '/lcapCode',
   };
   return config;
