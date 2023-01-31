@@ -177,12 +177,8 @@ export default Form.create({ name: 'FORM_IN_PROJECT_MODAL' })(
         };
       });
       return {
-        headerArr: headerArr.filter(
-          (item) => item.default != null && item.name
-        ),
-        paramsArr: paramsArr.filter(
-          (item) => item.name && item.default != null
-        ),
+        headerArr: headerArr.filter((item) => item.name),
+        paramsArr: paramsArr.filter((item) => item.name),
       };
     };
     //拆分url变成表格数据
@@ -233,7 +229,6 @@ export default Form.create({ name: 'FORM_IN_PROJECT_MODAL' })(
             let sendData = {};
             if (editor.getValue() && !checkMenu) {
               try {
-               
                 let result = JSON.parse(editor.getValue());
                 if (result.type == 'object' || result.type == 'array') {
                   if (result.type == 'object' && !result.properties) {
@@ -244,7 +239,7 @@ export default Form.create({ name: 'FORM_IN_PROJECT_MODAL' })(
                     message.error('请输入正确的JsonSchema格式！');
                     return;
                   }
-                }else{
+                } else {
                   message.error('请输入正确的JsonSchema格式！');
                   return;
                 }
@@ -252,9 +247,54 @@ export default Form.create({ name: 'FORM_IN_PROJECT_MODAL' })(
                 message.error('请输入正确的JsonSchema格式！');
                 return;
               }
-
             }
             let headerBoayArr = changSendHearderOrBodyArr();
+
+            const saveHeaderArr = headerBoayArr.headerArr.map((item) => {
+              return { ...item, state: false };
+            });
+
+            let isHeadersValid = true;
+            let headersErrorMessage = [];
+            for (let i = 0; i < saveHeaderArr.length; i++) {
+              const reqHeader = saveHeaderArr[i];
+              if (
+                reqHeader.required &&
+                (reqHeader.default == null || reqHeader.default === '')
+              ) {
+                isHeadersValid = false;
+                headersErrorMessage.push(reqHeader.name);
+              }
+            }
+            if (!isHeadersValid) {
+              return message.error(
+                `请求头${headersErrorMessage.join(',')}为必填项，请填写值！`
+              );
+            }
+
+            const saveParamArr = headerBoayArr.paramsArr.map((item) => {
+              return { ...item, state: false };
+            });
+
+            let isParamsValid = true;
+            let paramsErrorMessage = [];
+            for (let i = 0; i < saveParamArr.length; i++) {
+              const reqParam = saveParamArr[i];
+              if (
+                reqParam.required &&
+                (reqParam.default == null || reqParam.default === '')
+              ) {
+                isParamsValid = false;
+                paramsErrorMessage.push(reqParam.name);
+              }
+            }
+            if (!isParamsValid) {
+              return message.error(
+                `请求参数${paramsErrorMessage.join(
+                  ','
+                )}为必填项，请填写参考值！`
+              );
+            }
             sendData = {
               datasourceId: activeData.datasourceId,
               datasourceName: values.datasourceName,
@@ -264,12 +304,8 @@ export default Form.create({ name: 'FORM_IN_PROJECT_MODAL' })(
                 url,
                 schemaName: values.schemaName,
                 method: values.method,
-                header: headerBoayArr.headerArr.map((item) => {
-                  return { ...item, state: false };
-                }),
-                params: headerBoayArr.paramsArr.map((item) => {
-                  return { ...item, state: false };
-                }),
+                header: saveHeaderArr,
+                params: saveParamArr,
                 requestBody: {
                   type: checkMenu ? 'text' : 'json',
                   value: editor.getValue(),
@@ -308,7 +344,7 @@ export default Form.create({ name: 'FORM_IN_PROJECT_MODAL' })(
                     message.error('请输入正确的JsonSchema格式！');
                     return;
                   }
-                }else{
+                } else {
                   message.error('请输入正确的JsonSchema格式！');
                   return;
                 }
@@ -316,9 +352,55 @@ export default Form.create({ name: 'FORM_IN_PROJECT_MODAL' })(
                 message.error('请输入正确的JsonSchema格式！');
                 return;
               }
-
             }
             let headerBoayArr = changSendHearderOrBodyArr();
+
+            const saveHeaderArr = headerBoayArr.headerArr.map((item) => {
+              return { ...item, state: false };
+            });
+
+            let isHeadersValid = true;
+            let headersErrorMessage = [];
+            for (let i = 0; i < saveHeaderArr.length; i++) {
+              const reqHeader = saveHeaderArr[i];
+              if (
+                reqHeader.required &&
+                (reqHeader.default == null || reqHeader.default === '')
+              ) {
+                isHeadersValid = false;
+                headersErrorMessage.push(reqHeader.name);
+              }
+            }
+            if (!isHeadersValid) {
+              return message.error(
+                `请求头${headersErrorMessage.join(',')}为必填项，请填写值！`
+              );
+            }
+
+            const saveParamArr = headerBoayArr.paramsArr.map((item) => {
+              return { ...item, state: false };
+            });
+
+            let isParamsValid = true;
+            let paramsErrorMessage = [];
+            for (let i = 0; i < saveParamArr.length; i++) {
+              const reqParam = saveParamArr[i];
+              if (
+                reqParam.required &&
+                (reqParam.default == null || reqParam.default === '')
+              ) {
+                isParamsValid = false;
+                paramsErrorMessage.push(reqParam.name);
+              }
+            }
+            if (!isParamsValid) {
+              return message.error(
+                `请求参数${paramsErrorMessage.join(
+                  ','
+                )}为必填项，请填写参考值！`
+              );
+            }
+
             let sendData = {};
             sendData = {
               schemaType: enums['HTTP'],
@@ -327,12 +409,8 @@ export default Form.create({ name: 'FORM_IN_PROJECT_MODAL' })(
                 url,
                 schemaName: values.schemaName,
                 method: values.method,
-                header: headerBoayArr.headerArr.map((item) => {
-                  return { ...item, state: false };
-                }),
-                params: headerBoayArr.paramsArr.map((item) => {
-                  return { ...item, state: false };
-                }),
+                header: saveHeaderArr,
+                params: saveParamArr,
                 requestBody: {
                   type: checkMenu ? 'text' : 'json',
                   value: editor.getValue(),
@@ -353,10 +431,10 @@ export default Form.create({ name: 'FORM_IN_PROJECT_MODAL' })(
               } else {
                 message.error(
                   res.msg ||
-                  intl.formatMessage({
-                    id: 'common.addError',
-                    defaultValue: '新增失败，请稍后重试！',
-                  })
+                    intl.formatMessage({
+                      id: 'common.addError',
+                      defaultValue: '新增失败，请稍后重试！',
+                    })
                 );
               }
             }).catch((res) => {

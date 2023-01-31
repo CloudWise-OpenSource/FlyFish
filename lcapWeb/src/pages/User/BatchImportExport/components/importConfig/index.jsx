@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { observer, toJS } from '@chaoswise/cw-mobx'
+import { observer, toJS } from '@chaoswise/cw-mobx';
 import { Table, Tag, Icon, Select, Input, Form, message } from '@chaoswise/ui';
 import TreeSelect from '@chaoswise/ui/lib/Antd/TreeSelect';
-import styles from "./style.less";
-import store from "../../model/index";
+import styles from './style.less';
+import store from '../../model/index';
 
 const { Option } = Select;
 
@@ -15,26 +15,26 @@ const EditableRow = ({ form, index, ...props }) => (
 );
 
 const EditableFormRow = Form.create()(EditableRow);
-let selectedRowsCopy = []
+let selectedRowsCopy = [];
 const EditableCell = observer((props) => {
-  const [editing, setEditing] = useState(false)//判断那一列组件可以进行修改
+  const [editing, setEditing] = useState(false); //判断那一列组件可以进行修改
   // const { selectedRows, setSelectedRows } = store
-  let formElement = null
-  let inputElement = null
+  let formElement = null;
+  let inputElement = null;
 
   useEffect(() => {
     if (editing) {
       inputElement.focus();
     }
-  }, [editing])
+  }, [editing]);
 
   const toggleEdit = (record) => {
     if (!record.update) {
-      setEditing(!editing)
+      setEditing(!editing);
     }
   };
 
-  const save = e => {
+  const save = (e) => {
     const { record, handleSave } = props;
 
     formElement.validateFields((error, values) => {
@@ -55,8 +55,8 @@ const EditableCell = observer((props) => {
     });
   };
 
-  const renderCell = form => {
-    formElement = form
+  const renderCell = (form) => {
+    formElement = form;
     const { children, dataIndex, record, title } = props;
     return editing ? (
       <Form.Item style={{ margin: 0 }}>
@@ -65,23 +65,30 @@ const EditableCell = observer((props) => {
             {
               required: true,
               message: `请填写${title}`,
-            }, {
+            },
+            {
               max: 50,
-              message: '组件名称长度不能超过50！'
-            }
+              message: '组件名称长度不能超过50！',
+            },
           ],
           initialValue: record[dataIndex],
-        })(<Input ref={node => {
-          return (inputElement = node)
-        }} onPressEnter={save} onBlur={save} />)}
+        })(
+          <Input
+            ref={(node) => {
+              return (inputElement = node);
+            }}
+            onPressEnter={save}
+            onBlur={save}
+          />
+        )}
       </Form.Item>
     ) : (
       <div
-        className={"editable-cell-value-wrap " + styles.importConfigComName}
+        className={'editable-cell-value-wrap ' + styles.importConfigComName}
         onClick={() => toggleEdit(record)}
       >
         {children}
-        {record.update ? <></> : <Icon type="edit" theme="twoTone" />}
+        {record.update ? <></> : <Icon type='edit' theme='twoTone' />}
       </div>
     );
   };
@@ -106,409 +113,445 @@ const EditableCell = observer((props) => {
       )}
     </td>
   );
-})
+});
 
 const ImportConfig = observer((props) => {
-  const { setImportSelectedNum, setImportTableData, getImportConfig, getProjectsData, getComponentClassifyTreeData, setIsAppHasComponent, getVersionValidate } = store
-  const { importSelectedNum, importTableData, projectsData, componentClassifyTreeData, isComponent, isAppHasComponent, previouStepFlag, comsInAppTableData, versionvalidatResult } = store
-  const { selectedRows, setSelectedRows, setComsInAppTableData } = store
-  const [selectedRowKeys, setSelectedRowKeys] = useState([])
-  let appOrComDispaly = isComponent ? "组件" : "应用"
-  let timer = null
-  let versionValue = ''
+  const {
+    setImportSelectedNum,
+    setImportTableData,
+    getImportConfig,
+    getProjectsData,
+    getComponentClassifyTreeData,
+    setIsAppHasComponent,
+    getVersionValidate,
+  } = store;
+  const {
+    importSelectedNum,
+    importTableData,
+    projectsData,
+    componentClassifyTreeData,
+    isComponent,
+    isAppHasComponent,
+    previouStepFlag,
+    comsInAppTableData,
+    versionvalidatResult,
+  } = store;
+  const { selectedRows, setSelectedRows, setComsInAppTableData } = store;
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  let appOrComDispaly = isComponent ? '组件' : '应用';
+  let timer = null;
+  let versionValue = '';
 
   const selectChange = (selectedRowKeys, selectedRows) => {
-    setImportSelectedNum(selectedRows.length)
-    setSelectedRowKeys(selectedRowKeys)
-    selectedRowsCopy = [...selectedRows]
-    setSelectedRows(selectedRowsCopy)
-  }
+    setImportSelectedNum(selectedRows.length);
+    setSelectedRowKeys(selectedRowKeys);
+    selectedRowsCopy = [...selectedRows];
+    setSelectedRows(selectedRowsCopy);
+  };
 
   useEffect(() => {
-    getImportConfig()
-    getProjectsData()
-    getComponentClassifyTreeData()
-    setImportSelectedNum(0)
-  }, [])
+    getImportConfig();
+    getProjectsData();
+    getComponentClassifyTreeData();
+    setImportSelectedNum(0);
+  }, []);
 
   const rowSelection = {
     selectedRowKeys,
-    onChange: selectChange
+    onChange: selectChange,
   };
 
   const typeOnchange = (value, option) => {
-    const editTableCellDataId = option._owner.memoizedProps.record.id
-    let newData = _.cloneDeep(toJS(importTableData))
-    newData.forEach(item => {
+    const editTableCellDataId = option._owner.memoizedProps.record.id;
+    let newData = _.cloneDeep(toJS(importTableData));
+    newData.forEach((item) => {
       if (item.id === editTableCellDataId) {
-        item.type = value
+        item.type = value;
         if (value === 'project') {
-          item.projects = []
-          item.projectsName = []
+          item.projects = [];
+          item.projectsName = [];
         }
       }
     });
-    setImportTableData(newData)
-    if (selectedRows.some(item => item.id === editTableCellDataId)) {
-      let selectedRowsCopy = _.cloneDeep(toJS(selectedRows))
-      selectedRowsCopy.forEach(item => {
+    setImportTableData(newData);
+    if (selectedRows.some((item) => item.id === editTableCellDataId)) {
+      let selectedRowsCopy = _.cloneDeep(toJS(selectedRows));
+      selectedRowsCopy.forEach((item) => {
         if (item.id === editTableCellDataId) {
-          item.type = value
+          item.type = value;
           if (value === 'project') {
-            item.projects = []
-            item.projectsName = []
-          }
-        }
-      })
-      setSelectedRows(selectedRowsCopy)
-    }
-  }
-  const projectsOnslect = (value, record) => {
-    const editTableCellDataId = record.id
-    let newData = _.cloneDeep(toJS(importTableData))
-    if (value.length > record.projects.length) {
-      newData.forEach(item => {
-        if (item.id === editTableCellDataId) {
-          let projectIsRepeat = item.projects.some(element => {
-            return element === value[value.length - 1].key
-          })
-          if (!projectIsRepeat) {
-            item.projects = [...item.projects, value[value.length - 1].key]
-            item.projectsName = [...item.projectsName, value[value.length - 1].label]
-          } else {
-            message.error('不能选取重复的项目')
+            item.projects = [];
+            item.projectsName = [];
           }
         }
       });
-      setImportTableData(newData)
-      if (selectedRows.some(item => item.id === editTableCellDataId)) {
-        let selectedRowsCopy = _.cloneDeep(toJS(selectedRows))
-        selectedRowsCopy.forEach(item => {
-          if (item.id === editTableCellDataId) {
-            let projectIsRepeat = item.projects.some(element => {
-              return element === value[value.length - 1].key
-            })
-            if (!projectIsRepeat) {
-              item.projects = [...item.projects, value[value.length - 1].key]
-              item.projectsName = [...item.projectsName, value[value.length - 1].label]
-            } else {
-              message.error('不能选取重复的项目')
-            }
+      setSelectedRows(selectedRowsCopy);
+    }
+  };
+  const projectsOnslect = (value, record) => {
+    const editTableCellDataId = record.id;
+    let newData = _.cloneDeep(toJS(importTableData));
+    if (value.length > record.projects.length) {
+      newData.forEach((item) => {
+        if (item.id === editTableCellDataId) {
+          let projectIsRepeat = item.projects.some((element) => {
+            return element === value[value.length - 1].key;
+          });
+          if (!projectIsRepeat) {
+            item.projects = [...item.projects, value[value.length - 1].key];
+            item.projectsName = [
+              ...item.projectsName,
+              value[value.length - 1].label,
+            ];
+          } else {
+            message.error('不能选取重复的项目');
           }
-        })
-        setSelectedRows(selectedRowsCopy)
+        }
+      });
+      setImportTableData(newData);
+      if (selectedRows.some((item) => item.id === editTableCellDataId)) {
+        let selectedRowsCopy = _.cloneDeep(toJS(selectedRows));
+        selectedRowsCopy.forEach((item) => {
+          if (item.id === editTableCellDataId) {
+            let projectIsRepeat = item.projects.some((element) => {
+              return element === value[value.length - 1].key;
+            });
+            if (!projectIsRepeat) {
+              item.projects = [...item.projects, value[value.length - 1].key];
+              item.projectsName = [
+                ...item.projectsName,
+                value[value.length - 1].label,
+              ];
+            }
+            // else {
+            //   message.error('不能选取重复的项目')
+            // }
+          }
+        });
+        setSelectedRows(selectedRowsCopy);
       }
     } else {
-      let deleteProjectIndex
+      let deleteProjectIndex;
       for (let i = 0; i < value.length; i++) {
         if (value[i].key !== record.projectsName[i]) {
-          deleteProjectIndex = i
-          break
+          deleteProjectIndex = i;
+          break;
         }
         if (i === value.length - 1) {
-          deleteProjectIndex = i + 1
+          deleteProjectIndex = i + 1;
         }
       }
-      newData.forEach(item => {
+      newData.forEach((item) => {
         if (item.id === editTableCellDataId) {
-          item.projects.splice(deleteProjectIndex, 1)
-          item.projectsName.splice(deleteProjectIndex, 1)
+          item.projects.splice(deleteProjectIndex, 1);
+          item.projectsName.splice(deleteProjectIndex, 1);
         }
       });
-      setImportTableData(newData)
-      if (selectedRows.some(item => item.id === editTableCellDataId)) {
-        let selectedRowsCopy = _.cloneDeep(toJS(selectedRows))
-        selectedRowsCopy.forEach(item => {
+      setImportTableData(newData);
+      if (selectedRows.some((item) => item.id === editTableCellDataId)) {
+        let selectedRowsCopy = _.cloneDeep(toJS(selectedRows));
+        selectedRowsCopy.forEach((item) => {
           if (item.id === editTableCellDataId) {
-            item.projects.splice(deleteProjectIndex, 1)
-            item.projectsName.splice(deleteProjectIndex, 1)
+            item.projects.splice(deleteProjectIndex, 1);
+            item.projectsName.splice(deleteProjectIndex, 1);
           }
-        })
-        setSelectedRows(selectedRowsCopy)
+        });
+        setSelectedRows(selectedRowsCopy);
       }
     }
-  }
+  };
   const categoryOnchange = (param) => {
-    const value = JSON.parse(param.value)
-    let newData = _.cloneDeep(toJS(importTableData))
-    newData.forEach(item => {
+    const value = JSON.parse(param.value);
+    let newData = _.cloneDeep(toJS(importTableData));
+    newData.forEach((item) => {
       if (item.id === value.three.id) {
-        item.category = value.one.id
-        item.subCategory = value.two
-        item.subCategoryName = param.label
-        item.categoryName = value.one.name
+        item.category = value.one.id;
+        item.subCategory = value.two;
+        item.subCategoryName = param.label;
+        item.categoryName = value.one.name;
       }
     });
-    setImportTableData(newData)
-    if (selectedRows.some(item => item.id === value.three.id)) {
-      let selectedRowsCopy = _.cloneDeep(toJS(selectedRows))
-      selectedRowsCopy.forEach(item => {
+    setImportTableData(newData);
+    if (selectedRows.some((item) => item.id === value.three.id)) {
+      let selectedRowsCopy = _.cloneDeep(toJS(selectedRows));
+      selectedRowsCopy.forEach((item) => {
         if (item.id === value.three.id) {
-          item.category = value.one.id
-          item.subCategory = value.two
-          item.subCategoryName = param.label
-          item.categoryName = value.one.name
+          item.category = value.one.id;
+          item.subCategory = value.two;
+          item.subCategoryName = param.label;
+          item.categoryName = value.one.name;
         }
-      })
-      setSelectedRows(selectedRowsCopy)
+      });
+      setSelectedRows(selectedRowsCopy);
     }
-  }
+  };
 
   const appProjectsOnchange = (value, option) => {
-    const editTableCellDataId = option._owner.memoizedProps.record.id
-    const newData = _.cloneDeep(toJS(importTableData))
-    newData.forEach(item => {
+    const editTableCellDataId = option._owner.memoizedProps.record.id;
+    const newData = _.cloneDeep(toJS(importTableData));
+    newData.forEach((item) => {
       if (item.id === editTableCellDataId) {
-        item.projectId = value.key
-        item.projectName = value.label
+        item.projectId = value.key;
+        item.projectName = value.label;
       }
     });
-    setImportTableData(newData)
-    if (selectedRows.some(item => item.id === editTableCellDataId)) {
-      let selectedRowsCopy = _.cloneDeep(toJS(selectedRows))
-      selectedRowsCopy.forEach(item => {
+    setImportTableData(newData);
+    if (selectedRows.some((item) => item.id === editTableCellDataId)) {
+      let selectedRowsCopy = _.cloneDeep(toJS(selectedRows));
+      selectedRowsCopy.forEach((item) => {
         if (item.id === editTableCellDataId) {
-          item.projectId = value.key
-          item.projectName = value.label
+          item.projectId = value.key;
+          item.projectName = value.label;
         }
-      })
-      setSelectedRows(selectedRowsCopy)
+      });
+      setSelectedRows(selectedRowsCopy);
     }
-  }
+  };
 
   const appsComTypeOnchange = (value, option) => {
-    const editTableCellDataId = option._owner.memoizedProps.record.id
-    let newData = _.cloneDeep(toJS(importTableData))
-    let newComsInAppTableData = _.cloneDeep(toJS(comsInAppTableData))
-    newData.forEach(item => {
-      item.components.forEach(element => {
+    const editTableCellDataId = option._owner.memoizedProps.record.id;
+    let newData = _.cloneDeep(toJS(importTableData));
+    let newComsInAppTableData = _.cloneDeep(toJS(comsInAppTableData));
+    newData.forEach((item) => {
+      item.components.forEach((element) => {
         if (element.id === editTableCellDataId) {
-          element.type = value
+          element.type = value;
           if (value === 'project') {
-            element.projects = []
-            element.projectsName = []
+            element.projects = [];
+            element.projectsName = [];
           }
         }
       });
     });
-    setImportTableData(newData)
-    newComsInAppTableData.forEach(item => {
+    setImportTableData(newData);
+    newComsInAppTableData.forEach((item) => {
       if (item.id === editTableCellDataId) {
-        item.type = value
+        item.type = value;
         if (value === 'project') {
-          item.projects = []
-          item.projectsName = []
+          item.projects = [];
+          item.projectsName = [];
         }
       }
-    })
-    setComsInAppTableData(newComsInAppTableData)
-    let selectedRowsCopy = _.cloneDeep(toJS(selectedRows))
-    selectedRowsCopy.forEach(item => {
-      item.components.forEach(element => {
+    });
+    setComsInAppTableData(newComsInAppTableData);
+    let selectedRowsCopy = _.cloneDeep(toJS(selectedRows));
+    selectedRowsCopy.forEach((item) => {
+      item.components.forEach((element) => {
         if (element.id === editTableCellDataId) {
-          element.type = value
+          element.type = value;
           if (value.key === 'project') {
-            element.projects = []
-            element.projectsName = []
+            element.projects = [];
+            element.projectsName = [];
           }
         }
       });
-    })
-    setSelectedRows(selectedRowsCopy)
-  }
+    });
+    setSelectedRows(selectedRowsCopy);
+  };
 
   const appsComProjectsOnchange = (value, record) => {
-    const editTableCellDataId = record.id
-    let newData = _.cloneDeep(toJS(importTableData))
-    let newComsInAppTableData = _.cloneDeep(toJS(comsInAppTableData))
-    setComsInAppTableData(newComsInAppTableData)
+    const editTableCellDataId = record.id;
+    let newData = _.cloneDeep(toJS(importTableData));
+    let newComsInAppTableData = _.cloneDeep(toJS(comsInAppTableData));
+    setComsInAppTableData(newComsInAppTableData);
     if (value.length > record.projects.length) {
-      newData.forEach(item => {
-        item.components.forEach(comelem => {
+      newData.forEach((item) => {
+        item.components.forEach((comelem) => {
           if (comelem.id === editTableCellDataId) {
-            let projectIsRepeat = comelem.projects.some(element => {
-              return element === value[value.length - 1].key
-            })
+            let projectIsRepeat = comelem.projects.some((element) => {
+              return element === value[value.length - 1].key;
+            });
             if (!projectIsRepeat) {
-              comelem.projects = [...comelem.projects, value[value.length - 1].key]
-              comelem.projectsName = [...comelem.projectsName, value[value.length - 1].label]
+              comelem.projects = [
+                ...comelem.projects,
+                value[value.length - 1].key,
+              ];
+              comelem.projectsName = [
+                ...comelem.projectsName,
+                value[value.length - 1].label,
+              ];
             }
           }
-        })
+        });
       });
-      setImportTableData(newData)
-      newComsInAppTableData.forEach(item => {
+      setImportTableData(newData);
+      newComsInAppTableData.forEach((item) => {
         if (item.id === editTableCellDataId) {
-          let projectIsRepeat = item.projects.some(element => {
-            return element === value[value.length - 1].key
-          })
+          let projectIsRepeat = item.projects.some((element) => {
+            return element === value[value.length - 1].key;
+          });
           if (!projectIsRepeat) {
-            item.projects = [...item.projects, value[value.length - 1].key]
-            item.projectsName = [...item.projectsName, value[value.length - 1].label]
+            item.projects = [...item.projects, value[value.length - 1].key];
+            item.projectsName = [
+              ...item.projectsName,
+              value[value.length - 1].label,
+            ];
           } else {
-            message.error('不能选取重复的项目')
+            message.error('不能选取重复的项目');
           }
         }
       });
-      setComsInAppTableData(newComsInAppTableData)
-      let selectedRowsCopy = _.cloneDeep(toJS(selectedRows))
-      selectedRowsCopy.forEach(item => {
-        item.components.forEach(comelem => {
+      setComsInAppTableData(newComsInAppTableData);
+      let selectedRowsCopy = _.cloneDeep(toJS(selectedRows));
+      selectedRowsCopy.forEach((item) => {
+        item.components.forEach((comelem) => {
           if (comelem.id === editTableCellDataId) {
-            let projectIsRepeat = comelem.projects.some(element => {
-              return element === value[value.length - 1].key
-            })
+            let projectIsRepeat = comelem.projects.some((element) => {
+              return element === value[value.length - 1].key;
+            });
             if (!projectIsRepeat) {
-              comelem.projects = [...comelem.projects, value[value.length - 1].key]
-              comelem.projectsName = [...comelem.projectsName, value[value.length - 1].label]
+              comelem.projects = [
+                ...comelem.projects,
+                value[value.length - 1].key,
+              ];
+              comelem.projectsName = [
+                ...comelem.projectsName,
+                value[value.length - 1].label,
+              ];
             }
           }
-        })
-      })
-      setSelectedRows(selectedRowsCopy)
+        });
+      });
+      setSelectedRows(selectedRowsCopy);
     } else {
-      let deleteProjectIndex
+      let deleteProjectIndex;
       for (let i = 0; i < value.length; i++) {
         if (value[i].key !== record.projectsName[i]) {
-          deleteProjectIndex = i
-          break
+          deleteProjectIndex = i;
+          break;
         }
         if (i === value.length - 1) {
-          deleteProjectIndex = i + 1
+          deleteProjectIndex = i + 1;
         }
       }
-      newData.forEach(item => {
-        item.components.forEach(comelem => {
+      newData.forEach((item) => {
+        item.components.forEach((comelem) => {
           if (comelem.id === editTableCellDataId) {
-            comelem.projects.splice(deleteProjectIndex, 1)
-            comelem.projectsName.splice(deleteProjectIndex, 1)
+            comelem.projects.splice(deleteProjectIndex, 1);
+            comelem.projectsName.splice(deleteProjectIndex, 1);
           }
-        })
+        });
       });
-      setImportTableData(newData)
-      newComsInAppTableData.forEach(item => {
+      setImportTableData(newData);
+      newComsInAppTableData.forEach((item) => {
         if (item.id === editTableCellDataId) {
-          item.projects.splice(deleteProjectIndex, 1)
-          item.projectsName.splice(deleteProjectIndex, 1)
+          item.projects.splice(deleteProjectIndex, 1);
+          item.projectsName.splice(deleteProjectIndex, 1);
         }
       });
-      setComsInAppTableData(newComsInAppTableData)
-      let selectedRowsCopy = _.cloneDeep(toJS(selectedRows))
-      selectedRowsCopy.forEach(item => {
-        item.components.forEach(comelem => {
+      setComsInAppTableData(newComsInAppTableData);
+      let selectedRowsCopy = _.cloneDeep(toJS(selectedRows));
+      selectedRowsCopy.forEach((item) => {
+        item.components.forEach((comelem) => {
           if (comelem.id === editTableCellDataId) {
-            comelem.projects.splice(deleteProjectIndex, 1)
-            comelem.projectsName.splice(deleteProjectIndex, 1)
+            comelem.projects.splice(deleteProjectIndex, 1);
+            comelem.projectsName.splice(deleteProjectIndex, 1);
           }
-        })
-      })
-      setSelectedRows(selectedRowsCopy)
+        });
+      });
+      setSelectedRows(selectedRowsCopy);
     }
-  }
+  };
 
   const appsComCategoryOnchange = (param) => {
-    const value = JSON.parse(param.value)
-    let newData = _.cloneDeep(toJS(importTableData))
-    let newComsInAppTableData = _.cloneDeep(toJS(comsInAppTableData))
-    newData.forEach(item => {
-      item.components.forEach(element => {
+    const value = JSON.parse(param.value);
+    let newData = _.cloneDeep(toJS(importTableData));
+    let newComsInAppTableData = _.cloneDeep(toJS(comsInAppTableData));
+    newData.forEach((item) => {
+      item.components.forEach((element) => {
         if (element.id === value.three.id) {
-          element.category = value.one.id
-          element.subCategory = value.two
-          element.subCategoryName = param.label
-          element.categoryName = value.one.name
+          element.category = value.one.id;
+          element.subCategory = value.two;
+          element.subCategoryName = param.label;
+          element.categoryName = value.one.name;
         }
       });
     });
-    setImportTableData(newData)
-    newComsInAppTableData.forEach(item => {
+    setImportTableData(newData);
+    newComsInAppTableData.forEach((item) => {
       if (item.id === value.three.id) {
-        item.category = value.one.id
-        item.subCategory = value.two
-        item.subCategoryName = param.label
-        item.categoryName = value.one.name
+        item.category = value.one.id;
+        item.subCategory = value.two;
+        item.subCategoryName = param.label;
+        item.categoryName = value.one.name;
       }
-    })
-    setComsInAppTableData(newComsInAppTableData)
-    let selectedRowsCopy = _.cloneDeep(toJS(selectedRows))
-    selectedRowsCopy.forEach(item => {
-      item.components.forEach(element => {
+    });
+    setComsInAppTableData(newComsInAppTableData);
+    let selectedRowsCopy = _.cloneDeep(toJS(selectedRows));
+    selectedRowsCopy.forEach((item) => {
+      item.components.forEach((element) => {
         if (element.id === value.three.id) {
-          element.category = value.one.id
-          element.subCategory = value.two
-          element.subCategoryName = param.label
-          element.categoryName = value.one.name
+          element.category = value.one.id;
+          element.subCategory = value.two;
+          element.subCategoryName = param.label;
+          element.categoryName = value.one.name;
         }
       });
-    })
-    setSelectedRows(selectedRowsCopy)
-  }
+    });
+    setSelectedRows(selectedRowsCopy);
+  };
 
   const versionOnchange = (event, record) => {
-
-    versionValue = event.currentTarget.value
+    versionValue = event.currentTarget.value;
     if (versionValue.length > 0) {
       //调取校验接口
-      getVersionValidate({ id: record.id, version: versionValue })
+      getVersionValidate({ id: record.id, version: versionValue });
     } else {
       let newData = _.cloneDeep(toJS(importTableData));
-      let newComsInAppTableData = _.cloneDeep(toJS(comsInAppTableData))
+      let newComsInAppTableData = _.cloneDeep(toJS(comsInAppTableData));
       if (isComponent) {
-        newData.forEach(item => {
+        newData.forEach((item) => {
           if (item.id === record.id) {
             item.versionFlag = '';
-            item.version = item.resetVersion
-            item.versionValidateMes = ''
+            item.version = item.resetVersion;
+            item.versionValidateMes = '';
           }
         });
         setImportTableData(newData);
-        if (selectedRows.some(item => item.id === record.id)) {
+        if (selectedRows.some((item) => item.id === record.id)) {
           let selectedRowsCopy = _.cloneDeep(toJS(selectedRows));
-          selectedRowsCopy.forEach(item => {
+          selectedRowsCopy.forEach((item) => {
             if (item.id === record.id) {
-              item.version =item.resetVersion
+              item.version = item.resetVersion;
               item.versionFlag = '';
-              item.versionValidateMes = ''
+              item.versionValidateMes = '';
             }
           });
           setSelectedRows(selectedRowsCopy);
         }
       } else {
-        newData.forEach(item => {
-          item.components.forEach(element => {
+        newData.forEach((item) => {
+          item.components.forEach((element) => {
             if (element.id === record.id) {
-              element.versionFlag = ''
-              element.version =element.resetVersion
-              element.versionValidateMes = ''
+              element.versionFlag = '';
+              element.version = element.resetVersion;
+              element.versionValidateMes = '';
             }
           });
         });
-        newComsInAppTableData.forEach(item => {
+        newComsInAppTableData.forEach((item) => {
           if (item.id === record.id) {
-            item.versionFlag = ''
-            item.version = item.resetVersion
-            item.versionValidateMes = ''
+            item.versionFlag = '';
+            item.version = item.resetVersion;
+            item.versionValidateMes = '';
           }
         });
         let selectedRowsCopy = _.cloneDeep(toJS(selectedRows));
-        selectedRowsCopy.forEach(item => {
-          item.components.forEach(element => {
+        selectedRowsCopy.forEach((item) => {
+          item.components.forEach((element) => {
             if (element.id === record.id) {
-              element.versionFlag = ''
-              element.version = element.resetVersion
-              element.versionValidateMes = ''
+              element.versionFlag = '';
+              element.version = element.resetVersion;
+              element.versionValidateMes = '';
             }
           });
         });
         setSelectedRows(selectedRowsCopy);
-        setImportTableData(newData)
-        setComsInAppTableData(newComsInAppTableData)
+        setImportTableData(newData);
+        setComsInAppTableData(newComsInAppTableData);
       }
     }
-
-
-
-  }
+  };
 
   const componentColumns = [
     {
@@ -523,13 +566,19 @@ const ImportConfig = observer((props) => {
       width: '10%',
       dataIndex: 'update',
       key: 'update',
-      render: tag => (
+      render: (tag) => (
         <span>
-          {
-            tag ? <Tag color="blue" key={tag}>更新</Tag> : <Tag color="green" key={tag}>新建 </Tag>
-          }
+          {tag ? (
+            <Tag color='blue' key={tag}>
+              更新
+            </Tag>
+          ) : (
+            <Tag color='green' key={tag}>
+              新建{' '}
+            </Tag>
+          )}
         </span>
-      )
+      ),
     },
     {
       title: '组件版本',
@@ -537,27 +586,27 @@ const ImportConfig = observer((props) => {
       dataIndex: 'version',
       key: 'version',
       render: (text, record) => (
-
         <>
-          {
-            record.update ?
-              <Form.Item
-                hasFeedback
-                validateStatus={record.versionFlag}
-                help={record.versionValidateMes}
-              >
-                <Input
-                  onBlur={(e) => {
-                    versionOnchange(e, record)
-                  }}
-                  defaultValue={record.versionFlag ? record.version : ''}
-                  placeholder='填写将创建新版本，未填写版本则覆盖原版本'
-                  className={styles.versionInfo}
-                ></Input></Form.Item>
-              : <span>{text}</span>
-          }
+          {record.update ? (
+            <Form.Item
+              hasFeedback
+              validateStatus={record.versionFlag}
+              help={record.versionValidateMes}
+            >
+              <Input
+                onBlur={(e) => {
+                  versionOnchange(e, record);
+                }}
+                defaultValue={record.versionFlag ? record.version : ''}
+                placeholder='填写将创建新版本，未填写版本则覆盖原版本'
+                className={styles.versionInfo}
+              ></Input>
+            </Form.Item>
+          ) : (
+            <span>{text}</span>
+          )}
         </>
-      )
+      ),
     },
     {
       title: '组件类别',
@@ -566,19 +615,24 @@ const ImportConfig = observer((props) => {
       key: 'type',
       render: (text, record) => (
         <>
-          {
-            record.update ?
-              <span>{text === 'common' ? '基础组件' : '项目组件'}</span> :
-              <Select style={{ width: '90%' }}
-                defaultValue={text}
-                onChange={typeOnchange}
-              >
-                <Option value='common' key='common'>基础组件</Option>
-                <Option value='project' key='project'>项目组件</Option>
-              </Select>
-          }
+          {record.update ? (
+            <span>{text === 'common' ? '基础组件' : '项目组件'}</span>
+          ) : (
+            <Select
+              style={{ width: '90%' }}
+              defaultValue={text}
+              onChange={typeOnchange}
+            >
+              <Option value='common' key='common'>
+                基础组件
+              </Option>
+              <Option value='project' key='project'>
+                项目组件
+              </Option>
+            </Select>
+          )}
         </>
-      )
+      ),
     },
     {
       title: '所属项目',
@@ -586,41 +640,47 @@ const ImportConfig = observer((props) => {
       dataIndex: 'projectsName',
       key: 'projectsName',
       render: (text, record) => {
-        let projectsNameArr = []
-        projectsNameArr = text && text.map((item) => {
-          return {
-            key: item
-          }
-        })
+        let projectsNameArr = [];
+        projectsNameArr =
+          text &&
+          text.map((item) => {
+            return {
+              key: item,
+            };
+          });
         return (
           <>
-            {
-              record.update ?
-                <span>{text && text.join(',')}</span> :
-                record.type === 'project' ?
-                  <Select
-                    mode="multiple"
-                    labelInValue
-                    showSearch
-                    filterOption={(input, option) =>
-                      option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                    }
-                    style={{ width: '90%' }}
-                    onChange={(value) => projectsOnslect(value, record)}
-                    // defaultValue={projectsNameArr}
-                    value={projectsNameArr}
-                  >
-                    {
-                      projectsData.map((item) => {
-                        return <Option value={item.id} key={item.id}>{item.name}</Option>
-                      })
-                    }
-                  </Select> : <></>
-
-            }
+            {record.update ? (
+              <span>{text && text.join(',')}</span>
+            ) : record.type === 'project' ? (
+              <Select
+                mode='multiple'
+                labelInValue
+                showSearch
+                filterOption={(input, option) =>
+                  option.props.children
+                    .toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0
+                }
+                style={{ width: '90%' }}
+                onChange={(value) => projectsOnslect(value, record)}
+                // defaultValue={projectsNameArr}
+                value={projectsNameArr}
+              >
+                {projectsData.map((item) => {
+                  return (
+                    <Option value={item.id} key={item.id}>
+                      {item.name}
+                    </Option>
+                  );
+                })}
+              </Select>
+            ) : (
+              <></>
+            )}
           </>
-        )
-      }
+        );
+      },
     },
     {
       title: '组件分类',
@@ -629,41 +689,43 @@ const ImportConfig = observer((props) => {
       key: 'subCategoryName',
       render: (text, record) => (
         <>
-          {
-            record.update ?
-              <span>{text}</span> :
-              <TreeSelect
-                labelInValue
-                style={{ width: '80%' }}
-                getPopupContainer={(node) => {
-                  return node.parentNode;
-                }}
-                dropdownStyle={{ maxHeight: 300, overflow: 'auto' }}
-                onChange={categoryOnchange}
-                treeData={
-                  componentClassifyTreeData.map((v, k) => {
+          {record.update ? (
+            <span>{text}</span>
+          ) : (
+            <TreeSelect
+              labelInValue
+              style={{ width: '80%' }}
+              getPopupContainer={(node) => {
+                return node.parentNode;
+              }}
+              dropdownStyle={{ maxHeight: 300, overflow: 'auto' }}
+              onChange={categoryOnchange}
+              treeData={componentClassifyTreeData.map((v, k) => {
+                return {
+                  title: v.name,
+                  value: v.id,
+                  key: k + '',
+                  disabled: true,
+                  children: v.children.map((v1, k1) => {
                     return {
-                      title: v.name,
-                      value: v.id,
-                      key: k + '',
-                      disabled: true,
-                      children: v.children.map((v1, k1) => {
-                        return {
-                          title: v1.name,
-                          value: JSON.stringify({ one: v, two: v1.id, three: record }),
-                          key: k + '-' + k1,
-                        }
-                      })
-                    }
-                  })
-                }
-                placeholder={text}
-                treeDefaultExpandAll
-                placement="topLeft"
-              />
-          }
+                      title: v1.name,
+                      value: JSON.stringify({
+                        one: v,
+                        two: v1.id,
+                        three: record,
+                      }),
+                      key: k + '-' + k1,
+                    };
+                  }),
+                };
+              })}
+              placeholder={text}
+              treeDefaultExpandAll
+              placement='topLeft'
+            />
+          )}
         </>
-      )
+      ),
     },
   ];
 
@@ -678,11 +740,19 @@ const ImportConfig = observer((props) => {
       title: '导入方式',
       width: '60%',
       dataIndex: 'update',
-      render: tag => (
+      render: (tag) => (
         <span>
-          {tag ? <Tag color="blue" key={tag}>更新</Tag> : <Tag color="green" key={tag}>新建 </Tag>}
+          {tag ? (
+            <Tag color='blue' key={tag}>
+              更新
+            </Tag>
+          ) : (
+            <Tag color='green' key={tag}>
+              新建{' '}
+            </Tag>
+          )}
         </span>
-      )
+      ),
     },
     {
       title: '所属项目',
@@ -693,21 +763,24 @@ const ImportConfig = observer((props) => {
           labelInValue
           showSearch
           filterOption={(input, option) =>
-            option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+            option.props.children.toLowerCase().indexOf(input.toLowerCase()) >=
+            0
           }
           defaultValue={{ key: text }}
           style={{ width: '90%' }}
           onChange={appProjectsOnchange}
         >
-          {
-            projectsData.map((item) => {
-              return <Option value={item.id} key={item.id}>{item.name}</Option>
-            })
-          }
+          {projectsData.map((item) => {
+            return (
+              <Option value={item.id} key={item.id}>
+                {item.name}
+              </Option>
+            );
+          })}
         </Select>
-      )
+      ),
     },
-  ]
+  ];
 
   const componentsInApp = [
     {
@@ -722,13 +795,19 @@ const ImportConfig = observer((props) => {
       width: '10%',
       dataIndex: 'update',
       key: 'update',
-      render: tag => (
+      render: (tag) => (
         <span>
-          {
-            tag ? <Tag color="blue" key={tag}>更新</Tag> : <Tag color="green" key={tag}>新建 </Tag>
-          }
+          {tag ? (
+            <Tag color='blue' key={tag}>
+              更新
+            </Tag>
+          ) : (
+            <Tag color='green' key={tag}>
+              新建{' '}
+            </Tag>
+          )}
         </span>
-      )
+      ),
     },
     {
       title: '所属应用',
@@ -742,24 +821,26 @@ const ImportConfig = observer((props) => {
       dataIndex: 'version',
       render: (text, record) => (
         <>
-          {
-            record.update ?
-              <Form.Item
-                hasFeedback
-                validateStatus={record.versionFlag}
-                help={record.versionValidateMes}
-              ><Input
+          {record.update ? (
+            <Form.Item
+              hasFeedback
+              validateStatus={record.versionFlag}
+              help={record.versionValidateMes}
+            >
+              <Input
                 onBlur={(e) => {
-                  versionOnchange(e, record)
+                  versionOnchange(e, record);
                 }}
                 defaultValue={record.versionFlag ? record.version : ''}
                 placeholder='填写将创建新版本，未填写版本则覆盖原版本'
                 className={styles.versionInfo}
-              ></Input></Form.Item>
-              : <span>{text}</span>
-          }
+              ></Input>
+            </Form.Item>
+          ) : (
+            <span>{text}</span>
+          )}
         </>
-      )
+      ),
     },
     {
       title: '组件类别',
@@ -768,19 +849,24 @@ const ImportConfig = observer((props) => {
       key: 'type',
       render: (text, record) => (
         <>
-          {
-            record.update ?
-              <span>{text === 'common' ? '基础组件' : '项目组件'}</span> :
-              <Select style={{ width: '90%' }}
-                defaultValue={text}
-                onChange={appsComTypeOnchange}
-              >
-                <Option value='common' key='common'>基础组件</Option>
-                <Option value='project' key='project'>项目组件</Option>
-              </Select>
-          }
+          {record.update ? (
+            <span>{text === 'common' ? '基础组件' : '项目组件'}</span>
+          ) : (
+            <Select
+              style={{ width: '90%' }}
+              defaultValue={text}
+              onChange={appsComTypeOnchange}
+            >
+              <Option value='common' key='common'>
+                基础组件
+              </Option>
+              <Option value='project' key='project'>
+                项目组件
+              </Option>
+            </Select>
+          )}
         </>
-      )
+      ),
     },
     {
       title: '所属项目',
@@ -788,40 +874,46 @@ const ImportConfig = observer((props) => {
       dataIndex: 'projectsName',
       key: 'projectsName',
       render: (text, record) => {
-        let projectsNameArr = []
-        projectsNameArr = text && text.map((item) => {
-          return {
-            key: item
-          }
-        })
+        let projectsNameArr = [];
+        projectsNameArr =
+          text &&
+          text.map((item) => {
+            return {
+              key: item,
+            };
+          });
         return (
           <>
-            {
-              record.update ?
-                <span>{text && text.join(',')}</span> :
-                record.type === 'project' ?
-                  <Select
-                    mode="multiple"
-                    labelInValue
-                    showSearch
-                    filterOption={(input, option) =>
-                      option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                    }
-                    style={{ width: '90%' }}
-                    onChange={(value) => appsComProjectsOnchange(value, record)}
-                    defaultValue={projectsNameArr}
-                  >
-                    {
-                      projectsData.map((item) => {
-                        return <Option value={item.id} key={item.id}>{item.name}</Option>
-                      })
-                    }
-                  </Select> : <></>
-
-            }
+            {record.update ? (
+              <span>{text && text.join(',')}</span>
+            ) : record.type === 'project' ? (
+              <Select
+                mode='multiple'
+                labelInValue
+                showSearch
+                filterOption={(input, option) =>
+                  option.props.children
+                    .toLowerCase()
+                    .indexOf(input.toLowerCase()) >= 0
+                }
+                style={{ width: '90%' }}
+                onChange={(value) => appsComProjectsOnchange(value, record)}
+                defaultValue={projectsNameArr}
+              >
+                {projectsData.map((item) => {
+                  return (
+                    <Option value={item.id} key={item.id}>
+                      {item.name}
+                    </Option>
+                  );
+                })}
+              </Select>
+            ) : (
+              <></>
+            )}
           </>
-        )
-      }
+        );
+      },
     },
     {
       title: '组件分类',
@@ -830,88 +922,95 @@ const ImportConfig = observer((props) => {
       key: 'subCategoryName',
       render: (text, record) => (
         <>
-          {
-            record.update ?
-              <span>{text}</span> :
-              <TreeSelect
-                labelInValue
-                // style={{ width: '80%' }}
-                dropdownStyle={{ maxHeight: 300, overflow: 'auto', top: '30px', right: 0 }}
-                onChange={appsComCategoryOnchange}
-                getPopupContainer={(node) => {
-                  return node;
-                }}
-                dropdownClassName={styles.cwTreeSelect}
-                treeData={
-                  componentClassifyTreeData.map((v, k) => {
+          {record.update ? (
+            <span>{text}</span>
+          ) : (
+            <TreeSelect
+              labelInValue
+              // style={{ width: '80%' }}
+              dropdownStyle={{
+                maxHeight: 300,
+                overflow: 'auto',
+                top: '30px',
+                right: 0,
+              }}
+              onChange={appsComCategoryOnchange}
+              getPopupContainer={(node) => {
+                return node;
+              }}
+              dropdownClassName={styles.cwTreeSelect}
+              treeData={componentClassifyTreeData.map((v, k) => {
+                return {
+                  title: v.name,
+                  value: v.id,
+                  key: k + '',
+                  disabled: true,
+                  children: v.children.map((v1, k1) => {
                     return {
-                      title: v.name,
-                      value: v.id,
-                      key: k + '',
-                      disabled: true,
-                      children: v.children.map((v1, k1) => {
-                        return {
-                          title: v1.name,
-                          value: JSON.stringify({ one: v, two: v1.id, three: record }),
-                          key: k + '-' + k1,
-                        }
-                      })
-                    }
-                  })
-                }
-                placeholder={text}
-                treeDefaultExpandAll
-                placement="topLeft"
-              />
-          }
+                      title: v1.name,
+                      value: JSON.stringify({
+                        one: v,
+                        two: v1.id,
+                        three: record,
+                      }),
+                      key: k + '-' + k1,
+                    };
+                  }),
+                };
+              })}
+              placeholder={text}
+              treeDefaultExpandAll
+              placement='topLeft'
+            />
+          )}
         </>
-      )
+      ),
     },
   ];
-  const handleSave = row => {
+  const handleSave = (row) => {
     if (!isComponent && comsInAppTableData.length > 0) {
-      let newData = _.cloneDeep(toJS(importTableData))
-      let newComsInAppTableData = _.cloneDeep(toJS(comsInAppTableData))
-      newData.forEach(item => {
-        item.components.forEach(element => {
+      let newData = _.cloneDeep(toJS(importTableData));
+      let newComsInAppTableData = _.cloneDeep(toJS(comsInAppTableData));
+      newData.forEach((item) => {
+        item.components.forEach((element) => {
           if (element.id === row.id) {
-            element.name = row.name
+            element.name = row.name;
           }
         });
       });
-      setImportTableData(newData)
-      newComsInAppTableData.forEach(item => {
+      setImportTableData(newData);
+      newComsInAppTableData.forEach((item) => {
         if (item.id === row.id) {
-          item.name = row.name
+          item.name = row.name;
         }
-      })
-      setComsInAppTableData(newComsInAppTableData)
-      let selectedRowsCopy = _.cloneDeep(toJS(selectedRows))
-      selectedRowsCopy.forEach(item => {
-        item.components.forEach(element => {
+      });
+      setComsInAppTableData(newComsInAppTableData);
+      let selectedRowsCopy = _.cloneDeep(toJS(selectedRows));
+      selectedRowsCopy.forEach((item) => {
+        item.components.forEach((element) => {
           if (element.id === row.id) {
-            element.name = row.name
+            element.name = row.name;
           }
         });
-      })
-      setSelectedRows(selectedRowsCopy)
+      });
+      setSelectedRows(selectedRowsCopy);
     } else {
-      const newData = _.cloneDeep(toJS(importTableData))
-      const index = newData.findIndex(item => row.id === item.id);
+      const newData = _.cloneDeep(toJS(importTableData));
+      const index = newData.findIndex((item) => row.id === item.id);
       const item = newData[index];
       newData.splice(index, 1, {
         ...item,
         ...row,
       });
-      setImportTableData(newData)
-      if (selectedRows.some(item => item.id === row.id)) {
-        let selectedRowsCopy = _.cloneDeep(toJS(selectedRows))
-        selectedRowsCopy.forEach(item => {
+      setImportTableData(newData);
+      if (selectedRows.some((item) => item.id === row.id)) {
+        let selectedRowsCopy = _.cloneDeep(toJS(selectedRows));
+        selectedRowsCopy.forEach((item) => {
           if (item.id === row.id) {
-            item.name = row.name
+            item.name = row.name;
           }
-        })
-        setSelectedRows(selectedRowsCopy)
+        });
+        setSelectedRows(selectedRowsCopy);
       }
     }
   };
@@ -922,13 +1021,19 @@ const ImportConfig = observer((props) => {
       cell: EditableCell,
     },
   };
-  const columns = (isComponent ? componentColumns : (previouStepFlag ? AppColumns : componentsInApp)).map(col => {
+  const columns = (
+    isComponent
+      ? componentColumns
+      : previouStepFlag
+      ? AppColumns
+      : componentsInApp
+  ).map((col) => {
     if (!col.editable) {
       return col;
     }
     return {
       ...col,
-      onCell: record => ({
+      onCell: (record) => ({
         record,
         editable: col.editable,
         dataIndex: col.dataIndex,
@@ -940,37 +1045,44 @@ const ImportConfig = observer((props) => {
 
   return (
     <>
-      {
-        isAppHasComponent || previouStepFlag ?
-          <div style={{ position: 'relative' }}>
-            <Form>
-              <Table
-                components={components}
-                rowClassName={() => 'editable-row'}
-                bordered
-                rowKey={"id"}
-                dataSource={importTableData}
-                columns={columns}
-                rowSelection={rowSelection}
-                className={styles.importConfigTableStyle}
-              />
-              <span className={styles.importConfigSpan}>总共待导入{appOrComDispaly}{importTableData.length}个，已选中{importSelectedNum}个</span>
-            </Form>
-          </div>
-          : <Form><div>
+      {isAppHasComponent || previouStepFlag ? (
+        <div style={{ position: 'relative' }}>
+          <Form>
             <Table
               components={components}
               rowClassName={() => 'editable-row'}
               bordered
-              rowKey={"id"}
+              rowKey={'id'}
+              dataSource={importTableData}
+              columns={columns}
+              rowSelection={rowSelection}
+              className={styles.importConfigTableStyle}
+            />
+            <span className={styles.importConfigSpan}>
+              总共待导入{appOrComDispaly}
+              {importTableData.length}个，已选中{importSelectedNum}个
+            </span>
+          </Form>
+        </div>
+      ) : (
+        <Form>
+          <div>
+            <Table
+              components={components}
+              rowClassName={() => 'editable-row'}
+              bordered
+              rowKey={'id'}
               dataSource={comsInAppTableData}
               columns={columns}
-              className={styles.importConfigTableStyle + ' ' + styles.comsInAppTable}
+              className={
+                styles.importConfigTableStyle + ' ' + styles.comsInAppTable
+              }
             />
-          </div></Form>
-      }
+          </div>
+        </Form>
+      )}
     </>
   );
-})
+});
 
-export default ImportConfig
+export default ImportConfig;

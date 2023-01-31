@@ -41,6 +41,19 @@ export const getScreenHTML = (component, data, config, fields) => {
           .ant4-form-item .ant4-form-item-label:after {
             content: ":";
           }
+          body {
+            background-color: #FFF!important;
+          }
+          #container .ant4-form-item-label>label {
+            color: rgba(0, 0, 0, 0.65) !important;
+          }
+          #container .ant4-radio-inner, #container .ant4-select .ant4-select-selector {
+            color: rgba(0, 0, 0, 0.85) !important;
+            border-color: rgba(0, 0, 0, 0.25) !important;
+          }
+          .ant4-select-selection-placeholder {
+            color: rgba(0, 0, 0, 0.25) !important;
+          }
         </style>
       </head>
       <body>
