@@ -67,8 +67,8 @@ const EditableCell = observer((props) => {
               message: `请填写${title}`,
             },
             {
-              max: 50,
-              message: '组件名称长度不能超过50！',
+              max: 20,
+              message: '组件名称长度不能超过20！',
             },
           ],
           initialValue: record[dataIndex],
