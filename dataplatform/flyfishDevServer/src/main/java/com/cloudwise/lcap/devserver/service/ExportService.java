@@ -124,6 +124,8 @@ public class ExportService extends ServiceImpl<ImportResultMapper, ImportResult>
                     } catch (FileNotFoundException e) {
                         log.error("组件封面图复制失败" + e);
                     }
+                }else {
+                    reqDto.setCover(null);
                 }
             }
 
