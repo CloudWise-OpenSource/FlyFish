@@ -255,13 +255,11 @@ public class ImportService {
                     .deleted(0).creator(ThreadLocalContext.getUserId()).updater(ThreadLocalContext.getUserId()).accountId(ThreadLocalContext.getAccountId()).build();
             //判断新导入的组件是否存在封面
             File file = new File(destFolder + COMPONENT_RELEASE);
-            log.info("file:{} ", file.getAbsolutePath());
             if (file.exists()) {
                 //倒入后】时，强制更新该组件的封面为导入时最新的封面
                 File[] covers = file.listFiles(pathname -> pathname.isFile() && pathname.getName().startsWith("cover"));
-                if (null != covers && covers.length > 0) {
-                    String coverPath = File.separator + covers[0].getName();
-                    comp.setCover(lcap_www_relative_path + COMPONENTS + File.separator + componentId + File.separator + version + COMPONENT_RELEASE + coverPath);
+                if (null != covers && covers.length > 0 && covers[0].length() > 0) {
+                    comp.setCover(lcap_www_relative_path + COMPONENTS + File.separator + componentId + File.separator + version + COMPONENT_RELEASE + File.separator + covers[0].getName());
                 }
             }
 

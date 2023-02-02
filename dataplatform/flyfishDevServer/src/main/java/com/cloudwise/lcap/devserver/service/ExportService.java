@@ -113,7 +113,7 @@ public class ExportService extends ServiceImpl<ImportResultMapper, ImportResult>
                     cover += "/" + cover;
                 }
                 File coverFile = new File(portal_web_path + cover);
-                if (coverFile.exists() && coverFile.isFile()){
+                if (coverFile.exists() && coverFile.isFile() && coverFile.length() > 0){
                     String coverFileName = cover.substring(cover.lastIndexOf("/"));
                     try {
                         //优先使用这个封面图
@@ -261,7 +261,7 @@ public class ExportService extends ServiceImpl<ImportResultMapper, ImportResult>
                                         imagePath = "/" + imagePath;
                                     }
                                     File appCoverFile = new File(portal_web_path + imagePath);
-                                    if (appCoverFile.exists() && appCoverFile.isFile()){
+                                    if (appCoverFile.exists() && appCoverFile.isFile() && appCoverFile.length() > 0){
                                         try {
                                             String imageName = imagePath.substring(imagePath.lastIndexOf("/"));
                                             IoUtil.copy(new FileInputStream(appCoverFile.getAbsolutePath()), new FileOutputStream(folder + APPLICATIONS + File.separator + applicationId + imageName));
