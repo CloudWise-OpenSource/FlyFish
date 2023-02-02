@@ -68,11 +68,11 @@ public class DataUtils {
                     || var == Types.LONGVARCHAR || var == Types.BINARY || var == Types.LONGVARBINARY) {
                 return rsmd.getString(columnName);
             } else if (var == Types.DATE) {
-                return  rsmd.getDate(columnName).toString();
+                return Objects.isNull(rsmd.getDate(columnName)) ? null : rsmd.getDate(columnName).toString();
             } else if (var == Types.TIME) {
-                return rsmd.getTime(columnName).toString();
+                return Objects.isNull(rsmd.getTime(columnName)) ? null : rsmd.getTime(columnName).toString();
             } else if (var == Types.TIMESTAMP) {
-                return rsmd.getTimestamp(columnName).toString();
+                return Objects.isNull(rsmd.getTimestamp(columnName)) ? null : rsmd.getTimestamp(columnName).toString();
             } else if (var == Types.TINYINT || var == Types.SMALLINT || var == Types.INTEGER) {
                 return rsmd.getInt(columnName);
             } else if (var == Types.BIGINT) {

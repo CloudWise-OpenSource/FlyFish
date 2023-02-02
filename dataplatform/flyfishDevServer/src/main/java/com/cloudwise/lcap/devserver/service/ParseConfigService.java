@@ -30,13 +30,13 @@ import static com.cloudwise.lcap.commonbase.contants.Constant.COMPONENT;
 public class ParseConfigService {
 
     @Autowired
-    private ApplicationMapper applicationDao;
+    private ApplicationMapper applicationMapper;
     @Autowired
-    private ComponentMapper componentDao;
+    private ComponentMapper componentMapper;
     @Autowired
-    private ProjectMapper projectDao;
+    private ProjectMapper projectMapper;
     @Autowired
-    private ComponentCategoryMapper categoryDao;
+    private ComponentCategoryMapper categoryMapper;
     @Autowired
     private ComponentProjectRefMapper componentProjectMapper;
 
@@ -50,7 +50,7 @@ public class ParseConfigService {
 
         // 应用有组件信息
         List<String> applicationIds = applications.stream().map(ResourceApplicationDto::getId).collect(Collectors.toList());
-        List<Application> applicationList = applicationDao.selectBatchIds(applicationIds);
+        List<Application> applicationList = applicationMapper.selectBatchIds(applicationIds);
         Map<String, Application> collects = applicationList.stream().collect(Collectors.toMap(Application::getId, o -> o));
 
         // 获取组件为新增还是修改
@@ -81,25 +81,27 @@ public class ParseConfigService {
                 }
                 Set<String> componentIds = CollectionUtil.emptyIfNull(componentViewDtoMap.keySet());
 
-                List<ComponentCategory> componentCategories = categoryDao.selectBatchIds(componentCategoryIds);
-                Map<String, String> componentCategoryMap = componentCategories.stream().collect(Collectors.toMap(ComponentCategory::getId, ComponentCategory::getName));
                 List<JSONObject> componentProjectRefs = componentProjectMapper.selectByComponentIds(componentIds);
+                List<Component> components1 = componentMapper.selectBatchIds(componentIds);
+                Map<String, Component> componentMap = components1.stream().collect(Collectors.toMap(Component::getId, o -> o));
 
-                Map<String, Component> collect1 = componentDao.selectBatchIds(componentIds).stream().collect(Collectors.toMap(o -> o.getId(), o -> o));
-                componentViewDtoMap.forEach((k, t) -> {
+                componentCategoryIds.addAll(components1.stream().map(Component::getCategoryId).collect(Collectors.toSet()));
+                componentCategoryIds.addAll(components1.stream().map(Component::getSubCategoryId).collect(Collectors.toSet()));
+                Map<String, String> componentCategoryMap = categoryMapper.selectBatchIds(componentCategoryIds).stream().collect(Collectors.toMap(ComponentCategory::getId, ComponentCategory::getName));
+
+                Collection<ResourceComponentDto> values = componentViewDtoMap.values();
+                values.forEach(t -> {
                     //判断组件费否为更新
-                    Component cp = collect1.get(k);
+                    Component cp = componentMap.get(t.getId());
                     if (null != cp) {
-                        //为更新
-                        t.setUpdate(true);
                         t.setUpdate(true);
                         t.setCategory(cp.getCategoryId());
                         t.setSubCategory(cp.getSubCategoryId());
-                        t.setCategoryName(componentCategoryMap.get(t.getCategory()));
-                        t.setSubCategoryName(componentCategoryMap.get(t.getSubCategory()));
+                        t.setCategoryName(componentCategoryMap.get(cp.getCategoryId()));
+                        t.setSubCategoryName(componentCategoryMap.get(cp.getSubCategoryId()));
                         t.setType(cp.getType());
-                        List<String> projectIds = componentProjectRefs.stream().filter(o -> o.getStr("componentId").equals(k)).map(o -> o.getStr("projectId")).collect(Collectors.toList());
-                        List<String> projectNames = componentProjectRefs.stream().filter(o -> o.getStr("componentId").equals(k)).map(o -> o.getStr("projectName")).collect(Collectors.toList());
+                        List<String> projectIds = componentProjectRefs.stream().filter(o -> o.getStr("componentId").equals(t.getId())).map(o -> o.getStr("projectId")).collect(Collectors.toList());
+                        List<String> projectNames = componentProjectRefs.stream().filter(o -> o.getStr("componentId").equals(t.getId())).map(o -> o.getStr("projectName")).collect(Collectors.toList());
                         t.setProjects(projectIds);
                         t.setProjectsName(projectNames);
                     }
@@ -127,18 +129,18 @@ public class ParseConfigService {
             componentCategoryIds.add(component.getSubCategory());
         }
 
-        List<ComponentCategory> componentCategories = categoryDao.selectBatchIds(componentCategoryIds);
-        Map<String, String> componentCategoryMap = componentCategories.stream().collect(Collectors.toMap(ComponentCategory::getId, ComponentCategory::getName));
         List<JSONObject> componentProjectRefs = componentProjectMapper.selectByComponentIds(componentIds);
+        List<Component> components1 = componentMapper.selectBatchIds(componentIds);
+        Map<String, Component> collects = components1.stream().collect(Collectors.toMap(Component::getId, o -> o));
 
+        componentCategoryIds.addAll(components1.stream().map(Component::getCategoryId).collect(Collectors.toSet()));
+        componentCategoryIds.addAll(components1.stream().map(Component::getSubCategoryId).collect(Collectors.toSet()));
+        Map<String, String> componentCategoryMap = categoryMapper.selectBatchIds(componentCategoryIds).stream().collect(Collectors.toMap(ComponentCategory::getId, ComponentCategory::getName));
 
-        Map<String, Component> collects = componentDao.selectBatchIds(componentIds).stream().collect(Collectors.toMap(Component::getId, o -> o));
         for (ResourceComponentDto dto : components) {
             String id = dto.getId();
             if (collects.containsKey(id)) {
                 Component component = collects.get(id);
-
-                dto.setUpdate(true);
                 dto.setUpdate(true);
                 dto.setCategory(component.getCategoryId());
                 dto.setSubCategory(component.getSubCategoryId());
@@ -158,7 +160,7 @@ public class ParseConfigService {
     private List<String> getProjectName(List<String> ids) {
         List<String> projectsName = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(ids)) {
-            List<Project> projects = projectDao.selectBatchIds(ids);
+            List<Project> projects = projectMapper.selectBatchIds(ids);
             projectsName = projects.stream().map(Project::getName).collect(Collectors.toList());
         }
         return projectsName;

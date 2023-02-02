@@ -7,10 +7,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication(scanBasePackages = {"com.cloudwise.lcap.commonbase","com.cloudwise.lcap.devserver"})
 @MapperScan(basePackages = {"com.cloudwise.lcap.commonbase.mapper"})
-public class LcapDevServer {
+public class FlyfishDevServer {
     public static void main(String[] args) {
 
-        SpringApplication application = new SpringApplication(LcapDevServer.class);
+        SpringApplication application = new SpringApplication(FlyfishDevServer.class);
         application.addInitializers(new SpringContentUtil());
         application.run(args);
     }
