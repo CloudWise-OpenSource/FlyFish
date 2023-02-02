@@ -18,7 +18,7 @@ cmd=$1
 shift
 
 
-CLASS=com.cloudwise.lcap.devserver.LcapDevServer
+CLASS=com.cloudwise.lcap.devserver.FlyfishDevServer
 
 echo "Begin $cmd start......"
 

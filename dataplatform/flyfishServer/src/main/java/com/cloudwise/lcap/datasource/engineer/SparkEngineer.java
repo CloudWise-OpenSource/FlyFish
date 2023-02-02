@@ -83,6 +83,7 @@ public class SparkEngineer {
                 }
                 data.add(object);
             });
+            sparkSession.catalog().dropTempView(tableName);
         } catch (Exception e) {
             if (e instanceof BaseException) {
                 throw new BaseException(e);
