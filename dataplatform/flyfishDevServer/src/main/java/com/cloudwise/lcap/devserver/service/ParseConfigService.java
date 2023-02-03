@@ -92,9 +92,11 @@ public class ParseConfigService {
                 Collection<ResourceComponentDto> values = componentViewDtoMap.values();
                 values.forEach(t -> {
                     //判断组件费否为更新
-                    Component cp = componentMap.get(t.getId());
-                    if (null != cp) {
+                    if (componentMap.containsKey(t.getId())) {
+                        Component cp = componentMap.get(t.getId());
+                        t.setName(cp.getName());
                         t.setUpdate(true);
+                        t.setDesc(cp.getDesc());
                         t.setCategory(cp.getCategoryId());
                         t.setSubCategory(cp.getSubCategoryId());
                         t.setCategoryName(componentCategoryMap.get(cp.getCategoryId()));
@@ -141,7 +143,9 @@ public class ParseConfigService {
             String id = dto.getId();
             if (collects.containsKey(id)) {
                 Component component = collects.get(id);
+                dto.setName(component.getName());
                 dto.setUpdate(true);
+                dto.setDesc(component.getDesc());
                 dto.setCategory(component.getCategoryId());
                 dto.setSubCategory(component.getSubCategoryId());
                 dto.setCategoryName(componentCategoryMap.get(component.getCategoryId()));
