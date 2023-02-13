@@ -97,7 +97,7 @@ public class ImportService {
         if (CollectionUtils.isNotEmpty(lists)) {
             throw new BaseException("应用名称" + lists + "存在重复!");
         }
-
+        //组件的原始版本号，也是导入的包文件的版本号。如果版本号有变更，需要将包文件变更
         Map<String, String> originComponentIdAndMap = new HashMap<>();
         for (ResourceApplicationDto resourceApplicationDto : manifest.getApplicationList()) {
             List<ResourceComponentDto> components = resourceApplicationDto.getComponents();
@@ -110,8 +110,8 @@ public class ImportService {
             String applicationId = application.getId();
             List<ResourceComponentDto> components = application.getComponents();
             if (CollectionUtil.isNotEmpty(components)) {
+                componentList.putAll(components.stream().collect(Collectors.toMap(ResourceComponentDto::getId, o -> o)));
                 //如果组件修改了版本，则需要对 pages 做相应修改
-                componentList = components.stream().collect(Collectors.toMap(ResourceComponentDto::getId, o -> o));
                 List<JSONObject> pages = JSONUtil.toList(application.getPages(), JSONObject.class);
                 if (CollectionUtils.isNotEmpty(pages)) {
                     for (JSONObject page : pages) {
@@ -224,9 +224,9 @@ public class ImportService {
         for (ResourceComponentDto dto : resourceComponentDtoList) {
             String componentId = dto.getId();
             dto.setDevelopStatus("online");
-            // 用户手动设置的版本号
+            //用户手动设置的版本号
             String version = dto.getVersion();
-            //导出时的组件版本
+            //导入包的包文件的版本号
             String originVersion = originComponentIdAndMap.get(componentId);
             //用户手动修改了版本号，则需要对应版本组件的配置文件中的版本标志
             if (!version.equals(originVersion)) {

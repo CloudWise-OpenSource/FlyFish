@@ -108,12 +108,12 @@ public class ExportService extends ServiceImpl<ImportResultMapper, ImportResult>
             String componentFilePath = lcap_www_path + COMPONENTS + File.separator + componentId + File.separator + recentVersion + COMPONENT_RELEASE;
             //导出时校验封面图
             String cover = reqDto.getCover();
-            if (StringUtils.isNotBlank(cover)){
+            if (StringUtils.isNotBlank(cover)) {
                 if (!cover.startsWith("/")) {
                     cover += "/" + cover;
                 }
                 File coverFile = new File(portal_web_path + cover);
-                if (coverFile.exists() && coverFile.isFile() && coverFile.length() > 0){
+                if (coverFile.exists() && coverFile.isFile() && coverFile.length() > 0) {
                     String coverFileName = cover.substring(cover.lastIndexOf("/"));
                     try {
                         //优先使用这个封面图
@@ -124,7 +124,7 @@ public class ExportService extends ServiceImpl<ImportResultMapper, ImportResult>
                     } catch (FileNotFoundException e) {
                         log.error("组件封面图复制失败" + e);
                     }
-                }else {
+                } else {
                     reqDto.setCover(null);
                 }
             }
@@ -167,7 +167,7 @@ public class ExportService extends ServiceImpl<ImportResultMapper, ImportResult>
         } finally {
             FileUtil.del(zipFile);
             FileUtil.del(folder);
-            if (inStream != null){
+            if (inStream != null) {
                 try {
                     inStream.close();
                 } catch (IOException e) {
@@ -257,17 +257,17 @@ public class ExportService extends ServiceImpl<ImportResultMapper, ImportResult>
                                 component.set("source", "component");
                                 component.set("componentGroupId", "");
                                 JSONObject options = component.getBean("options", JSONObject.class);
-                                String imagePath = options.getStr("image");
-                                if (StringUtils.isNotBlank(imagePath)) {
-                                    if (!imagePath.startsWith("/")){
+                                if ( options.containsKey("image") && StringUtils.isNotBlank(options.getStr("image"))) {
+                                    String imagePath = options.getStr("image");
+                                    if (!imagePath.startsWith("/")) {
                                         imagePath = "/" + imagePath;
                                     }
                                     File appCoverFile = new File(portal_web_path + imagePath);
-                                    if (appCoverFile.exists() && appCoverFile.isFile() && appCoverFile.length() > 0){
+                                    if (appCoverFile.exists() && appCoverFile.isFile() && appCoverFile.length() > 0) {
                                         try {
                                             String imageName = imagePath.substring(imagePath.lastIndexOf("/"));
-                                            IoUtil.copy(new FileInputStream(appCoverFile.getAbsolutePath()), new FileOutputStream(folder + APPLICATIONS + File.separator + applicationId + imageName));
-                                            options.put("image", lcap_www_relative_path + APPLICATIONS + File.separator + applicationId + imageName);
+                                            IoUtil.copy(new FileInputStream(appCoverFile.getAbsolutePath()), new FileOutputStream(folder + APPLICATIONS + File.separator + applicationId + File.separator + imageName));
+                                            options.put("image", lcap_www_relative_path + APPLICATIONS + File.separator + applicationId + File.separator + imageName);
                                         } catch (FileNotFoundException e) {
                                             log.error("资源图片复制失败" + e);
                                         }
