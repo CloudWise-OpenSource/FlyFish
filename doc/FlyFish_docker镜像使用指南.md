@@ -17,23 +17,15 @@ docker-compose up -d
 - 执行命令后，看到
 
 ```shell
-Creating flyfishmysql      ... done
-Creating flyfishcodeserver ... done
-Creating flyfishdevserver  ... done
-Creating flyfishserver     ... done
-Creating fiyfishweb        ... done
+Container mysql             ... Started
+Container flyfishcodeserver ... Started
+Container flyfishdevserver  ... Started
+Container flyfishserver     ... Started
+Container fiyfishweb        ... Started
 ```
 
 则服务启动成功。
 
-> 由于 flyfish 内嵌了 33 个组件，需要等组件初始化完成后才能登录成功
->
-> 查看 server 日志：docker logs flyfishserver -f
->
-> upload component success: 62d60a64ae3be617a2a61ad3, progress: 33/33
-> upload done
->
-> 至此 组件初始化完成
 
 - 访问地址：http://127.0.0.1:8089
 
