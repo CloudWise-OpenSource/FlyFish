@@ -58,7 +58,7 @@ https://gitee.com/CloudWise/fly-fish
 | Env     | Instruction |
 | ------- | ----------- |
 | node    | 14.19.3     |
-| mongodb | 4.0.0       |
+| mysql   | 5.7.x       |
 | nginx   | 1.20.1      |
 | jdk     | 1.8         |
 
@@ -66,10 +66,11 @@ https://gitee.com/CloudWise/fly-fish
 
 | Reception                                             | Port  |
 | ----------------------------------------------------- | ----- |
+| Mysql                                                 | 18103 |
 | FlyFishWeb Port(Nginx static resource proxy)          | 8089  |
 | FlyFishCodeServer(Online editor)Port                  | 8081  |
-| FlyFishServer(Primary backend service)Port            | 7001  |
-| FlyfishDataServer(Data source management service)Port | 18532 |
+| FlyFishServer(Primary backend service)Port            | 19531  |
+| FlyfishDevServer(Data source management service)Port | 19532 |
 
 ### Deployment Process
 
@@ -78,35 +79,6 @@ https://gitee.com/CloudWise/fly-fish
 - [01-Basic environment preparation](./doc/01-基础环境准备篇.md)
 - [02-code_server deployment](./doc/02-code_server部署篇.md)
 - [03-FlyFish platform deployment](./doc/03-FlyFish平台部署篇.md)
-
-> Or execute one key script：
-
-```bash
-# CentOS 7.5/7.6  x86-64
-# Root account is required
-# Flyfish can be installed in any directory with permission
-# The installation directory specified here is /data/app/
-mkdir -p /data/app/
-cd /data/app/
-
-git clone -b main https://github.com/CloudWise-OpenSource/FlyFish.git FlyFish
-or
-git clone -b main https://gitee.com/CloudWise/fly-fish.git FlyFish
-
-cd /data/app/FlyFish
-bash flyfish.sh install
-
-# One click unload
-bash flyfish.sh uninstall
-```
-
-## Upgrade Process
-
-```
-# 1、Update code
-$ git checkout main
-$ git pull
-```
 
 ## Roadmap
 

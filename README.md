@@ -49,10 +49,11 @@
 
 | 服务台                                | 端口  |
 | ------------------------------------- | ----- |
+| mysql                               | 18103 |
 | FlyfishWeb 端口(nginx 静态资源代理)   | 8089  |
 | FlyfishCodeServer(在线编辑器)端口     | 8081  |
-| FlyfishServer(主后端服务)端口         | 7001  |
-| FlyfishDataServer(数据源管理服务)端口 | 18532 |
+| FlyfishServer(主后端服务)端口         | 19831  |
+| FlyfishDevServer(数据源管理服务)端口 | 19532 |
 
 ### 部署流程
 
@@ -65,37 +66,6 @@
 - [01-基础环境准备篇](./doc/01-基础环境准备篇.md)
 - [02-code_server 部署篇](./doc/02-code_server部署篇.md)
 - [03-FlyFish 平台部署篇](./doc/03-FlyFish平台部署篇.md)
-
-> 或执行一键脚本：
-
-```bash
-# CentOS 7.5/7.6  x86-64
-# 须使用root账户
-# 可在任意有权限的目录下安装 FlyFish
-# 这里指定安装目录为 /data/app/
-mkdir -p /data/app/
-cd /data/app/
-
-git clone -b main https://github.com/CloudWise-OpenSource/FlyFish.git FlyFish
-or
-git clone -b main https://gitee.com/CloudWise/fly-fish.git FlyFish
-
-cd /data/app/FlyFish
-# 一键安装
-bash flyfish.sh install
-
-# 一键卸载
-bash flyfish.sh uninstall
-
-```
-
-## 升级流程
-
-```
-# 1、更新代码
-$ git checkout main
-$ git pull
-```
 
 ## 学习资料
 
