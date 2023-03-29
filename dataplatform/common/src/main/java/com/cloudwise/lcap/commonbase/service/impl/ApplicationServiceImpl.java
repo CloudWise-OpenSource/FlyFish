@@ -552,7 +552,7 @@ public class ApplicationServiceImpl extends ServiceImpl<ApplicationMapper, Appli
         if (null == userId) {
             return null;
         }
-        BaseUser byId = baseUserService.getById(userId);
+        BaseUser byId = baseUserService.getById(userId.toString());
         if (byId != null) {
             return byId.getUsername();
         } else {
