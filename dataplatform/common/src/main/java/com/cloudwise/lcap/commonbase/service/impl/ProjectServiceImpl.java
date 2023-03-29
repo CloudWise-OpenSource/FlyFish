@@ -266,7 +266,7 @@ public class ProjectServiceImpl extends ServiceImpl<ProjectMapper, Project> impl
         if (null == userId) {
             return null;
         }
-        BaseUser byId = baseUserService.getById(userId);
+        BaseUser byId = baseUserService.getById(userId.toString());
         if (byId != null) {
             return byId.getUsername();
         } else {

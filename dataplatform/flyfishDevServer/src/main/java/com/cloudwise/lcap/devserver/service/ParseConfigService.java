@@ -53,6 +53,8 @@ public class ParseConfigService {
         List<Application> applicationList = applicationMapper.selectBatchIds(applicationIds);
         Map<String, Application> collects = applicationList.stream().collect(Collectors.toMap(Application::getId, o -> o));
 
+        ComponentCategory firstDefaultCatalog = categoryMapper.selectFirstDefaultCatalog();
+        ComponentCategory secondDefaultCatalog = categoryMapper.selectSecondDefaultCatalog(firstDefaultCatalog.getId());
         // 获取组件为新增还是修改
         List<ResourceApplicationDto> applicationDtoList = new ArrayList<>();
         for (ResourceApplicationDto dto : applications) {
@@ -107,8 +109,14 @@ public class ParseConfigService {
                         t.setProjects(projectIds);
                         t.setProjectsName(projectNames);
                     }
+                    if (StringUtils.isNotEmpty(t.getCategoryName()) || StringUtils.isNotEmpty(t.getSubCategoryName())){
+                        t.setCategory(firstDefaultCatalog.getId());
+                        t.setSubCategory(secondDefaultCatalog.getId());
+                        t.setCategoryName(firstDefaultCatalog.getName());
+                        t.setSubCategoryName(secondDefaultCatalog.getName());
+                    }
                 });
-                dto.setComponents(Lists.newArrayList(componentViewDtoMap.values()));
+                dto.setComponents(Lists.newArrayList(values));
             }
             applicationDtoList.add(dto);
         }
