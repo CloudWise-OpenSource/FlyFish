@@ -17,13 +17,19 @@ import com.cloudwise.lcap.commonbase.service.RoleService;
 import com.cloudwise.lcap.commonbase.util.JwtUtils;
 import com.cloudwise.lcap.commonbase.vo.MenusListVo;
 import com.cloudwise.lcap.commonbase.vo.MenusVo;
+import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -129,17 +135,24 @@ public class BaseUserController {
     }
 
     @PutMapping("/info/{id}")
-    public void update(@PathVariable String id, @RequestBody BaseUser user) {
+    public void update(@PathVariable String id, @RequestBody BaseUser user, HttpServletRequest request) {
         try {
-            user.setId(id);
-            String password = user.getPassword();
-            if(StrUtil.isNotBlank(password)){
-                user.setPassword(SecureUtil.md5(password));
+            String userId = getUserIdByToken(request);
+            BaseUser baseUser = baseUserService.getBaseMapper().selectById(userId);
+            // 只有超级管理员才能修改用户信息
+            if (Objects.equals(baseUser.getRoleId(), "1")) {
+                user.setId(id);
+                String password = user.getPassword();
+                if(StrUtil.isNotBlank(password)){
+                    user.setPassword(SecureUtil.md5(password));
+                }
+                baseUserService.updateById(user);
+            } else {
+                throw new BizException("无权限更新用户信息");
             }
-            baseUserService.updateById(user);
         } catch (Exception e) {
             log.error("更新用户异常:", e);
-            throw new BizException("更新用户异常:" + e.getMessage());
+            throw new BizException("更新用户信息异常");
         }
     }
 
@@ -199,5 +212,28 @@ public class BaseUserController {
             log.error("用户列表异常:", e);
             throw new BizException("用户列表异常:" + e.getMessage());
         }
+    }
+    
+    /**
+     * 获取用户Id
+     * @return
+     */
+    private String getUserIdByToken(HttpServletRequest request) {
+        String token = "";
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("token")) {
+                    token = cookie.getValue();
+                }
+            }
+        }
+        
+        if (StringUtils.isEmpty(token)) {
+            log.error("获取用户信息失败");
+            throw new BizException("获取用户信息失败");
+        }
+        Claims claim = jwtUtils.getClaimsByToken(token);
+        return claim.getSubject();
     }
 }
