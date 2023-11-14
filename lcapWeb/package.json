@@ -44,6 +44,7 @@
 		"not op_mini all"
 	],
 	"devDependencies": {
+    "caniuse-lite": "1.0.30001559",
 		"terser-webpack-plugin": "5.3.6"
 	}
 }
