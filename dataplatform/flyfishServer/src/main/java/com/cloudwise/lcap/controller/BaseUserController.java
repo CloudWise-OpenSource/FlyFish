@@ -65,6 +65,9 @@ public class BaseUserController {
                 throw new BizException("用户名重复，请重新注册");
             }
             String password = user.getPassword();
+            if (password.length() < 6 || password.length() > 40) {
+                throw new BizException("密码长度必须在6到40之间");
+            }
             user.setPassword(SecureUtil.md5(password));
             user.setIsDouc(false);
             user.setStatus("valid");
@@ -89,6 +92,10 @@ public class BaseUserController {
      */
     @PostMapping("/login")
     public JSONObject login(@RequestBody BaseUser user, HttpServletResponse response) {
+        String password = user.getPassword();
+        if (password.length() < 6 || password.length() > 40) {
+            throw new BizException("密码长度必须在6到40之间");
+        }
         LambdaQueryWrapper<BaseUser> eq = Wrappers.<BaseUser>lambdaQuery().eq(BaseUser::getUsername, user.getUsername()).eq(BaseUser::getPassword, SecureUtil.md5(user.getPassword()));
         BaseUser one = baseUserService.getOne(eq);
         if (one == null) {
@@ -144,6 +151,9 @@ public class BaseUserController {
                 user.setId(id);
                 String password = user.getPassword();
                 if(StrUtil.isNotBlank(password)){
+                    if (password.length() < 6 || password.length() > 40){
+                        throw new BizException("密码长度必须在6到40之间");
+                    }
                     user.setPassword(SecureUtil.md5(password));
                 }
                 baseUserService.updateById(user);
